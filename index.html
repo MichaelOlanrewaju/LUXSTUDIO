@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base target="_top">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold:        #b8860b;
+      --gold-light:  #d4a017;
+      --gold-pale:   #fdf9f0;
+      --surface:     #f8f6f3;
+      --border:      #e4dfd9;
+      --text:        #1a1714;
+      --text-muted:  #6b6560;
+      --serif:       'Playfair Display', Georgia, serif;
+      --sans:        'DM Sans', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { overflow-x: hidden; width: 100%; font-family: var(--sans); color: var(--text); background: #fff; -webkit-font-smoothing: antialiased; }
+
+    /* NAVBAR */
+    #mainNav { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 14px 0; background: rgba(255,255,255,0.97); border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: padding .3s, box-shadow .3s; }
+    #mainNav.scrolled { padding: 10px 0; box-shadow: 0 2px 20px rgba(0,0,0,0.08); }
+    #mainNav .nav-link { font-family: var(--sans); font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); font-weight: 400; padding: 8px 14px; transition: color .2s; }
+    #mainNav .nav-link:hover { color: var(--gold); }
+    .btn-nav-book { font-family: var(--sans); font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; padding: 10px 24px; background: var(--text); color: #fff !important; border: none; border-radius: 0; text-decoration: none; transition: background .2s; display: inline-block; min-height: 40px; line-height: 1.6; }
+    .btn-nav-book:hover { background: var(--gold); color: #fff !important; }
+    .navbar-toggler { border: 1px solid var(--border); padding: 6px 10px; border-radius: 0; }
+    .navbar-toggler:focus { box-shadow: none; }
+    body { padding-top: 73px; }
+
+    /* HERO */
+    .hero-section { min-height: 92vh; position: relative; display: flex; align-items: center; overflow: hidden; }
+    .hero-slide { position: absolute; inset: 0; z-index: 0; background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0; transition: opacity 1.4s ease-in-out; }
+    .hero-slide.active { opacity: 1; }
+    .hero-overlay { position: absolute; inset: 0; z-index: 1; background: linear-gradient(160deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.38) 60%, rgba(0,0,0,0.7) 100%); }
+    .hero-content { position: relative; z-index: 2; width: 100%; text-align: center; padding: 56px 20px 48px; }
+    .hero-eyebrow { position: absolute; top: 28px; left: 50%; transform: translateX(-50%); z-index: 2; display: inline-block; font-size: 10px; letter-spacing: 4px; white-space: nowrap; text-transform: uppercase; color: rgba(255,255,255,0.85); padding: 7px 18px; }
+    .hero-btns { display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: 10px; }
+    .btn-hero { display: inline-flex; align-items: center; padding: 13px 22px; background: var(--gold); color: #fff !important; font-family: var(--sans); font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; border: 2px solid var(--gold); text-decoration: none; transition: background .25s, border-color .25s, color .25s; white-space: nowrap; border-radius: 0; }
+    .btn-hero:hover { background: transparent; border-color: #fff; color: #fff !important; }
+    .btn-hero-outline { display: inline-flex; align-items: center; padding: 11px 18px; background: transparent; color: #fff !important; font-family: var(--sans); font-size: 11px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.5); text-decoration: none; transition: background .25s, color .25s; white-space: nowrap; border-radius: 0; }
+    .btn-hero-outline:hover { background: rgba(255,255,255,0.12); color: #fff !important; }
+    .hero-dots { position: absolute; bottom: 52px; left: 50%; transform: translateX(-50%); z-index: 3; display: flex; gap: 8px; }
+    .hero-dot { width: 24px; height: 2px; background: rgba(255,255,255,0.3); border: none; cursor: pointer; padding: 0; transition: background .3s; }
+    .hero-dot.active { background: var(--gold); }
+    .scroll-cue { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .scroll-cue span { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.45); }
+    .scroll-line { width: 1px; height: 36px; background: linear-gradient(180deg, rgba(255,255,255,0.5), transparent); animation: scrollPulse 1.8s ease-in-out infinite; }
+    @keyframes scrollPulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+    /* SECTIONS */
+    .section-kicker { font-size: 10px; letter-spacing: 3.5px; text-transform: uppercase; color: var(--gold); text-align: center; margin-bottom: 10px; display: block; }
+    .section-title { font-family: var(--serif); font-size: clamp(24px, 5vw, 38px); font-weight: 700; text-align: center; color: var(--text); margin-bottom: 14px; }
+    .section-title em { font-style: italic; color: var(--gold); }
+    .section-divider { width: 44px; height: 2px; background: var(--gold); margin: 0 auto 22px; }
+    .section-body { font-size: 15px; font-weight: 300; color: var(--text-muted); line-height: 1.8; text-align: center; max-width: 580px; margin: 0 auto; }
+
+    /* PROMISE */
+    .promise-section { padding: 72px 0; background: #fff; }
+    .feat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 32px; }
+    .feat-card { background: var(--surface); border: 1px solid var(--border); padding: 28px 18px; text-align: center; height: 100%; transition: border-color .25s, transform .25s; }
+    .feat-card:hover { border-color: var(--gold); transform: translateY(-4px); }
+    .feat-icon { font-size: 26px; color: var(--gold); display: block; margin-bottom: 12px; }
+    .feat-card h3 { font-family: var(--serif); font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .feat-card p { font-size: 13px; color: var(--text-muted); line-height: 1.7; font-weight: 300; margin: 0; }
+    @media (max-width: 600px) {
+      .feat-row { grid-template-columns: 1fr; gap: 12px; }
+      .feat-card { display: flex; flex-direction: row; align-items: flex-start; text-align: left; padding: 18px 16px; gap: 14px; height: auto; }
+      .feat-card-text { flex: 1; }
+      .feat-icon { font-size: 22px; margin-bottom: 0; flex-shrink: 0; margin-top: 3px; }
+      .feat-card h3 { font-size: 15px; margin-bottom: 4px; }
+    }
+
+    /* PORTFOLIO */
+    .portfolio-section { padding: 72px 0; background: var(--surface); border-top: 1px solid var(--border); }
+    .filter-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 36px; }
+    .filter-tab { font-family: var(--sans); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 20px; border: 1px solid var(--border); background: #fff; color: var(--text-muted); cursor: pointer; transition: all .2s; border-radius: 0; }
+    .filter-tab:hover, .filter-tab.active { background: var(--gold); border-color: var(--gold); color: #fff; }
+    .gallery-grid { columns: 2; column-gap: 10px; }
+    @media (min-width: 768px) { .gallery-grid { columns: 3; } }
+    @media (min-width: 1100px) { .gallery-grid { columns: 4; } }
+    .gallery-item { break-inside: avoid; margin-bottom: 10px; position: relative; overflow: hidden; cursor: pointer; }
+    .gallery-item img { width: 100%; height: auto; display: block; transition: transform .5s ease; filter: grayscale(8%); }
+    .gallery-item:hover img { transform: scale(1.05); filter: grayscale(0%); }
+    .gallery-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.75) 100%); opacity: 0; transition: opacity .3s; display: flex; align-items: flex-end; padding: 16px; }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+    .gallery-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.9); font-family: var(--sans); }
+    .gallery-view-more-wrap { text-align: center; margin-top: 28px; }
+    .btn-view-more { display: inline-block; padding: 13px 36px; background: transparent; border: 1px solid var(--gold); color: var(--gold); font-family: var(--sans); font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background .2s, color .2s; }
+    .btn-view-more:hover { background: var(--gold); color: #fff; }
+
+    /* LIGHTBOX */
+    .lb-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 9000; flex-direction: column; align-items: center; justify-content: center; }
+    .lb-backdrop.open { display: flex; }
+    .lb-close { position: absolute; top: 20px; right: 24px; background: none; border: none; color: #fff; font-size: 32px; cursor: pointer; z-index: 9001; line-height: 1; }
+    .lb-counter { position: absolute; top: 22px; left: 24px; font-size: 11px; letter-spacing: 2px; color: rgba(255,255,255,0.4); text-transform: uppercase; }
+    .lb-img-wrap { width: 100%; max-width: 860px; max-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 0 60px; }
+    .lb-img-wrap img { max-width: 100%; max-height: 80vh; object-fit: contain; border: none; }
+    .lb-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: none; border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 22px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background .2s, border-color .2s; z-index: 9001; }
+    .lb-arrow:hover { background: var(--gold); border-color: var(--gold); }
+    .lb-arrow.prev { left: 12px; } .lb-arrow.next { right: 12px; }
+    .lb-dots { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; justify-content: center; max-width: 80vw; }
+    .lb-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.25); border: none; cursor: pointer; padding: 0; transition: background .2s; }
+    .lb-dot.active { background: var(--gold); }
+
+    /* SESSIONS */
+    .showcase-section { padding: 72px 0; background: #fff; }
+    .sessions-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    @media (max-width: 768px) { .sessions-grid { grid-template-columns: repeat(2, 1fr); } }
+    .showcase-card { position: relative; overflow: hidden; }
+    .showcase-card img { width: 100%; height: 320px; object-fit: cover; display: block; transition: transform .6s ease; }
+    @media (max-width: 768px) { .showcase-card img { height: 220px; } }
+    .showcase-card:hover img { transform: scale(1.06); }
+    .showcase-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.82) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px 16px; }
+    .showcase-tag { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 5px; font-family: var(--sans); }
+    .showcase-name { font-family: var(--serif); font-size: clamp(15px, 2.5vw, 22px); font-weight: 600; color: #fff; line-height: 1.2; margin-bottom: 4px; }
+    .showcase-desc { font-size: 11px; color: rgba(255,255,255,0.65); font-weight: 300; line-height: 1.5; }
+    .showcase-btn { display: inline-block; margin-top: 10px; padding: 7px 16px; background: var(--gold); color: #fff !important; font-family: var(--sans); font-size: 10px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; border: none; text-decoration: none; transition: background .2s; border-radius: 0; cursor: pointer; }
+    .showcase-btn:hover { background: #fff; color: var(--text) !important; }
+
+    /* VIDEO REELS */
+    .reels-section { padding: 72px 0; background: var(--text); }
+    .reels-section .section-kicker { color: rgba(255,255,255,0.4); }
+    .reels-section .section-title  { color: #fff; }
+    .reels-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 40px; }
+    .reel-card { position: relative; overflow: hidden; background: #111; cursor: pointer; aspect-ratio: 3 / 4; }
+    .reel-card video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .reel-card-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,0.75) 100%); pointer-events: none; }
+    .reel-play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 58px; height: 58px; background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.55); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background .25s, border-color .25s, opacity .3s; pointer-events: none; }
+    .reel-play-btn svg { width: 22px; height: 22px; fill: #fff; margin-left: 3px; }
+    .reel-card.playing .reel-play-btn { opacity: 0; }
+    .reel-card:hover .reel-play-btn { background: var(--gold); border-color: var(--gold); opacity: 1 !important; }
+    .reel-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 16px 14px 14px; pointer-events: none; }
+    .reel-caption-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); font-family: var(--sans); margin-bottom: 3px; }
+    .reel-caption-name { font-family: var(--serif); font-size: 15px; font-weight: 600; color: #fff; line-height: 1.2; }
+    .reel-mute-btn { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; opacity: 0; transition: opacity .2s, background .2s; }
+    .reel-mute-btn svg { width: 14px; height: 14px; fill: #fff; }
+    .reel-card:hover .reel-mute-btn, .reel-card.playing .reel-mute-btn { opacity: 1; }
+    .reel-mute-btn:hover { background: var(--gold); border-color: var(--gold); }
+    @media (max-width: 767px) {
+      .reels-grid { display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; gap: 12px; padding-bottom: 12px; scrollbar-width: none; }
+      .reels-grid::-webkit-scrollbar { display: none; }
+      .reel-card { flex: 0 0 72vw; scroll-snap-align: center; aspect-ratio: 3 / 4; }
+    }
+
+    /* BOOKING */
+    .booking-section { background: var(--surface); border-top: 1px solid var(--border); padding: 72px 0; }
+    .form-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 400; }
+    .form-control, .form-select { font-family: var(--sans); font-size: 16px; font-weight: 300; border-radius: 0; border-color: var(--border); color: var(--text); padding: 12px 14px; background-color: #fff; }
+    .form-control:focus, .form-select:focus { border-color: var(--gold); box-shadow: 0 0 0 0.15rem rgba(184,134,11,0.12); }
+    .form-control::placeholder { color: #c4bdb5; font-weight: 300; }
+    textarea.form-control { min-height: 90px; resize: vertical; }
+    .btn-submit { width: 100%; padding: 16px; background: var(--text); color: #fff; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; border: none; border-radius: 0; cursor: pointer; transition: background .2s; min-height: 52px; }
+    .btn-submit:hover { background: var(--gold); }
+    .success-msg { display: none; text-align: center; margin-top: 20px; color: var(--gold); font-size: 13px; padding: 14px; border: 1px solid rgba(184,134,11,0.3); background: var(--gold-pale); }
+    .wa-hint { display: flex; align-items: center; gap: 8px; justify-content: center; margin-top: 14px; font-size: 12px; color: var(--text-muted); }
+    .wa-hint svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    /* FOOTER */
+    .site-footer { background: var(--text); text-align: center; padding: 32px 16px; font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 1px; }
+    .site-footer strong { font-family: var(--serif); font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.8); display: block; margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="#">
+      <img src="https://res.cloudinary.com/lanremichael/image/upload/v1777536586/LOGO_vvhdu7.png" alt="Studio Logo" height="44">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+        <li class="nav-item"><a class="nav-link" href="#portfolio">Portfolio</a></li>
+        <li class="nav-item"><a class="nav-link" href="#sessions">Sessions</a></li>
+        <li class="nav-item ms-lg-3 mt-2 mt-lg-0"><a class="btn btn-nav-book" href="#book">Book a Session</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero-section">
+  <div class="hero-slide active" style="background-image:url('https://res.cloudinary.com/lanremichael/image/upload/v1777397226/IMG_4069_zxft7a.jpg');"></div>
+  <div class="hero-slide" style="background-image:url('https://res.cloudinary.com/lanremichael/image/upload/v1777533311/CT101038_1_lynjrb.jpg'); background-position:40% 25%"></div>
+  <div class="hero-slide" style="background-image:url('https://res.cloudinary.com/lanremichael/image/upload/v1777563975/CT104718_Large_dxy1lv.jpg');"></div>
+  <div class="hero-slide" style="background-image:url('https://res.cloudinary.com/lanremichael/image/upload/v1777397297/T4_pjfmky.jpg'); background-position:50% 40%"></div>
+  <div class="hero-slide" style="background-image:url('https://res.cloudinary.com/lanremichael/image/upload/v1777397269/CT107319_mlcxh7.jpg'); background-position:50% 40%"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-eyebrow">Where Every Frame Tells a Story...</div>
+  <div class="hero-content">
+    <div class="hero-btns">
+      <a class="btn-hero" href="#book">Book Your Session</a>
+      <a class="btn-hero-outline" href="#portfolio">View Our Work</a>
+    </div>
+  </div>
+  <div class="hero-dots" id="heroDots"></div>
+  <div class="scroll-cue"><div class="scroll-line"></div><span>Scroll</span></div>
+</section>
+
+<!-- PROMISE -->
+<section class="promise-section">
+  <div class="container">
+    <span class="section-kicker">Why Clients Choose Us</span>
+    <h2 class="section-title">Every Portrait, <em>Crafted for You</em></h2>
+    <div class="section-divider"></div>
+    <div class="feat-row">
+      <div class="feat-card"><span class="feat-icon">✦</span><div class="feat-card-text"><h3>Guided Direction</h3><p>We direct every pose, expression &amp; angle so you look your absolute best, no awkward moments, ever.</p></div></div>
+      <div class="feat-card"><span class="feat-icon">◆</span><div class="feat-card-text"><h3>Premium Quality</h3><p>Every portrait is hand-retouched by our expert editors. Flawless, consistent quality across your full gallery.</p></div></div>
+      <div class="feat-card"><span class="feat-icon">◉</span><div class="feat-card-text"><h3>Make Up Artist</h3><p>Look and feel your absolute best. Professional makeup artist available to book alongside your session.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lb-backdrop" id="lightbox">
+  <button class="lb-close" id="lbClose">✕</button>
+  <div class="lb-counter" id="lbCounter">1 / 1</div>
+  <div class="lb-img-wrap"><img id="lbImg" src="" alt=""></div>
+  <button class="lb-arrow prev" id="lbPrev">&#8592;</button>
+  <button class="lb-arrow next" id="lbNext">&#8594;</button>
+  <div class="lb-dots" id="lbDots"></div>
+</div>
+
+<!-- PORTFOLIO -->
+<section class="portfolio-section" id="portfolio">
+  <div class="container">
+    <span class="section-kicker">Our Work</span>
+    <h2 class="section-title">A Glimpse Into <em>Our World</em></h2>
+    <div class="section-divider"></div>
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-filter="all">All</button>
+      <button class="filter-tab" data-filter="birthday">Birthday</button>
+      <button class="filter-tab" data-filter="anniversary">Anniversary</button>
+      <button class="filter-tab" data-filter="maternity">Maternity</button>
+      <button class="filter-tab" data-filter="prewedding">Pre-Wedding</button>
+      <button class="filter-tab" data-filter="family">Family</button>
+    </div>
+    <div class="gallery-grid" id="galleryGrid">
+      <div class="gallery-item" data-category="birthday"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777397250/CT102502_asr48q.jpg" alt="Birthday" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777397267/CT108204_mbnm2a.jpg" alt="Birthday" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777397240/IMG_2381_xwwqev.jpg" alt="Birthday" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777397226/IMG_4069_zxft7a.jpg" alt="Birthday" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777535071/CT104562_1_2_Large_iaek9z.jpg" alt="Birthday" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777397236/Fash_2_vuy37o.jpg" alt="Birthday" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777533311/CT103799_r1zunn.jpg" alt="Birthday" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777394479/CT103474_fd2vbw.jpg" alt="Birthday" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="anniversary"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777563981/IMG_4521_Large_nvacev.jpg" alt="Anniversary" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Anniversary</span></div></div>
+      <div class="gallery-item" data-category="anniversary"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777564767/IMG_0016_Large_phu7yn.jpg" alt="Anniversary" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Anniversary</span></div></div>
+      <div class="gallery-item" data-category="anniversary"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777564768/CT102174_Large_udxoqe.jpg" alt="Anniversary" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Anniversary</span></div></div>
+      <div class="gallery-item" data-category="anniversary"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777564767/IMG_4429_Large_ffwh7t.jpg" alt="Anniversary" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Anniversary</span></div></div>
+      <div class="gallery-item" data-category="anniversary"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777535170/IMG_4486_Large_u7razh.jpg" alt="Anniversary" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Anniversary</span></div></div>
+      <div class="gallery-item" data-category="anniversary"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777535120/CT101583_2_Large_wb0svx.jpg" alt="Anniversary" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Anniversary</span></div></div>
+      <div class="gallery-item" data-category="maternity"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777533304/CT108366_zilzgb.jpg" alt="Maternity" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Maternity</span></div></div>
+      <div class="gallery-item" data-category="maternity"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777397271/CT102306_ycbevc.jpg" alt="Maternity" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Maternity</span></div></div>
+      <div class="gallery-item" data-category="maternity"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777397297/T4_pjfmky.jpg" alt="Maternity" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Maternity</span></div></div>
+      <div class="gallery-item" data-category="maternity"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777394451/2_afe032.jpg" alt="Maternity" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Maternity</span></div></div>
+      <div class="gallery-item" data-category="maternity"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777533311/CT101038_1_lynjrb.jpg" alt="Maternity" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Maternity</span></div></div>
+      <div class="gallery-item" data-category="maternity"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777397213/Chioma-11__2_ak9w6r.jpg" alt="Maternity" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Maternity</span></div></div>
+      <div class="gallery-item" data-category="maternity"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777397297/CT101274_2_szcdme.jpg" alt="Maternity" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Maternity</span></div></div>
+      <div class="gallery-item" data-category="maternity"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777397283/CT108575_hiihzb.jpg" alt="Maternity" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Maternity</span></div></div>
+      <div class="gallery-item" data-category="prewedding"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777533293/CT109843_f2eoim.jpg" alt="Pre-Wedding" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Pre-Wedding</span></div></div>
+      <div class="gallery-item" data-category="prewedding"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777533306/CT103350_1_mcbzed.jpg" alt="Pre-Wedding" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Pre-Wedding</span></div></div>
+      <div class="gallery-item" data-category="prewedding"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777535147/CT107454_Large_nni90f.jpg" alt="Pre-Wedding" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Pre-Wedding</span></div></div>
+      <div class="gallery-item" data-category="prewedding"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777563978/CT1097790_1_Large_gduqma.jpg" alt="Pre-Wedding" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Pre-Wedding</span></div></div>
+      <div class="gallery-item" data-category="prewedding"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777563974/CT104697_Large_ng9wq5.jpg" alt="Pre-Wedding" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Pre-Wedding</span></div></div>
+      <div class="gallery-item" data-category="prewedding"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777565082/CT104592_xsziem.jpg" alt="Pre-Wedding" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Pre-Wedding</span></div></div>
+      <div class="gallery-item" data-category="family"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777397256/CT100970_kxp1zy.jpg" alt="Family" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Family</span></div></div>
+      <div class="gallery-item" data-category="family"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777397269/CT107319_mlcxh7.jpg" alt="Family" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Family</span></div></div>
+      <div class="gallery-item" data-category="family"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777535120/CT101583_2_Large_wb0svx.jpg" alt="Family" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Family</span></div></div>
+      <div class="gallery-item" data-category="family"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777563974/CT103977_Large_bicbqa.jpg" alt="Family" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Family</span></div></div>
+      <div class="gallery-item" data-category="family"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777535150/CT101093_Large_kfapdp.jpg" alt="Family" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Family</span></div></div>
+      <div class="gallery-item" data-category="family"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777563977/CT109610_Large_n1zgjr.jpg" alt="Family" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Family</span></div></div>
+      <div class="gallery-item" data-category="family"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777563980/IMG_4431_Large_f8mvsi.jpg" alt="Family" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Family</span></div></div>
+      <div class="gallery-item" data-category="family"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777563979/IMG_0015_Large_dkmod4.jpg" alt="Family" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Family</span></div></div>
+    </div>
+    <div class="gallery-view-more-wrap" id="viewMoreWrap">
+      <button class="btn-view-more" id="btnViewMore">View More ↓</button>
+    </div>
+  </div>
+</section>
+
+<!-- SESSIONS -->
+<section class="showcase-section" id="sessions">
+  <div class="container">
+    <span class="section-kicker">Session Types</span>
+    <h2 class="section-title">What We <em>Specialise In</em></h2>
+    <div class="section-divider"></div>
+    <div class="sessions-grid">
+      <div>
+        <div class="showcase-card mb-2"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777397250/CT102502_asr48q.jpg" alt="Birthday"><div class="showcase-overlay"><div class="showcase-tag">Session Type</div><div class="showcase-name">Birthday</div><div class="showcase-desc">Celebrate your day · 40+ images</div><a class="showcase-btn" href="#book">Book This</a></div></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777397267/CT108204_mbnm2a.jpg" style="width:100%;height:60px;object-fit:cover;object-position:top" alt="" loading="lazy"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777535071/CT104562_1_2_Large_iaek9z.jpg" style="width:100%;height:60px;object-fit:cover" alt="" loading="lazy"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777533311/CT103799_r1zunn.jpg" style="width:100%;height:60px;object-fit:cover" alt="" loading="lazy"></div>
+      </div>
+      <div>
+        <div class="showcase-card mb-2"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777563981/IMG_4521_Large_nvacev.jpg" alt="Anniversary"><div class="showcase-overlay"><div class="showcase-tag">Session Type</div><div class="showcase-name">Anniversary</div><div class="showcase-desc">Timeless couple moments · 50+ images</div><a class="showcase-btn" href="#book">Book This</a></div></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777564767/IMG_0016_Large_phu7yn.jpg" style="width:100%;height:60px;object-fit:cover" alt="" loading="lazy"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777564768/CT102174_Large_udxoqe.jpg" style="width:100%;height:60px;object-fit:cover" alt="" loading="lazy"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777535170/IMG_4486_Large_u7razh.jpg" style="width:100%;height:60px;object-fit:cover" alt="" loading="lazy"></div>
+      </div>
+      <div>
+        <div class="showcase-card mb-2"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777397297/T4_pjfmky.jpg" alt="Maternity"><div class="showcase-overlay"><div class="showcase-tag">Session Type</div><div class="showcase-name">Maternity</div><div class="showcase-desc">1.5-hr session · 50+ timeless images</div><a class="showcase-btn" href="#book">Book This</a></div></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777533304/CT108366_zilzgb.jpg" style="width:100%;height:60px;object-fit:cover;object-position:top" alt="" loading="lazy"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777397271/CT102306_ycbevc.jpg" style="width:100%;height:60px;object-fit:cover;object-position:top" alt="" loading="lazy"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777397213/Chioma-11__2_ak9w6r.jpg" style="width:100%;height:60px;object-fit:cover;object-position:top" alt="" loading="lazy"></div>
+      </div>
+      <div>
+        <div class="showcase-card mb-2"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777533293/CT109843_f2eoim.jpg" alt="Pre-Wedding"><div class="showcase-overlay"><div class="showcase-tag">Session Type</div><div class="showcase-name">Pre-Wedding</div><div class="showcase-desc">Before the big day · 60+ images</div><a class="showcase-btn" href="#book">Book This</a></div></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777533306/CT103350_1_mcbzed.jpg" style="width:100%;height:60px;object-fit:cover" alt="" loading="lazy"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777535147/CT107454_Large_nni90f.jpg" style="width:100%;height:60px;object-fit:cover" alt="" loading="lazy"><img src="https://res.cloudinary.com/lanremichael/image/upload/v1777563974/CT104697_Large_ng9wq5.jpg" style="width:100%;height:60px;object-fit:cover" alt="" loading="lazy"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO REELS -->
+<section class="reels-section">
+  <div class="container">
+    <span class="section-kicker">Client Love</span>
+    <h2 class="section-title" style="color:#fff">Real Sessions, <em>Real Moments</em></h2>
+    <div class="section-divider"></div>
+    <div class="reels-grid">
+      <!-- REEL 1 -->
+      <div class="reel-card">
+        <video src="https://res.cloudinary.com/lanremichael/video/upload/v1777746145/copy_73F92DB3-E65C-45D0-86B7-43B5D710E848_udcmt7.mov" muted playsinline loop preload="metadata"></video>
+        <div class="reel-card-overlay"></div>
+        <div class="reel-play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        <button class="reel-mute-btn" aria-label="Toggle mute">
+          <svg class="icon-muted" viewBox="0 0 24 24"><path d="M16.5 12A4.5 4.5 0 0 0 14 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.796 8.796 0 0 0 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06A8.99 8.99 0 0 0 17.73 18L19 19.27 20.27 18 5.27 3 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+          <svg class="icon-unmuted" viewBox="0 0 24 24" style="display:none"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+        </button>
+        <div class="reel-caption"><div class="reel-caption-label">Client Story</div><div class="reel-caption-name">Maternity Session</div></div>
+      </div>
+      <!-- REEL 2 -->
+      <div class="reel-card">
+        <video src="https://res.cloudinary.com/lanremichael/video/upload/v1777746167/FacetuneC981A326-116D-4EC3-8234-DBBE98448A58_qhinro.mov" muted playsinline loop preload="metadata"></video>
+        <div class="reel-card-overlay"></div>
+        <div class="reel-play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        <button class="reel-mute-btn" aria-label="Toggle mute">
+          <svg class="icon-muted" viewBox="0 0 24 24"><path d="M16.5 12A4.5 4.5 0 0 0 14 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.796 8.796 0 0 0 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06A8.99 8.99 0 0 0 17.73 18L19 19.27 20.27 18 5.27 3 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+          <svg class="icon-unmuted" viewBox="0 0 24 24" style="display:none"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+        </button>
+        <div class="reel-caption"><div class="reel-caption-label">Client Story</div><div class="reel-caption-name">Birthday Shoot</div></div>
+      </div>
+      <!-- REEL 3 -->
+      <div class="reel-card">
+        <video src="https://res.cloudinary.com/lanremichael/video/upload/v1777746180/copy_193F3CC5-DE01-4620-AAE0-4F433296D800_mr5dy7.mov" muted playsinline loop preload="metadata"></video>
+        <div class="reel-card-overlay"></div>
+        <div class="reel-play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        <button class="reel-mute-btn" aria-label="Toggle mute">
+          <svg class="icon-muted" viewBox="0 0 24 24"><path d="M16.5 12A4.5 4.5 0 0 0 14 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.796 8.796 0 0 0 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06A8.99 8.99 0 0 0 17.73 18L19 19.27 20.27 18 5.27 3 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+          <svg class="icon-unmuted" viewBox="0 0 24 24" style="display:none"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+        </button>
+        <div class="reel-caption"><div class="reel-caption-label">Client Story</div><div class="reel-caption-name">Pre-Wedding</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING -->
+<section class="booking-section" id="book">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6">
+        <span class="section-kicker">Ready to Begin?</span>
+        <h2 class="section-title">Book Your <em>Session</em></h2>
+        <div class="section-divider"></div>
+        <p class="section-body mb-4">Fill in your details below and we'll reach out within 24 hours to confirm your booking.</p>
+        <form id="leadForm" novalidate>
+          <div class="row g-3">
+            <!-- ✅ Full name — full width on mobile, half on sm+ -->
+            <div class="col-12"><label class="form-label" for="fname">Full Name</label><input class="form-control" id="fname" name="name" type="text" placeholder="Your name" required></div>
+            <!-- ✅ WhatsApp — required, full width -->
+            <div class="col-12"><label class="form-label" for="fphone">WhatsApp Number <span style="color:var(--gold)">*</span></label><input class="form-control" id="fphone" name="phone" type="tel" placeholder="+44 000 0000 000" required></div>
+            <div class="col-12 col-sm-6"><label class="form-label" for="fdate">Preferred Date</label><input class="form-control" id="fdate" name="shootDate" type="date" required></div>
+            <div class="col-12 col-sm-6"><label class="form-label" for="fscene">Scene</label><select class="form-select" id="fscene" name="scene" required><option value="">Select a scene</option><option value="Outdoor">🌿 Outdoor</option><option value="Studio">🏛️ Studio</option></select></div>
+            <div class="col-12"><label class="form-label" for="ftype">Shoot Type</label><select class="form-select" id="ftype" name="shootType" required><option value="">Select a shoot type</option><option>Birthday</option><option>Anniversary</option><option>Maternity</option><option>Pre-Wedding</option><option>Wedding</option><option>Family Portrait</option><option>Personal Branding</option><option>Children</option><option>Graduation</option><option>Social Events</option><option>Boudoir</option><option>Other</option></select></div>
+            <div class="col-12"><label class="form-label" for="fmessage">Additional Notes</label><textarea class="form-control" id="fmessage" name="message" placeholder="Tell us anything we should know about your shoot…"></textarea></div>
+            <div class="col-12"><button type="submit" class="btn-submit">Request Availability →</button></div>
+          </div>
+        </form>
+        <div class="wa-hint">
+          <svg viewBox="0 0 24 24" fill="#25D366" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          You'll be redirected to WhatsApp to confirm your booking
+        </div>
+        <div class="success-msg" id="successMsg">✦ &nbsp; Thank you! Redirecting you to WhatsApp…</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <strong>Luxeimperial Studio</strong>
+  Manchester UK &nbsp;·&nbsp; luxeimperialstudiouk@gmail.com &nbsp;·&nbsp; © 2026 All rights reserved
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  var WA_NUMBER = '447368208684';
+
+  window.addEventListener('scroll', function() {
+    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50);
+  });
+
+  document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+    anchor.addEventListener('click', function(e) {
+      var target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        var navMenu = document.getElementById('navMenu');
+        if (navMenu && navMenu.classList.contains('show')) document.querySelector('.navbar-toggler').click();
+        var navHeight = document.getElementById('mainNav').offsetHeight;
+        window.scrollTo({ top: target.getBoundingClientRect().top + window.pageYOffset - navHeight - 16, behavior: 'smooth' });
+      }
+    });
+  });
+
+  document.getElementById('fdate').min = new Date().toISOString().split('T')[0];
+
+  // Hero slideshow
+  (function () {
+    var slides = Array.from(document.querySelectorAll('.hero-slide'));
+    var dotsEl = document.getElementById('heroDots');
+    var cur = 0;
+    slides.forEach(function (_, i) {
+      var d = document.createElement('button');
+      d.className = 'hero-dot' + (i === 0 ? ' active' : '');
+      d.addEventListener('click', function () { goTo(i); });
+      dotsEl.appendChild(d);
+    });
+    function goTo(n) {
+      slides[cur].classList.remove('active'); dotsEl.children[cur].classList.remove('active');
+      cur = (n + slides.length) % slides.length;
+      slides[cur].classList.add('active'); dotsEl.children[cur].classList.add('active');
+    }
+    setInterval(function () { goTo(cur + 1); }, 5000);
+  })();
+
+  // Gallery + lightbox
+  (function () {
+    var allItems = Array.from(document.querySelectorAll('.gallery-item'));
+    var lightbox = document.getElementById('lightbox');
+    var lbImg = document.getElementById('lbImg');
+    var lbCounter = document.getElementById('lbCounter');
+    var lbDots = document.getElementById('lbDots');
+    var lbImages = [], lbIndex = 0;
+    var CATEGORIES = ['birthday', 'anniversary', 'maternity', 'prewedding'];
+
+    function applyFilter(filter) {
+      allItems.forEach(function (item) { item.style.display = 'none'; });
+      if (filter === 'all') {
+        CATEGORIES.forEach(function (cat) {
+          var first = allItems.find(function (item) { return item.getAttribute('data-category') === cat; });
+          if (first) first.style.display = 'block';
+        });
+        document.getElementById('viewMoreWrap').style.display = 'block';
+      } else {
+        allItems.forEach(function (item) { if (item.getAttribute('data-category') === filter) item.style.display = 'block'; });
+        document.getElementById('viewMoreWrap').style.display = 'none';
+      }
+    }
+    document.querySelectorAll('.filter-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        document.querySelectorAll('.filter-tab').forEach(function (t) { t.classList.remove('active'); });
+        this.classList.add('active');
+        applyFilter(this.getAttribute('data-filter'));
+      });
+    });
+    document.getElementById('btnViewMore').addEventListener('click', function () {
+      lbImages = allItems.map(function (item) { return item.querySelector('img').src; });
+      openLightbox(0);
+    });
+    allItems.forEach(function (item) {
+      item.addEventListener('click', function () {
+        var cat = item.getAttribute('data-category');
+        var matching = allItems.filter(function (i) { return i.getAttribute('data-category') === cat; });
+        lbImages = matching.map(function (i) { return i.querySelector('img').src; });
+        openLightbox(matching.indexOf(item));
+      });
+    });
+    function openLightbox(idx) { lbIndex = idx; lightbox.classList.add('open'); document.body.style.overflow = 'hidden'; renderLb(); }
+    function closeLightbox() { lightbox.classList.remove('open'); document.body.style.overflow = ''; }
+    function renderLb() {
+      lbImg.src = lbImages[lbIndex];
+      lbCounter.textContent = (lbIndex + 1) + ' / ' + lbImages.length;
+      lbDots.innerHTML = '';
+      lbImages.forEach(function (_, i) {
+        var d = document.createElement('button');
+        d.className = 'lb-dot' + (i === lbIndex ? ' active' : '');
+        d.addEventListener('click', function () { lbIndex = i; renderLb(); });
+        lbDots.appendChild(d);
+      });
+    }
+    document.getElementById('lbClose').addEventListener('click', closeLightbox);
+    document.getElementById('lbPrev').addEventListener('click', function () { lbIndex = (lbIndex - 1 + lbImages.length) % lbImages.length; renderLb(); });
+    document.getElementById('lbNext').addEventListener('click', function () { lbIndex = (lbIndex + 1) % lbImages.length; renderLb(); });
+    lightbox.addEventListener('click', function (e) { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', function (e) {
+      if (!lightbox.classList.contains('open')) return;
+      if (e.key === 'ArrowRight') { lbIndex = (lbIndex + 1) % lbImages.length; renderLb(); }
+      if (e.key === 'ArrowLeft')  { lbIndex = (lbIndex - 1 + lbImages.length) % lbImages.length; renderLb(); }
+      if (e.key === 'Escape') closeLightbox();
+    });
+    var lbSx = 0;
+    lightbox.addEventListener('touchstart', function (e) { lbSx = e.touches[0].clientX; }, { passive: true });
+    lightbox.addEventListener('touchend', function (e) {
+      var dx = e.changedTouches[0].clientX - lbSx;
+      if (dx < -40) { lbIndex = (lbIndex + 1) % lbImages.length; renderLb(); }
+      else if (dx > 40) { lbIndex = (lbIndex - 1 + lbImages.length) % lbImages.length; renderLb(); }
+    }, { passive: true });
+    applyFilter('all');
+  })();
+
+  // Video reels — autoplay on scroll into view, mute toggle
+  (function () {
+    var cards = Array.from(document.querySelectorAll('.reel-card'));
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var video = entry.target.querySelector('video');
+        if (!video) return;
+        if (entry.isIntersecting) {
+          // Only autoplay (muted) if no other card is manually playing with sound
+          var anyPlaying = cards.some(function (c) {
+            var v = c.querySelector('video');
+            return v && !v.paused && !v.muted;
+          });
+          if (!anyPlaying) {
+            video.muted = true;
+            video.play().catch(function () {});
+            entry.target.classList.add('playing');
+          }
+        } else {
+          // Only auto-pause if it's still muted (i.e. not manually unmuted by user)
+          if (video.muted) {
+            video.pause();
+            entry.target.classList.remove('playing');
+          }
+        }
+      });
+    }, { threshold: 0.5 });
+    cards.forEach(function (card) {
+      var video    = card.querySelector('video');
+      var muteBtn  = card.querySelector('.reel-mute-btn');
+      var iconMute = muteBtn.querySelector('.icon-muted');
+      var iconUnmu = muteBtn.querySelector('.icon-unmuted');
+      observer.observe(card);
+      card.addEventListener('click', function (e) {
+        if (e.target.closest('.reel-mute-btn')) return;
+        if (!video.paused) {
+          // Already playing — pause it
+          video.pause();
+          card.classList.remove('playing');
+        } else {
+          // Stop & mute all other cards first
+          cards.forEach(function (otherCard) {
+            if (otherCard === card) return;
+            var otherVideo = otherCard.querySelector('video');
+            var otherMute  = otherCard.querySelector('.icon-muted');
+            var otherUnmu  = otherCard.querySelector('.icon-unmuted');
+            otherVideo.pause();
+            otherVideo.muted = true;
+            otherMute.style.display = '';
+            otherUnmu.style.display = 'none';
+            otherCard.classList.remove('playing');
+          });
+          // Restart this one from beginning, unmuted
+          video.currentTime = 0;
+          video.muted = false;
+          iconMute.style.display = 'none';
+          iconUnmu.style.display = '';
+          video.play().catch(function(){});
+          card.classList.add('playing');
+        }
+      });
+      muteBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        video.muted = !video.muted;
+        iconMute.style.display = video.muted ? '' : 'none';
+        iconUnmu.style.display = video.muted ? 'none' : '';
+      });
+    });
+  })();
+
+  // Form → WhatsApp
+  document.getElementById('leadForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var form = this, valid = true;
+    form.querySelectorAll('[required]').forEach(function (f) {
+      if (!f.value.trim()) { f.style.borderColor = '#c0392b'; valid = false; }
+      else { f.style.borderColor = ''; }
+    });
+    if (!valid) return;
+    var btn = form.querySelector('.btn-submit');
+    btn.disabled = true; btn.textContent = 'Opening WhatsApp…';
+    var name      = form.name.value.trim(),
+        phone     = form.phone.value.trim(),
+        shootDate = form.shootDate.value,
+        scene     = form.scene.value,
+        shootType = form.shootType.value,
+        message   = form.message.value.trim();
+    var waText = 'Hello! I would like to book a photography session. Here are my details:\n\n' +
+      '👤 *Name:* ' + name + '\n📱 *WhatsApp:* ' + phone +
+      '\n📅 *Preferred Date:* ' + shootDate + '\n🎬 *Scene:* ' + scene +
+      '\n📸 *Shoot Type:* ' + shootType + '\n' +
+      (message ? '📝 *Notes:* ' + message + '\n' : '') + '\nLooking forward to hearing from you!';
+    fetch('https://script.google.com/macros/s/AKfycbzWXa1zcV-KXhGm2Cl0WJ5Kp_oUAbcu6a0N6vihpOTsEgQwJVGQGGZKZFdoBoB40NHr/exec', {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, phone: phone, shootDate: shootDate, scene: scene, shootType: shootType, message: message })
+    }).catch(function(err) { console.error('Sheet sync error:', err); });
+    document.getElementById('successMsg').style.display = 'block';
+    form.reset();
+    document.getElementById('fdate').min = new Date().toISOString().split('T')[0];
+    setTimeout(function () {
+      window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(waText), '_blank');
+      btn.disabled = false; btn.textContent = 'Request Availability →';
+    }, 800);
+  });
+</script>
+</body>
+</html>
