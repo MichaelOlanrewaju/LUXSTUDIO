@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luxeimperial Studio — CRM</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root{
+  --gold:#b8860b;--gold-lt:#d4a017;--gold-pale:#fdf8ee;--gold-bd:rgba(184,134,11,.2);
+  --dark:#111010;--muted:#6e6b68;--border:#e8e4df;--surface:#f5f2ee;--white:#fff;
+  --serif:'Lora',Georgia,serif;--sans:'Inter',system-ui,sans-serif;
+  --c-new:#1d4ed8;--c-new-bg:rgba(29,78,216,.06);--c-new-bd:rgba(29,78,216,.2);
+  --c-comm:#b45309;--c-comm-bg:rgba(180,83,9,.06);--c-comm-bd:rgba(180,83,9,.2);
+  --c-book:#065f46;--c-book-bg:rgba(6,95,70,.06);--c-book-bd:rgba(6,95,70,.2);
+  --c-closed:#4b5563;--c-closed-bg:rgba(75,85,99,.06);--c-closed-bd:rgba(75,85,99,.2);
+  --sh0:0 1px 3px rgba(0,0,0,.05);
+  --sh1:0 2px 8px rgba(0,0,0,.06),0 1px 3px rgba(0,0,0,.04);
+  --sh2:0 8px 32px rgba(0,0,0,.1),0 2px 8px rgba(0,0,0,.06);
+  --sh3:0 24px 64px rgba(0,0,0,.18),0 4px 16px rgba(0,0,0,.08);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--surface);color:var(--dark);-webkit-font-smoothing:antialiased;font-size:13px}
+
+/* ══ LOGIN ══ */
+#loginPage{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--dark);transition:opacity .5s,visibility .5s}
+#loginPage.out{opacity:0;visibility:hidden;pointer-events:none}
+.lp-bg{position:absolute;inset:0;background:linear-gradient(135deg,#111010,#1c1810,#111010)}
+.lp-orb{position:absolute;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(184,134,11,.15) 0%,transparent 70%)}
+.lp-orb1{width:560px;height:560px;top:-120px;right:-80px}
+.lp-orb2{width:300px;height:300px;bottom:-60px;left:-60px;opacity:.6}
+.lp-noise{position:absolute;inset:0;opacity:.02;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.login-box{position:relative;z-index:1;width:100%;max-width:390px;background:#fff;box-shadow:var(--sh3);animation:slideUp .6s cubic-bezier(.16,1,.3,1) both}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:none}}
+.lb-top{padding:30px 32px 22px;border-bottom:1px solid var(--border);text-align:center}
+.lb-logo{height:38px;width:auto;margin-bottom:10px}
+.lb-rule{width:32px;height:1px;background:var(--gold);margin:0 auto 8px}
+.lb-tag{font-size:8px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);font-weight:500}
+.lb-body{padding:26px 32px 32px}
+.lb-title{font-family:var(--serif);font-size:19px;color:var(--dark);margin-bottom:3px}
+.lb-sub{font-size:11px;color:var(--muted);margin-bottom:20px}
+.lb-err{display:none;font-size:11px;color:#dc2626;background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.15);padding:9px 12px;margin-bottom:14px;text-align:center}
+.fl{margin-bottom:13px}
+.fl-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;font-weight:500}
+.fl-inp{width:100%;font-family:var(--sans);font-size:13px;font-weight:300;padding:11px 13px;border:1px solid var(--border);background:#fff;color:var(--dark);outline:none;transition:all .2s;border-radius:0}
+.fl-inp:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,134,11,.08)}
+.fl-inp.err{border-color:#dc2626}
+.btn-login{width:100%;font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;padding:13px;background:var(--dark);color:#fff;border:none;cursor:pointer;transition:all .25s;margin-top:4px;overflow:hidden;position:relative}
+.btn-login::after{content:'';position:absolute;inset:0;background:var(--gold);transform:translateX(-100%);transition:transform .3s}
+.btn-login:hover::after{transform:translateX(0)}
+.btn-login span{position:relative;z-index:1}
+.lb-foot{text-align:center;font-size:10px;color:var(--muted);margin-top:16px;letter-spacing:.3px}
+
+/* ══ APP ══ */
+#app{display:none;min-height:100vh}
+
+/* ── TOPBAR ── */
+.topbar{height:54px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:500;gap:10px;box-shadow:var(--sh0)}
+.tb-logo{height:30px;width:auto}
+.tb-rule{width:1px;height:18px;background:var(--border);flex-shrink:0}
+.tb-section{font-family:var(--serif);font-size:14px;color:var(--muted);font-style:italic;white-space:nowrap}
+.tb-sp{flex:1}
+.tb-sync-txt{font-size:10px;color:var(--muted);white-space:nowrap}
+.btn-sync{font-family:var(--sans);font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:7px 14px;background:var(--dark);color:#fff;border:none;cursor:pointer;transition:background .2s;white-space:nowrap;flex-shrink:0}
+.btn-sync:hover{background:var(--gold)}
+.btn-sync:disabled{opacity:.4;cursor:not-allowed}
+.tb-user{display:flex;align-items:center;gap:7px;padding:5px 10px;border:1px solid var(--border);cursor:pointer;transition:border-color .2s;flex-shrink:0}
+.tb-user:hover{border-color:var(--gold)}
+.tb-av{width:26px;height:26px;border-radius:50%;background:var(--gold-pale);border:1px solid var(--gold-bd);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:11px;font-weight:600;color:var(--gold)}
+.tb-name{font-size:11px;font-weight:500;color:var(--dark)}
+.ham-btn{width:34px;height:34px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--dark);transition:all .2s;flex-shrink:0}
+.ham-btn:hover{border-color:var(--gold);color:var(--gold)}
+@media(min-width:900px){.ham-btn{display:none}}
+@media(max-width:500px){.tb-name,.tb-sync-txt{display:none}}
+
+/* ── LAYOUT ── */
+.app-wrap{display:grid;grid-template-columns:200px 1fr;min-height:calc(100vh - 54px)}
+@media(max-width:899px){.app-wrap{grid-template-columns:1fr}}
+
+/* ── SIDEBAR ── */
+.sidebar{background:#fff;border-right:1px solid var(--border);padding:12px 0;position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto}
+@media(max-width:899px){
+  .sidebar{position:fixed;top:54px;left:0;bottom:0;width:220px;z-index:450;transform:translateX(-110%);transition:transform .28s cubic-bezier(.4,0,.2,1);box-shadow:var(--sh3)}
+  .sidebar.open{transform:translateX(0)}
+}
+.sb-overlay{display:none;position:fixed;inset:0;top:54px;background:rgba(0,0,0,.45);z-index:440;backdrop-filter:blur(2px)}
+.sb-overlay.show{display:block}
+.sb-grp{margin-bottom:18px}
+.sb-lbl{font-size:8px;letter-spacing:3.5px;text-transform:uppercase;color:var(--muted);padding:0 16px 7px;display:block;font-weight:500}
+.sb-item{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;border-left:2px solid transparent;transition:all .15s;font-weight:400;user-select:none}
+.sb-item:hover{color:var(--dark);background:var(--surface);border-left-color:var(--border)}
+.sb-item.active{color:var(--dark);background:var(--gold-pale);border-left-color:var(--gold);font-weight:500}
+.sb-ico{font-size:13px;width:16px;text-align:center;flex-shrink:0}
+.sb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;border:2px solid currentColor}
+.sb-badge{margin-left:auto;font-size:9px;background:var(--surface);color:var(--muted);padding:1px 7px;border-radius:20px;font-weight:600;border:1px solid var(--border)}
+.sb-item.active .sb-badge{background:var(--gold-pale);border-color:var(--gold-bd);color:var(--gold)}
+/* status colours in sidebar */
+.sb-item.s-new .sb-ico{color:var(--c-new)}.sb-item.s-comm .sb-ico{color:var(--c-comm)}
+.sb-item.s-book .sb-ico{color:var(--c-book)}.sb-item.s-closed .sb-ico{color:var(--c-closed)}
+.sb-divider{margin:6px 16px 14px;border:none;border-top:1px solid var(--border)}
+
+/* ── MAIN ── */
+.main{padding:20px 22px;background:var(--surface);min-height:calc(100vh - 54px)}
+@media(max-width:576px){.main{padding:12px 10px}}
+.view{display:none;animation:fadeIn .28s ease}
+.view.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* ── PAGE HEADER ── */
+.ph{padding-bottom:16px;margin-bottom:18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.ph-left{}
+.ph-title{font-family:var(--serif);font-size:22px;font-weight:500;color:var(--dark);line-height:1;margin-bottom:3px}
+.ph-title em{font-style:italic;color:var(--gold)}
+.ph-sub{font-size:11px;color:var(--muted)}
+.ph-right{text-align:right;flex-shrink:0}
+.ph-count{font-family:var(--serif);font-size:15px;color:var(--dark);font-weight:400}
+.ph-date{font-size:10px;color:var(--muted);margin-top:1px}
+
+/* ── OVERVIEW STATS ── */
+.ov-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
+@media(max-width:700px){.ov-stats{grid-template-columns:repeat(2,1fr)}}
+.ov-stat{background:#fff;border:1px solid var(--border);padding:14px 16px;box-shadow:var(--sh0);transition:all .2s;cursor:pointer;position:relative;overflow:hidden}
+.ov-stat:hover{box-shadow:var(--sh1);transform:translateY(-2px)}
+.ov-stat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px}
+.os-new::after{background:var(--c-new)}.os-comm::after{background:var(--c-comm)}
+.os-book::after{background:var(--c-book)}.os-closed::after{background:var(--c-closed)}
+.ov-stat-n{font-family:var(--serif);font-size:34px;font-weight:600;line-height:1;margin-bottom:2px;color:var(--dark)}
+.ov-stat-l{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500}
+.ov-stat-ic{font-size:18px;margin-bottom:8px;display:block}
+.os-new .ov-stat-ic{color:var(--c-new)}.os-comm .ov-stat-ic{color:var(--c-comm)}
+.os-book .ov-stat-ic{color:var(--c-book)}.os-closed .ov-stat-ic{color:var(--c-closed)}
+
+/* ── TOOLBAR ── */
+.toolbar{background:#fff;border:1px solid var(--border);padding:8px 12px;margin-bottom:14px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;box-shadow:var(--sh0)}
+.srch{position:relative;flex:1;min-width:150px}
+.srch input{width:100%;font-family:var(--sans);font-size:12px;font-weight:300;padding:8px 11px 8px 31px;border:1px solid var(--border);color:var(--dark);outline:none;transition:all .2s;background:#fff;border-radius:0}
+.srch input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,134,11,.07)}
+.srch input::placeholder{color:var(--muted)}
+.srch i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;pointer-events:none}
+.t-sel{font-family:var(--sans);font-size:11px;padding:8px 9px;border:1px solid var(--border);background:#fff;color:var(--dark);outline:none;cursor:pointer;border-radius:0;transition:border-color .2s}
+.t-sel:focus{border-color:var(--gold)}
+.btn-add{font-family:var(--sans);font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:8px 16px;background:var(--gold);color:#fff;border:none;cursor:pointer;transition:background .2s;white-space:nowrap;flex-shrink:0}
+.btn-add:hover{background:var(--gold-lt)}
+
+/* ── TODAY BANNER (New Leads) ── */
+.today-banner{background:linear-gradient(135deg,var(--c-new-bg),rgba(29,78,216,.03));border:1px solid var(--c-new-bd);padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.tb-dot{width:8px;height:8px;border-radius:50%;background:var(--c-new);flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.tb-txt{font-size:12px;color:var(--c-new);font-weight:500}
+.tb-count{font-family:var(--serif);font-size:13px;font-weight:600;color:var(--c-new);margin-left:auto}
+
+/* ── LEAD CARD ── */
+.leads-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:1200px){.leads-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.leads-grid{grid-template-columns:1fr}}
+
+.lead-card{background:#fff;border:1px solid var(--border);box-shadow:var(--sh0);transition:all .22s;position:relative;overflow:hidden;animation:cardIn .3s ease both}
+@keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.lead-card:hover{box-shadow:var(--sh2);transform:translateY(-3px)}
+.lead-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;transition:width .2s}
+.lead-card:hover::before{width:4px}
+.lc-new::before{background:var(--c-new)}.lc-comm::before{background:var(--c-comm)}
+.lc-book::before{background:var(--c-book)}.lc-closed::before{background:var(--c-closed)}
+
+.lc-top{padding:13px 15px 10px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px}
+.lc-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:14px;font-weight:600;flex-shrink:0;transition:all .2s;border:1px solid}
+.lc-new .lc-av{background:var(--c-new-bg);color:var(--c-new);border-color:var(--c-new-bd)}
+.lc-comm .lc-av{background:var(--c-comm-bg);color:var(--c-comm);border-color:var(--c-comm-bd)}
+.lc-book .lc-av{background:var(--c-book-bg);color:var(--c-book);border-color:var(--c-book-bd)}
+.lc-closed .lc-av{background:var(--c-closed-bg);color:var(--c-closed);border-color:var(--c-closed-bd)}
+.lead-card:hover .lc-av{opacity:.85}
+.lc-info{flex:1;min-width:0}
+.lc-name{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lc-type{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:500}
+.lc-new .lc-type{color:var(--c-new)}.lc-comm .lc-type{color:var(--c-comm)}
+.lc-book .lc-type{color:var(--c-book)}.lc-closed .lc-type{color:var(--c-closed)}
+.lc-badge{font-size:8px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;border:1px solid}
+.lc-new .lc-badge{background:var(--c-new-bg);color:var(--c-new);border-color:var(--c-new-bd)}
+.lc-comm .lc-badge{background:var(--c-comm-bg);color:var(--c-comm);border-color:var(--c-comm-bd)}
+.lc-book .lc-badge{background:var(--c-book-bg);color:var(--c-book);border-color:var(--c-book-bd)}
+.lc-closed .lc-badge{background:var(--c-closed-bg);color:var(--c-closed);border-color:var(--c-closed-bd)}
+
+.lc-mid{padding:10px 15px}
+.lc-row{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);margin-bottom:5px;line-height:1.4}
+.lc-row:last-child{margin-bottom:0}
+.lc-row i{font-size:11px;width:13px;flex-shrink:0}
+.lc-new .lc-row i{color:var(--c-new)}.lc-comm .lc-row i{color:var(--c-comm)}
+.lc-book .lc-row i{color:var(--c-book)}.lc-closed .lc-row i{color:var(--c-closed)}
+.lc-note{margin:0 15px 10px;padding:7px 10px;font-size:11px;color:var(--muted);font-style:italic;line-height:1.6;border-left:2px solid var(--border);background:var(--surface)}
+
+.lc-btns{padding:8px 15px;border-top:1px solid var(--border);background:var(--surface);display:flex;gap:5px}
+.lc-btn{flex:1;font-family:var(--sans);font-size:9px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;padding:7px 4px;border:1px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;transition:all .15s;text-align:center;display:flex;align-items:center;justify-content:center;gap:4px;border-radius:0}
+.lc-btn:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-pale)}
+/* WhatsApp button — colour matches status */
+.lc-btn.wa-new{border-color:var(--c-new-bd);color:var(--c-new);background:var(--c-new-bg)}
+.lc-btn.wa-new:hover{background:var(--c-new);color:#fff;border-color:var(--c-new)}
+.lc-btn.wa-comm{border-color:var(--c-comm-bd);color:var(--c-comm);background:var(--c-comm-bg)}
+.lc-btn.wa-comm:hover{background:var(--c-comm);color:#fff;border-color:var(--c-comm)}
+.lc-btn.wa-book{border-color:var(--c-book-bd);color:var(--c-book);background:var(--c-book-bg)}
+.lc-btn.wa-book:hover{background:var(--c-book);color:#fff;border-color:var(--c-book)}
+.lc-btn.del:hover{border-color:#dc2626;color:#dc2626;background:rgba(220,38,38,.05)}
+.lc-btn.move-btn{border-color:var(--gold-bd);color:var(--gold)}
+.lc-btn.move-btn:hover{background:var(--gold);color:#fff;border-color:var(--gold)}
+
+/* ── CLOSED TABLE ── */
+.closed-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);box-shadow:var(--sh0)}
+.closed-table thead th{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:10px 13px;text-align:left;font-weight:500;border-bottom:1px solid var(--border);background:var(--surface);white-space:nowrap}
+.closed-table tbody td{padding:11px 13px;border-bottom:1px solid var(--border);vertical-align:middle}
+.closed-table tbody tr:last-child td{border-bottom:none}
+.closed-table tbody tr{transition:background .15s;cursor:pointer}
+.closed-table tbody tr:hover td{background:var(--gold-pale)}
+.ct-av{width:30px;height:30px;border-radius:50%;background:var(--c-closed-bg);border:1px solid var(--c-closed-bd);color:var(--c-closed);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:12px;font-weight:600;flex-shrink:0}
+.ct-name{font-family:var(--serif);font-size:14px;font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:1px}
+.ct-sub{font-size:10px;color:var(--muted)}
+.ct-reason{font-size:11px;color:var(--muted);font-style:italic;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ct-acts{display:flex;gap:4px}
+.ct-btn{width:26px;height:26px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--muted);transition:all .15s}
+.ct-btn:hover{border-color:var(--gold);color:var(--gold)}
+.ct-btn.del:hover{border-color:#dc2626;color:#dc2626}
+
+/* ── DATE PROMPT ── */
+.dp-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.dp-bg.show{display:flex}
+.dp-box{background:#fff;width:100%;max-width:340px;border-top:2px solid var(--gold);box-shadow:var(--sh3);animation:slideUp .3s ease}
+.dp-head{padding:18px 22px 12px;border-bottom:1px solid var(--border)}
+.dp-title{font-family:var(--serif);font-size:18px;font-weight:500;color:var(--dark);margin-bottom:2px}
+.dp-sub{font-size:11px;color:var(--muted)}
+.dp-body{padding:16px 22px 20px}
+.btn-dp{width:100%;font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:12px;background:var(--dark);color:#fff;border:none;cursor:pointer;transition:background .2s;margin-top:8px}
+.btn-dp:hover{background:var(--gold)}
+.btn-dp-cancel{width:100%;font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;padding:10px;background:#fff;color:var(--muted);border:1px solid var(--border);cursor:pointer;margin-top:6px;transition:all .2s}
+.btn-dp-cancel:hover{border-color:var(--dark);color:var(--dark)}
+
+/* ── MODAL ── */
+.modal-content{border:none;border-radius:0;border-top:2px solid var(--gold);box-shadow:var(--sh3)}
+.modal-header{padding:18px 22px 12px;border-bottom:1px solid var(--border)}
+.m-title{font-family:var(--serif);font-size:20px;font-weight:500;color:var(--dark)}
+.modal-body{padding:16px 22px}
+.modal-footer{padding:12px 22px 20px;border-top:1px solid var(--border);gap:7px}
+.mfl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;font-weight:500}
+.mfi{width:100%;font-family:var(--sans);font-size:13px;font-weight:300;padding:10px 12px;border:1px solid var(--border);background:#fff;color:var(--dark);outline:none;transition:all .2s;border-radius:0}
+.mfi:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,134,11,.07)}
+textarea.mfi{min-height:66px;resize:vertical}
+/* status selector */
+.st-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.st-opt{padding:9px 4px;border:1px solid var(--border);text-align:center;cursor:pointer;font-size:9px;letter-spacing:.8px;text-transform:uppercase;font-weight:600;color:var(--muted);transition:all .15s}
+.st-opt:hover{border-color:var(--gold);color:var(--gold)}
+.st-new.sel{background:var(--c-new-bg);border-color:var(--c-new-bd);color:var(--c-new)}
+.st-comm.sel{background:var(--c-comm-bg);border-color:var(--c-comm-bd);color:var(--c-comm)}
+.st-book.sel{background:var(--c-book-bg);border-color:var(--c-book-bd);color:var(--c-book)}
+.st-closed.sel{background:var(--c-closed-bg);border-color:var(--c-closed-bd);color:var(--c-closed)}
+.btn-save{font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:11px 26px;background:var(--dark);color:#fff;border:none;cursor:pointer;border-radius:0;transition:background .2s}
+.btn-save:hover{background:var(--gold)}
+.btn-cancel{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;padding:11px 16px;background:#fff;border:1px solid var(--border);color:var(--muted);cursor:pointer;border-radius:0;transition:all .2s}
+.btn-cancel:hover{border-color:var(--dark);color:var(--dark)}
+
+/* ── EMPTY STATE ── */
+.empty{grid-column:1/-1;text-align:center;padding:52px 16px;color:var(--muted)}
+.empty i{font-size:30px;opacity:.18;display:block;margin-bottom:12px}
+.empty .e-t{font-family:var(--serif);font-size:18px;color:var(--dark);margin-bottom:5px}
+.empty .e-s{font-size:11px;color:var(--muted);max-width:210px;margin:0 auto}
+
+/* ── TOAST ── */
+.toasts{position:fixed;bottom:18px;right:18px;z-index:9997;display:flex;flex-direction:column;gap:5px;pointer-events:none}
+.t-it{background:#fff;border:1px solid var(--border);border-left:3px solid var(--gold);box-shadow:var(--sh3);padding:10px 15px;font-size:12px;color:var(--dark);min-width:220px;display:flex;align-items:center;gap:8px;opacity:0;transform:translateX(12px);transition:all .26s;pointer-events:auto}
+.t-it.show{opacity:1;transform:translateX(0)}
+.t-it.warn{border-left-color:var(--c-comm)}
+.t-it.ok{border-left-color:var(--c-book)}
+.t-ico{font-size:13px;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}.spin{display:inline-block;animation:spin .7s linear infinite}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="loginPage">
+  <div class="lp-bg"><div class="lp-orb lp-orb1"></div><div class="lp-orb lp-orb2"></div><div class="lp-noise"></div></div>
+  <div class="login-box">
+    <div class="lb-top">
+      <img class="lb-logo" src="https://res.cloudinary.com/lanremichael/image/upload/v1777536586/LOGO_vvhdu7.png" alt="Luxeimperial Studio">
+      <div class="lb-rule"></div>
+      <div class="lb-tag">Client Management</div>
+    </div>
+    <div class="lb-body">
+      <div class="lb-title">Welcome back.</div>
+      <div class="lb-sub">Sign in to manage your studio pipeline.</div>
+      <div class="lb-err" id="lbErr"><i class="bi bi-shield-x me-1"></i>Incorrect username or password.</div>
+      <div class="fl"><label class="fl-lbl">Username</label><input class="fl-inp" id="lUser" type="text" placeholder="Enter username" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="fl"><label class="fl-lbl">Password</label><input class="fl-inp" id="lPass" type="password" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn-login" onclick="doLogin()"><span>Access Dashboard &nbsp;<i class="bi bi-arrow-right"></i></span></button>
+      <div class="lb-foot">Luxeimperial Studio · UK · Secure Access</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DATE PROMPT ══ -->
+<div class="dp-bg" id="dpBg">
+  <div class="dp-box">
+    <div class="dp-head">
+      <div class="dp-title">Confirm Shoot Date</div>
+      <div class="dp-sub">Moving this client to <strong>Booked</strong>. Enter their confirmed shoot date.</div>
+    </div>
+    <div class="dp-body">
+      <label class="mfl" style="margin-bottom:5px">Shoot Date *</label>
+      <input class="mfi" id="dpDate" type="date">
+      <button class="btn-dp" onclick="confirmBook()"><i class="bi bi-check2 me-1"></i>Confirm Booking</button>
+      <button class="btn-dp-cancel" onclick="cancelBook()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <button class="ham-btn" id="hamBtn" onclick="toggleSb()"><i class="bi bi-list" id="hamIco"></i></button>
+    <img class="tb-logo" src="https://res.cloudinary.com/lanremichael/image/upload/v1777536586/LOGO_vvhdu7.png" alt="Luxeimperial">
+    <div class="tb-rule"></div>
+    <span class="tb-section" id="tbSec">Overview</span>
+    <div class="tb-sp"></div>
+    <span class="tb-sync-txt" id="syncTxt"></span>
+    <button class="btn-sync ms-2" id="btnSync" onclick="syncData()"><i class="bi bi-arrow-repeat me-1"></i>Sync</button>
+    <div class="tb-user ms-2" onclick="doLogout()" title="Sign out">
+      <div class="tb-av" id="navAv">SA</div>
+      <span class="tb-name" id="navName">Admin</span>
+      <i class="bi bi-box-arrow-right ms-1" style="font-size:11px;color:var(--muted)"></i>
+    </div>
+  </div>
+  <div class="sb-overlay" id="sbOv" onclick="closeSb()"></div>
+
+  <div class="app-wrap">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <div class="sb-grp mt-1">
+        <div class="sb-lbl">Studio</div>
+        <div class="sb-item active" onclick="goView('overview',this)">
+          <i class="bi bi-grid-1x2 sb-ico"></i>Overview
+          <span class="sb-badge" id="sb-all">0</span>
+        </div>
+      </div>
+      <div class="sb-grp">
+        <div class="sb-lbl">Pipeline</div>
+        <div class="sb-item s-new" onclick="goView('new',this)">
+          <i class="bi bi-inbox sb-ico"></i>New Leads
+          <span class="sb-badge" id="sb-new">0</span>
+        </div>
+        <div class="sb-item s-comm" onclick="goView('comm',this)">
+          <i class="bi bi-chat-dots sb-ico"></i>In Communication
+          <span class="sb-badge" id="sb-comm">0</span>
+        </div>
+        <div class="sb-item s-book" onclick="goView('book',this)">
+          <i class="bi bi-calendar-check sb-ico"></i>Booked
+          <span class="sb-badge" id="sb-book">0</span>
+        </div>
+      </div>
+      <hr class="sb-divider">
+      <div class="sb-grp">
+        <div class="sb-lbl">Archive</div>
+        <div class="sb-item s-closed" onclick="goView('closed',this)">
+          <i class="bi bi-archive sb-ico"></i>Closed
+          <span class="sb-badge" id="sb-closed">0</span>
+        </div>
+      </div>
+      <hr class="sb-divider">
+      <div class="sb-grp">
+        <div class="sb-lbl">Filter by Type</div>
+        <div class="sb-item" onclick="setTF('',this)"><i class="bi bi-circle sb-ico"></i>All Types</div>
+        <div class="sb-item" onclick="setTF('Birthday',this)"><i class="bi bi-balloon sb-ico"></i>Birthday</div>
+        <div class="sb-item" onclick="setTF('Anniversary',this)"><i class="bi bi-heart sb-ico"></i>Anniversary</div>
+        <div class="sb-item" onclick="setTF('Maternity',this)"><i class="bi bi-person-heart sb-ico"></i>Maternity</div>
+        <div class="sb-item" onclick="setTF('Pre-Wedding',this)"><i class="bi bi-flower1 sb-ico"></i>Pre-Wedding</div>
+        <div class="sb-item" onclick="setTF('Family Portrait',this)"><i class="bi bi-people sb-ico"></i>Family</div>
+        <div class="sb-item" onclick="setTF('Graduation',this)"><i class="bi bi-mortarboard sb-ico"></i>Graduation</div>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- ── OVERVIEW ── -->
+      <div class="view active" id="v-overview">
+        <div class="ph">
+          <div class="ph-left">
+            <div class="ph-title">Studio <em>Overview</em></div>
+            <div class="ph-sub">Your pipeline at a glance — click any card to jump to that section.</div>
+          </div>
+          <div class="ph-right">
+            <div class="ph-count" id="ov-total">0 total clients</div>
+            <div class="ph-date" id="todayDate"></div>
+          </div>
+        </div>
+        <div class="ov-stats">
+          <div class="ov-stat os-new" onclick="goView('new',null)">
+            <i class="bi bi-inbox-fill ov-stat-ic"></i>
+            <div class="ov-stat-n" id="os-new">0</div>
+            <div class="ov-stat-l">New Leads</div>
+          </div>
+          <div class="ov-stat os-comm" onclick="goView('comm',null)">
+            <i class="bi bi-chat-dots-fill ov-stat-ic"></i>
+            <div class="ov-stat-n" id="os-comm">0</div>
+            <div class="ov-stat-l">In Communication</div>
+          </div>
+          <div class="ov-stat os-book" onclick="goView('book',null)">
+            <i class="bi bi-calendar-check-fill ov-stat-ic"></i>
+            <div class="ov-stat-n" id="os-book">0</div>
+            <div class="ov-stat-l">Booked</div>
+          </div>
+          <div class="ov-stat os-closed" onclick="goView('closed',null)">
+            <i class="bi bi-archive-fill ov-stat-ic"></i>
+            <div class="ov-stat-n" id="os-closed">0</div>
+            <div class="ov-stat-l">Closed</div>
+          </div>
+        </div>
+        <!-- Today's new leads preview -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-family:var(--serif);font-size:16px;font-weight:500;color:var(--dark)">Today's New Leads</div>
+          <span style="font-size:10px;color:var(--muted)" id="ov-today-c"></span>
+        </div>
+        <div class="leads-grid mb-4" id="ov-new-grid"></div>
+        <!-- Upcoming booked sessions -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;margin-top:20px">
+          <div style="font-family:var(--serif);font-size:16px;font-weight:500;color:var(--dark)">Upcoming Sessions</div>
+          <span style="font-size:10px;color:var(--muted)" id="ov-book-c"></span>
+        </div>
+        <div id="ov-book-list"></div>
+      </div>
+
+      <!-- ── NEW LEADS ── -->
+      <div class="view" id="v-new">
+        <div class="ph">
+          <div class="ph-left">
+            <div class="ph-title">New <em>Leads</em></div>
+            <div class="ph-sub">All new enquiries — reach out and introduce yourself.</div>
+          </div>
+          <div class="ph-right"><div class="ph-count" id="ph-new">0 leads</div></div>
+        </div>
+        <div id="today-banner-wrap"></div>
+        <div class="toolbar">
+          <div class="srch"><i class="bi bi-search"></i><input type="text" id="s-new" placeholder="Search name, phone, type…" oninput="renderNew()"></div>
+          <select class="t-sel" id="f-new" onchange="renderNew()">
+            <option value="">All Types</option>
+            <option>Birthday</option><option>Anniversary</option><option>Maternity</option>
+            <option>Pre-Wedding</option><option>Wedding</option><option>Family Portrait</option>
+            <option>Personal Branding</option><option>Graduation</option><option>Other</option>
+          </select>
+          <button class="btn-add" onclick="openModal()"><i class="bi bi-plus-lg me-1"></i>Add</button>
+        </div>
+        <div class="leads-grid" id="g-new"></div>
+      </div>
+
+      <!-- ── IN COMMUNICATION ── -->
+      <div class="view" id="v-comm">
+        <div class="ph">
+          <div class="ph-left">
+            <div class="ph-title">In <em>Communication</em></div>
+            <div class="ph-sub">Still in conversation — keep the momentum going.</div>
+          </div>
+          <div class="ph-right"><div class="ph-count" id="ph-comm">0 clients</div></div>
+        </div>
+        <div class="toolbar">
+          <div class="srch"><i class="bi bi-search"></i><input type="text" id="s-comm" placeholder="Search…" oninput="renderComm()"></div>
+          <select class="t-sel" id="f-comm" onchange="renderComm()">
+            <option value="">All Types</option>
+            <option>Birthday</option><option>Anniversary</option><option>Maternity</option>
+            <option>Pre-Wedding</option><option>Wedding</option><option>Family Portrait</option><option>Other</option>
+          </select>
+          <button class="btn-add" onclick="openModal()"><i class="bi bi-plus-lg me-1"></i>Add</button>
+        </div>
+        <div class="leads-grid" id="g-comm"></div>
+      </div>
+
+      <!-- ── BOOKED ── -->
+      <div class="view" id="v-book">
+        <div class="ph">
+          <div class="ph-left">
+            <div class="ph-title">Booked <em>Sessions</em></div>
+            <div class="ph-sub">Confirmed and paid — sessions ready to shoot.</div>
+          </div>
+          <div class="ph-right"><div class="ph-count" id="ph-book">0 sessions</div></div>
+        </div>
+        <div class="toolbar">
+          <div class="srch"><i class="bi bi-search"></i><input type="text" id="s-book" placeholder="Search…" oninput="renderBook()"></div>
+          <select class="t-sel" id="f-book" onchange="renderBook()">
+            <option value="">All Types</option>
+            <option>Birthday</option><option>Anniversary</option><option>Maternity</option>
+            <option>Pre-Wedding</option><option>Wedding</option><option>Family Portrait</option><option>Other</option>
+          </select>
+          <button class="btn-add" onclick="openModal()"><i class="bi bi-plus-lg me-1"></i>Add</button>
+        </div>
+        <div class="leads-grid" id="g-book"></div>
+      </div>
+
+      <!-- ── CLOSED ── -->
+      <div class="view" id="v-closed">
+        <div class="ph">
+          <div class="ph-left">
+            <div class="ph-title">Closed <em>Clients</em></div>
+            <div class="ph-sub">Clients who didn't proceed — archived for reference.</div>
+          </div>
+          <div class="ph-right"><div class="ph-count" id="ph-closed">0 clients</div></div>
+        </div>
+        <div class="toolbar">
+          <div class="srch"><i class="bi bi-search"></i><input type="text" id="s-closed" placeholder="Search closed clients…" oninput="renderClosed()"></div>
+          <button class="btn-add" onclick="openModal()"><i class="bi bi-plus-lg me-1"></i>Add</button>
+        </div>
+        <div id="g-closed"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL ══ -->
+<div class="modal fade" id="lModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header"><div class="m-title" id="mTitle">New Client</div><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <input type="hidden" id="eIdx" value="-1">
+        <div class="row g-3">
+          <div class="col-md-6"><label class="mfl">Full Name *</label><input class="mfi" id="f-name" type="text" placeholder="Client full name"></div>
+          <div class="col-md-6"><label class="mfl">WhatsApp Number *</label><input class="mfi" id="f-phone" type="tel" placeholder="+44 000 0000 000"></div>
+          <div class="col-md-6"><label class="mfl">Email <small style="color:var(--muted);font-size:10px;letter-spacing:0;text-transform:none">(optional)</small></label><input class="mfi" id="f-email" type="email" placeholder="client@email.com"></div>
+          <div class="col-md-6"><label class="mfl">Shoot Date</label><input class="mfi" id="f-date" type="date"></div>
+          <div class="col-md-6">
+            <label class="mfl">Session Type</label>
+            <select class="mfi" id="f-type"><option value="">Select type</option><option>Birthday</option><option>Anniversary</option><option>Maternity</option><option>Pre-Wedding</option><option>Wedding</option><option>Family Portrait</option><option>Personal Branding</option><option>Graduation</option><option>Social Events</option><option>Other</option></select>
+          </div>
+          <div class="col-md-6">
+            <label class="mfl">Scene</label>
+            <select class="mfi" id="f-scene"><option value="">Select scene</option><option>Studio</option><option>Outdoor</option></select>
+          </div>
+          <div class="col-12">
+            <label class="mfl">Stage</label>
+            <div class="st-grid">
+              <div class="st-opt st-new" onclick="selSt('new')">New Lead</div>
+              <div class="st-opt st-comm" onclick="selSt('comm')">In Communication</div>
+              <div class="st-opt st-book" onclick="selSt('book')">Booked</div>
+              <div class="st-opt st-closed" onclick="selSt('closed')">Closed</div>
+            </div>
+            <input type="hidden" id="f-status" value="new">
+          </div>
+          <div class="col-12"><label class="mfl">Notes</label><textarea class="mfi" id="f-notes" placeholder="Deposit paid, outfit, follow-up info, reason for closing…"></textarea></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn-save" onclick="saveLead()"><i class="bi bi-check2 me-1"></i>Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ════════════════════════════════════
+// 🔴 UPDATE THESE
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWXa1zcV-KXhGm2Cl0WJ5Kp_oUAbcu6a0N6vihpOTsEgQwJVGQGGZKZFdoBoB40NHr/exec';
+
+// Passwords are base64 encoded — not plain text in source
+// To encode a new password: btoa('yourpassword') in browser console
+var USERS = [
+  {u:'admin',   b:btoa('luxe2025!'),  name:'Studio Admin',   av:'SA'},
+  {u:'manager', b:btoa('imperial25'), name:'Client Manager', av:'CM'},
+  {u:'team',    b:btoa('luxe@team'),  name:'Team Member',    av:'TM'},
+];
+// ════════════════════════════════════
+
+var leads=[], typeFilter='', bsModal, pendingIdx=-1, currentUser=null, syncInterval=null;
+
+// ── AUTH ──
+function doLogin(){
+  var u=v('lUser'), p=v('lPass');
+  var found=USERS.find(function(x){return x.u===u && atob(x.b)===p;});
+  if(found){
+    currentUser=found;
+    sessionStorage.setItem('li_session', JSON.stringify({u:found.u, name:found.name, av:found.av, ts:Date.now()}));
+    showApp(found);
+  }else{
+    el('lbErr').style.display='block';
+    ['lUser','lPass'].forEach(function(id){el(id).classList.add('err');});
+    el('lPass').value='';
+  }
+}
+
+function showApp(user){
+  currentUser=user;
+  el('loginPage').classList.add('out');
+  setTimeout(function(){el('loginPage').style.display='none';},520);
+  el('app').style.display='block';
+  el('navAv').textContent=user.av;
+  el('navName').textContent=user.name;
+  el('lbErr').style.display='none';
+  ['lUser','lPass'].forEach(function(id){el(id).classList.remove('err');});
+  init();
+}
+
+function doLogout(){
+  if(!confirm('Sign out?'))return;
+  sessionStorage.removeItem('li_session');
+  location.reload();
+}
+
+// ── RESTORE SESSION ON REFRESH ──
+(function checkSession(){
+  try{
+    var s=sessionStorage.getItem('li_session');
+    if(s){
+      var sess=JSON.parse(s);
+      if(Date.now()-sess.ts < 8*60*60*1000){
+        var user=USERS.find(function(x){return x.u===sess.u;});
+        if(user){showApp(user);return;}
+      }
+    }
+  }catch(e){}
+})();
+
+// ── SIDEBAR ──
+function toggleSb(){
+  var open=el('sidebar').classList.toggle('open');
+  el('sbOv').classList.toggle('show',open);
+  el('hamIco').className=open?'bi bi-x-lg':'bi bi-list';
+}
+function closeSb(){
+  el('sidebar').classList.remove('open');
+  el('sbOv').classList.remove('show');
+  el('hamIco').className='bi bi-list';
+}
+
+// ── INIT ──
+function init(){
+  el('todayDate').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  loadCache();
+  if(!leads.length) loadDemo();
+  selSt('new');
+  // Auto-sync every 30 seconds if SCRIPT_URL is set
+  if(SCRIPT_URL && SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL'){
+    syncData();
+    if(syncInterval) clearInterval(syncInterval);
+    syncInterval = setInterval(function(){
+      syncData(true); // silent=true (no toast on auto-sync)
+    }, 30000);
+  }
+}
+
+// ── CACHE ──
+function loadCache(){try{var c=localStorage.getItem('li_crm');if(c){leads=JSON.parse(c);renderAll();stats();}}catch(e){}}
+function saveCache(){localStorage.setItem('li_crm',JSON.stringify(leads));}
+
+// ── DEMO DATA ──
+function loadDemo(){
+  var now=Date.now();
+  leads=[
+    {name:'Amara Johnson',phone:'447712345678',email:'amara@email.com',shootDate:'2025-06-12',shootType:'Maternity',scene:'Studio',status:'new',notes:'Loves the flower backdrop.',ts:new Date(now-864e5*.2).toISOString()},
+    {name:'Ada Nwosu',phone:'447700112233',email:'ada@email.com',shootDate:'2025-07-20',shootType:'Birthday',scene:'Studio',status:'new',notes:'30th birthday. Bold editorial look.',ts:new Date(now-864e5*.5).toISOString()},
+    {name:'Funmi Alade',phone:'447711223344',email:'',shootDate:'2025-07-05',shootType:'Pre-Wedding',scene:'Outdoor',status:'new',notes:'',ts:new Date(now-864e5*1.5).toISOString()},
+    {name:'Tolu & Bisi Adeyemi',phone:'447798765432',email:'tolu@email.com',shootDate:'2025-06-18',shootType:'Anniversary',scene:'Outdoor',status:'comm',notes:'Invoice sent 20 May. Waiting for deposit.',ts:new Date(now-864e5*3).toISOString()},
+    {name:'Chioma Obi',phone:'447766554433',email:'chioma@email.com',shootDate:'2025-07-12',shootType:'Maternity',scene:'Studio',status:'comm',notes:'Discussing bundle packages. Very interested.',ts:new Date(now-864e5*1).toISOString()},
+    {name:'Kemi Okafor',phone:'447733445566',email:'kemi@gmail.com',shootDate:'2025-06-22',shootType:'Birthday',scene:'Studio',status:'book',notes:'Deposit £150 received ✓. White dress. Arrive 30min early.',ts:new Date(now-864e5*5).toISOString()},
+    {name:'Yetunde Bello',phone:'447744556677',email:'yetunde@email.com',shootDate:'2025-06-28',shootType:'Maternity',scene:'Outdoor',status:'book',notes:'7 months pregnant. Golden hour 6pm.',ts:new Date(now-864e5*4).toISOString()},
+    {name:'Sade Badmus',phone:'447799001122',email:'',shootDate:'2025-05-20',shootType:'Birthday',scene:'Studio',status:'closed',notes:'Went with another studio — price difference.',ts:new Date(now-864e5*14).toISOString()},
+    {name:'Grace Udo',phone:'447788001122',email:'',shootDate:'',shootType:'Graduation',scene:'Outdoor',status:'closed',notes:'Not available for proposed dates.',ts:new Date(now-864e5*8).toISOString()},
+  ];
+  saveCache();renderAll();stats();
+}
+
+// ── SYNC ──
+async function syncData(silent){
+  var btn=el('btnSync');
+  if(!silent){btn.disabled=true;btn.innerHTML='<i class="bi bi-arrow-repeat spin me-1"></i>Syncing…';}
+  try{
+    var res=await fetch(SCRIPT_URL+'?action=getLeads');
+    var data=await res.json();
+    if(data&&data.leads&&data.leads.length){
+      var mapped=data.leads.map(function(r){
+        // Preserve any local status/notes changes, fall back to sheet values
+        var ex=leads.find(function(l){
+          return (l.phone&&r.phone&&l.phone===r.phone)||(l.name&&r.name&&l.name===r.name);
+        });
+        // Status mapping — handles all possible values from sheet
+        var sm={
+          'new':'new','New Lead':'new','new lead':'new',
+          'talking':'comm','talk':'comm','comm':'comm','In Communication':'comm','in communication':'comm',
+          'booked':'book','book':'book','Date Secured':'book','date secured':'book','Closed Won':'book',
+          'closed':'closed','lost':'closed','Closed Lost':'closed','closed lost':'closed','won':'book'
+        };
+        var rawStatus=(ex&&ex.status)?ex.status:(r.status||r.Status||'new');
+        var status=sm[rawStatus]||sm[rawStatus.toLowerCase()]||'new';
+        return {
+          name:      r.name||r.Name||'',
+          phone:     r.phone||r.Phone||'',
+          email:     r.email||r.Email||'',
+          shootDate: r.shootDate||r.ShootDate||r['Shoot Date']||'',
+          scene:     r.scene||r.Scene||'',
+          shootType: r.shootType||r.ShootType||r['Shoot Type']||'',
+          notes:     (ex&&ex.notes)?ex.notes:(r.notes||r.Notes||r.message||r.Message||''),
+          status:    status,
+          ts:        r.timestamp||r.ts||r.Timestamp||new Date().toISOString()
+        };
+      }).filter(function(r){return r.name||r.phone;}); // skip completely empty rows
+
+      leads=mapped;saveCache();renderAll();stats();
+      if(!silent) toast('Synced '+leads.length+' clients','ok');
+    }else{
+      if(!silent) toast('No data returned from sheet — check your Apps Script URL','warn');
+    }
+  }catch(e){
+    if(!leads.length)loadDemo();
+    if(!silent) toast('Sync failed: '+e.message,'warn');
+  }
+  if(!silent){btn.disabled=false;btn.innerHTML='<i class="bi bi-arrow-repeat me-1"></i>Sync';}
+  el('syncTxt').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+}
+
+// ── VIEW NAV ──
+function goView(id,sbEl){
+  document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
+  el('v-'+id).classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(function(i){i.classList.remove('active');});
+  if(sbEl)sbEl.classList.add('active');
+  var names={overview:'Overview',new:'New Leads',comm:'In Communication',book:'Booked',closed:'Closed'};
+  el('tbSec').textContent=names[id]||id;
+  closeSb();
+  var r={overview:renderOverview,new:renderNew,comm:renderComm,book:renderBook,closed:renderClosed};
+  if(r[id])r[id]();
+}
+
+// ── TYPE FILTER ──
+function setTF(t, el2){
+  typeFilter = t;
+  document.querySelectorAll('.sb-item').forEach(function(i){i.classList.remove('active');});
+  if(el2) el2.classList.add('active');
+  closeSb();
+  // Re-render whichever view is currently active
+  var activeView = document.querySelector('.view.active');
+  var id = activeView ? activeView.id.replace('v-','') : 'overview';
+  var renders = {overview:renderOverview, new:renderNew, comm:renderComm, book:renderBook, closed:renderClosed};
+  if(renders[id]) renders[id]();
+  stats();
+}
+
+// ── STATS ──
+function stats(){
+  var c={new:0,comm:0,book:0,closed:0};
+  leads.forEach(function(l){if(c[l.status]!==undefined)c[l.status]++;});
+  ['new','comm','book','closed'].forEach(function(k){
+    ['os-'+k,'sb-'+k].forEach(function(id){var e=el(id);if(e)e.textContent=c[k];});
+  });
+  el('sb-all').textContent=leads.length;
+  el('ov-total').textContent=leads.length+' total client'+(leads.length!==1?'s':'');
+}
+
+// ── HELPERS ──
+function el(id){return document.getElementById(id);}
+function v(id){return el(id).value.trim();}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function initials(n){var p=(n||'').trim().split(' ');return((p[0]||'')[0]||'').toUpperCase()+((p.length>1?(p[p.length-1]||'')[0]:'') ||'').toUpperCase();}
+function fmtDate(d){if(!d)return'—';try{return new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}catch(e){return d;}}
+function isToday(ts){if(!ts)return false;var d=new Date(ts);var t=new Date();return d.getDate()===t.getDate()&&d.getMonth()===t.getMonth()&&d.getFullYear()===t.getFullYear();}
+function ago(ts){if(!ts)return'—';var d=Math.floor((Date.now()-new Date(ts))/864e5);return d===0?'Today':d===1?'Yesterday':d+'d ago';}
+function byStatus(s){return leads.filter(function(l){return l.status===s&&(!typeFilter||l.shootType===typeFilter);});}
+function sorted(arr){return arr.slice().sort(function(a,b){return new Date(b.ts||0)-new Date(a.ts||0);});}
+
+// ── WHATSAPP MESSAGES ── (different per status)
+function waMsg(l){
+  var fn=(l.name||'').split(' ')[0];
+  var type=l.shootType||'photography';
+  var date=l.shootDate?fmtDate(l.shootDate):'';
+
+  if(l.status==='new'){
+    return 'Hello '+fn+'! 👋\n\nThank you for reaching out to *Luxeimperial Studio*. We\'re so excited about your '+type+' enquiry! ✨\n\nCould you let us know:\n• Your ideal shoot date\n• Whether you\'d prefer Studio or Outdoor\n• Any ideas or inspiration you have in mind?\n\nWe can\'t wait to create something beautiful with you! 📸\n\n— *Luxeimperial Studio, UK*';
+  }
+  if(l.status==='comm'){
+    return 'Hello '+fn+'! 😊\n\nJust following up on your *'+type+'* session with *Luxeimperial Studio*. We\'d love to get this booked in for you!\n\nWe have great availability coming up — shall we go ahead and secure your date? A deposit locks it in so you don\'t miss out. 🗓️\n\nReply here and we\'ll get everything sorted! 💛\n\n— *Luxeimperial Studio, UK*';
+  }
+  if(l.status==='book'){
+    var dateLine=date?'\n\n📅 *Your session date:* '+date:'';
+    return 'Hello '+fn+'! 🎉\n\nYour *'+type+'* session is officially confirmed with *Luxeimperial Studio*!'+dateLine+'\n\n✅ *What to prepare:*\n• Bring your chosen outfit(s)\n• Arrive 15 minutes early\n• Bring any props or special items\n• Relax and trust us — we\'ll do the rest! 😊\n\nIf you have any questions before your session, just message us here. We cannot wait to work with you! 💛✨\n\n— *Luxeimperial Studio, UK*';
+  }
+  return 'Hello '+fn+'! 👋 This is *Luxeimperial Studio* reaching out. Please let us know if there\'s anything we can help with.\n\n— *Luxeimperial Studio, UK*';
+}
+
+// ── CARD HTML ──
+function cardHTML(l, di){
+  var idx=leads.indexOf(l);
+  var s=l.status;
+  var cls='lc-'+s;
+  var waClass='wa-'+s;
+  var waLabel=s==='new'?'Say Hello':s==='comm'?'Follow Up':s==='book'?'Confirm Session':'WhatsApp';
+  var canAdvance=s==='new'||s==='comm';
+  var advLabel=s==='new'?'→ Talking':s==='comm'?'→ Booked':'';
+  var todayTag=isToday(l.ts)?'<span style="display:inline-block;font-size:8px;font-weight:600;letter-spacing:1px;text-transform:uppercase;background:var(--c-new-bg);color:var(--c-new);border:1px solid var(--c-new-bd);padding:2px 7px;border-radius:20px;margin-left:6px">Today</span>':'';
+
+  return '<div class="lead-card '+cls+'" style="animation-delay:'+(di*0.05)+'s">' +
+    '<div class="lc-top">' +
+      '<div class="lc-av">'+esc(initials(l.name))+'</div>' +
+      '<div class="lc-info"><div class="lc-name">'+esc(l.name)+todayTag+'</div><div class="lc-type">'+(l.shootType||'—')+(l.scene?' · '+l.scene:'')+'</div></div>' +
+      '<span class="lc-badge">'+(s==='new'?'New':s==='comm'?'Talking':s==='book'?'Booked':'Closed')+'</span>' +
+    '</div>' +
+    '<div class="lc-mid">' +
+      '<div class="lc-row"><i class="bi bi-telephone-fill"></i>'+esc(l.phone)+'</div>' +
+      (l.email?'<div class="lc-row"><i class="bi bi-envelope-fill"></i>'+esc(l.email)+'</div>':'') +
+      (l.shootDate?'<div class="lc-row"><i class="bi bi-calendar3-fill"></i>'+fmtDate(l.shootDate)+'</div>':'') +
+      '<div class="lc-row"><i class="bi bi-clock-fill"></i>'+ago(l.ts)+'</div>' +
+    '</div>' +
+    (l.notes?'<div class="lc-note">'+esc(l.notes.substring(0,88))+(l.notes.length>88?'…':'')+'</div>':'') +
+    '<div class="lc-btns">' +
+      '<button class="lc-btn '+waClass+'" onclick="openWA('+idx+')"><i class="bi bi-whatsapp"></i>'+waLabel+'</button>' +
+      '<button class="lc-btn" onclick="openModal('+idx+')"><i class="bi bi-pencil"></i>Edit</button>' +
+      (canAdvance?'<button class="lc-btn move-btn" onclick="advance('+idx+')"><i class="bi bi-arrow-right"></i>'+advLabel+'</button>':'') +
+      '<button class="lc-btn del" onclick="delLead('+idx+')"><i class="bi bi-trash"></i></button>' +
+    '</div>' +
+  '</div>';
+}
+
+// ── CLOSED TABLE ──
+function closedTableHTML(arr){
+  if(!arr.length) return '<div class="empty" style="display:block"><i class="bi bi-archive" style="font-size:30px;opacity:.15;display:block;margin-bottom:10px"></i><div class="e-t">No closed clients</div><div class="e-s">Clients you close will appear here.</div></div>';
+  return '<table class="closed-table"><thead><tr><th>Client</th><th>Type</th><th>Scene</th><th>Date</th><th>Reason / Notes</th><th>Actions</th></tr></thead><tbody>' +
+    arr.map(function(l){
+      var idx=leads.indexOf(l);
+      return '<tr onclick="openModal('+idx+')">' +
+        '<td><div class="d-flex align-items-center gap-2"><div class="ct-av">'+esc(initials(l.name))+'</div><div><div class="ct-name">'+esc(l.name)+'</div><div class="ct-sub">'+esc(l.phone)+'</div></div></div></td>' +
+        '<td style="font-size:11px">'+(l.shootType||'—')+'</td>' +
+        '<td style="font-size:11px">'+(l.scene||'—')+'</td>' +
+        '<td style="font-size:11px;white-space:nowrap">'+fmtDate(l.shootDate)+'</td>' +
+        '<td><div class="ct-reason">'+esc(l.notes||'—')+'</div></td>' +
+        '<td><div class="ct-acts" onclick="event.stopPropagation()">' +
+          '<button class="ct-btn" onclick="openModal('+idx+')" title="Edit"><i class="bi bi-pencil"></i></button>' +
+          '<button class="ct-btn del" onclick="delLead('+idx+')" title="Delete"><i class="bi bi-trash"></i></button>' +
+        '</div></td>' +
+      '</tr>';
+    }).join('') +
+  '</tbody></table>';
+}
+
+// ── BOOKED TABLE (for overview) ──
+function bookedTableHTML(arr){
+  if(!arr.length) return '<div style="text-align:center;padding:24px;color:var(--muted);font-size:12px">No upcoming sessions booked yet.</div>';
+  arr.sort(function(a,b){return(a.shootDate||'').localeCompare(b.shootDate||'');});
+  return '<table class="closed-table"><thead><tr><th>Client</th><th>Type</th><th>Scene</th><th>Shoot Date</th><th>Notes</th><th>Actions</th></tr></thead><tbody>' +
+    arr.map(function(l){
+      var idx=leads.indexOf(l);
+      return '<tr onclick="openModal('+idx+')">' +
+        '<td><div class="d-flex align-items-center gap-2"><div class="ct-av" style="background:var(--c-book-bg);color:var(--c-book);border-color:var(--c-book-bd)">'+esc(initials(l.name))+'</div><div><div class="ct-name">'+esc(l.name)+'</div><div class="ct-sub">'+esc(l.phone)+'</div></div></div></td>' +
+        '<td style="font-size:11px">'+(l.shootType||'—')+'</td>' +
+        '<td style="font-size:11px">'+(l.scene||'—')+'</td>' +
+        '<td style="font-size:11px;white-space:nowrap;font-weight:500;color:var(--c-book)">'+fmtDate(l.shootDate)+'</td>' +
+        '<td><div class="ct-reason">'+esc(l.notes||'—')+'</div></td>' +
+        '<td><div class="ct-acts" onclick="event.stopPropagation()">' +
+          '<button class="ct-btn" onclick="openWA('+idx+')" title="WhatsApp"><i class="bi bi-whatsapp" style="color:#16a34a"></i></button>' +
+          '<button class="ct-btn" onclick="openModal('+idx+')" title="Edit"><i class="bi bi-pencil"></i></button>' +
+        '</div></td>' +
+      '</tr>';
+    }).join('') +
+  '</tbody></table>';
+}
+
+// ── EMPTY STATE ──
+function emptyHTML(icon,title,sub){
+  return '<div class="empty" style="display:block;grid-column:1/-1"><i class="bi bi-'+icon+'" style="font-size:28px;opacity:.15;display:block;margin-bottom:10px"></i><div class="e-t">'+title+'</div><div class="e-s">'+sub+'</div></div>';
+}
+
+// ── RENDER OVERVIEW ──
+function renderOverview(){
+  var todayLeads=byStatus('new').filter(function(l){return isToday(l.ts);});
+  var recentNew=sorted(byStatus('new')).slice(0,3);
+  el('ov-today-c').textContent=todayLeads.length?todayLeads.length+' new today':'';
+  // Today banner
+  var g=el('ov-new-grid');
+  if(recentNew.length){
+    g.innerHTML=recentNew.map(function(l,i){return cardHTML(l,i);}).join('');
+  }else{
+    g.innerHTML=emptyHTML('inbox','No new leads yet','New enquiries will appear here.');
+  }
+  var bookArr=byStatus('book');
+  el('ov-book-c').textContent=bookArr.length?bookArr.length+' confirmed':'';
+  el('ov-book-list').innerHTML=bookedTableHTML(bookArr);
+}
+
+// ── RENDER NEW ──
+function renderNew(){
+  var q=v('s-new').toLowerCase();
+  var t=el('f-new').value;
+  var f=sorted(byStatus('new')).filter(function(l){
+    return(!q||(l.name||'').toLowerCase().includes(q)||(l.phone||'').includes(q)||(l.shootType||'').toLowerCase().includes(q))&&(!t||l.shootType===t);
+  });
+  el('ph-new').textContent=f.length+' lead'+(f.length!==1?'s':'');
+  // Today banner
+  var todayCt=f.filter(function(l){return isToday(l.ts);}).length;
+  el('today-banner-wrap').innerHTML=todayCt?
+    '<div class="today-banner"><div class="tb-dot"></div><span class="tb-txt">New leads today</span><span class="tb-count">'+todayCt+' new</span></div>':'';
+  var g=el('g-new');
+  g.innerHTML=f.length?f.map(function(l,i){return cardHTML(l,i);}).join(''):emptyHTML('inbox','No new leads','Fresh enquiries will show here.');
+}
+
+// ── RENDER COMM ──
+function renderComm(){
+  var q=v('s-comm').toLowerCase();
+  var t=el('f-comm').value;
+  var f=sorted(byStatus('comm')).filter(function(l){
+    return(!q||(l.name||'').toLowerCase().includes(q)||(l.phone||'').includes(q))&&(!t||l.shootType===t);
+  });
+  el('ph-comm').textContent=f.length+' client'+(f.length!==1?'s':'');
+  el('g-comm').innerHTML=f.length?f.map(function(l,i){return cardHTML(l,i);}).join(''):emptyHTML('chat-dots','No active conversations','Clients in communication will show here.');
+}
+
+// ── RENDER BOOKED ──
+function renderBook(){
+  var q=v('s-book').toLowerCase();
+  var t=el('f-book').value;
+  var f=byStatus('book').filter(function(l){
+    return(!q||(l.name||'').toLowerCase().includes(q)||(l.phone||'').includes(q))&&(!t||l.shootType===t);
+  });
+  f.sort(function(a,b){return(a.shootDate||'').localeCompare(b.shootDate||'');});
+  el('ph-book').textContent=f.length+' session'+(f.length!==1?'s':'');
+  el('g-book').innerHTML=f.length?f.map(function(l,i){return cardHTML(l,i);}).join(''):emptyHTML('calendar-check','No bookings yet','Confirmed sessions will show here.');
+}
+
+// ── RENDER CLOSED ──
+function renderClosed(){
+  var q=v('s-closed').toLowerCase();
+  var f=byStatus('closed').filter(function(l){
+    return(!q||(l.name||'').toLowerCase().includes(q)||(l.phone||'').includes(q));
+  });
+  f.sort(function(a,b){return new Date(b.ts||0)-new Date(a.ts||0);});
+  el('ph-closed').textContent=f.length+' client'+(f.length!==1?'s':'');
+  el('g-closed').innerHTML=closedTableHTML(f);
+}
+
+function renderAll(){stats();renderOverview();renderNew();renderComm();renderBook();renderClosed();}
+
+// ── ADVANCE ──
+function advance(idx){
+  var l=leads[idx];
+  if(l.status==='new'){
+    leads[idx].status='comm';
+    saveCache();renderAll();
+    toast(l.name.split(' ')[0]+' moved to In Communication');
+    pushStatus(leads[idx]);
+  }else if(l.status==='comm'){
+    // Ask for date before booking
+    pendingIdx=idx;
+    el('dpDate').value=l.shootDate||'';
+    el('dpDate').min=new Date().toISOString().split('T')[0];
+    el('dpBg').classList.add('show');
+  }
+}
+function confirmBook(){
+  var d=el('dpDate').value;
+  if(!d){toast('Please select a shoot date','warn');return;}
+  if(pendingIdx>=0){
+    leads[pendingIdx].status='book';
+    leads[pendingIdx].shootDate=d;
+    saveCache();renderAll();
+    toast(leads[pendingIdx].name.split(' ')[0]+' → Booked ✓','ok');
+    pushStatus(leads[pendingIdx]);
+    pendingIdx=-1;
+  }
+  el('dpBg').classList.remove('show');
+}
+function cancelBook(){pendingIdx=-1;el('dpBg').classList.remove('show');}
+
+// ── WHATSAPP ──
+function openWA(idx){
+  var l=leads[idx];
+  if(!l){toast('Client not found','warn');return;}
+  // Clean phone — remove spaces, dashes, brackets, + sign
+  var raw = (l.phone||'').replace(/[\s\-\(\)\+]/g,'');
+  // If starts with 0, replace with 44 (UK)
+  if(raw.charAt(0)==='0') raw='44'+raw.substring(1);
+  if(!raw){toast('No phone number for this client','warn');return;}
+  var msg = waMsg(l);
+  var url = 'https://wa.me/'+raw+'?text='+encodeURIComponent(msg);
+  window.open(url,'_blank');
+}
+
+// ── MODAL ──
+function openModal(idx){
+  if(!bsModal)bsModal=new bootstrap.Modal(el('lModal'));
+  el('eIdx').value=idx!==undefined?idx:-1;
+  if(idx!==undefined&&idx>=0){
+    var l=leads[idx];
+    el('mTitle').textContent='Edit Client';
+    el('f-name').value=l.name||'';el('f-phone').value=l.phone||'';
+    el('f-email').value=l.email||'';el('f-date').value=l.shootDate||'';
+    el('f-type').value=l.shootType||'';el('f-scene').value=l.scene||'';
+    el('f-notes').value=l.notes||'';selSt(l.status||'new');
+  }else{
+    el('mTitle').textContent='New Client';
+    ['f-name','f-phone','f-email','f-date','f-notes'].forEach(function(id){el(id).value='';});
+    el('f-type').value='';el('f-scene').value='';selSt('new');
+  }
+  bsModal.show();
+}
+function selSt(s){
+  el('f-status').value=s;
+  document.querySelectorAll('.st-opt').forEach(function(o){o.classList.remove('sel');});
+  var e=document.querySelector('.st-'+s);if(e)e.classList.add('sel');
+}
+function saveLead(){
+  var idx=parseInt(el('eIdx').value);
+  var lead={
+    name:v('f-name'),phone:v('f-phone'),email:v('f-email'),
+    shootDate:el('f-date').value,shootType:el('f-type').value,
+    scene:el('f-scene').value,status:el('f-status').value,
+    notes:el('f-notes').value.trim(),
+    ts:idx>=0?(leads[idx].ts||new Date().toISOString()):new Date().toISOString()
+  };
+  if(!lead.name||!lead.phone){toast('Name and phone are required','warn');return;}
+  if(idx>=0){leads[idx]=lead;toast('Client updated');}
+  else{leads.unshift(lead);toast('Client added');}
+  pushStatus(lead);saveCache();renderAll();
+  if(bsModal)bsModal.hide();
+}
+function delLead(idx){
+  if(!confirm('Remove "'+leads[idx].name+'"?'))return;
+  leads.splice(idx,1);saveCache();renderAll();toast('Client removed');
+}
+
+// ── PUSH STATUS TO SHEET ──
+async function pushStatus(lead){
+  if(!SCRIPT_URL||SCRIPT_URL==='YOUR_APPS_SCRIPT_URL')return;
+  try{
+    await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'updateStatus',phone:lead.phone,name:lead.name,status:lead.status,notes:lead.notes,shootDate:lead.shootDate})});
+  }catch(e){}
+}
+
+// ── TOAST ──
+function toast(msg,type){
+  var s=el('toasts');
+  var t=document.createElement('div');
+  t.className='t-it'+(type?' '+type:'');
+  var ic=type==='warn'?'bi-exclamation-triangle':type==='ok'?'bi-check-circle':'bi-info-circle';
+  t.innerHTML='<i class="bi '+ic+' t-ico"></i>'+esc(msg);
+  s.appendChild(t);
+  requestAnimationFrame(function(){t.classList.add('show');});
+  setTimeout(function(){t.classList.remove('show');setTimeout(function(){t.remove();},280);},3200);
+}
+</script>
+</body>
+</html>
