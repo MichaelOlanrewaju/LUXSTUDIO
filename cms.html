@@ -5,378 +5,307 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Luxeimperial Studio — CRM</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <style>
 :root{
-  --gold:#b8860b;--gold-lt:#d4a017;--gold-pale:#fdf8ee;--gold-bd:rgba(184,134,11,.2);
-  --dark:#111010;--muted:#6e6b68;--border:#e8e4df;--surface:#f5f2ee;--white:#fff;
-  --serif:'Lora',Georgia,serif;--sans:'Inter',system-ui,sans-serif;
-  --c-new:#1d4ed8;--c-new-bg:rgba(29,78,216,.06);--c-new-bd:rgba(29,78,216,.2);
-  --c-comm:#b45309;--c-comm-bg:rgba(180,83,9,.06);--c-comm-bd:rgba(180,83,9,.2);
-  --c-book:#065f46;--c-book-bg:rgba(6,95,70,.06);--c-book-bd:rgba(6,95,70,.2);
-  --c-closed:#4b5563;--c-closed-bg:rgba(75,85,99,.06);--c-closed-bd:rgba(75,85,99,.2);
-  --sh0:0 1px 3px rgba(0,0,0,.05);
-  --sh1:0 2px 8px rgba(0,0,0,.06),0 1px 3px rgba(0,0,0,.04);
-  --sh2:0 8px 32px rgba(0,0,0,.1),0 2px 8px rgba(0,0,0,.06);
-  --sh3:0 24px 64px rgba(0,0,0,.18),0 4px 16px rgba(0,0,0,.08);
+  /* brand */
+  --brand:#6366f1;        /* indigo */
+  --brand-d:#4f46e5;
+  --brand-l:#eef2ff;
+  --ink:#0f172a;          /* slate-900 */
+  --ink-2:#334155;
+  --muted:#64748b;        /* slate-500 */
+  --line:#e9edf3;
+  --bg:#f6f7fb;
+  --card:#ffffff;
+  --font:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+  /* status palette — coordinated, not clashing */
+  --new:#3b82f6;   --new-bg:#eff6ff;   --new-bd:#bfdbfe;
+  --comm:#f59e0b;  --comm-bg:#fffbeb;  --comm-bd:#fde68a;
+  --book:#10b981;  --book-bg:#ecfdf5;  --book-bd:#a7f3d0;
+  --closed:#94a3b8;--closed-bg:#f1f5f9;--closed-bd:#cbd5e1;
+  --danger:#ef4444;
+  --r:14px; --r-sm:10px;
+  --sh-sm:0 1px 2px rgba(16,24,40,.06);
+  --sh:0 4px 16px rgba(16,24,40,.08);
+  --sh-lg:0 16px 48px rgba(16,24,40,.16);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--sans);background:var(--surface);color:var(--dark);-webkit-font-smoothing:antialiased;font-size:13px}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.5}
+::selection{background:var(--brand-l)}
 
-/* ══ LOGIN ══ */
-#loginPage{position:fixed;inset:0;z-index:9999;display:flex;align-items:stretch;justify-content:center;background:var(--dark);transition:opacity .5s,visibility .5s;overflow-y:auto}
+/* ════════ LOGIN ════════ */
+#loginPage{position:fixed;inset:0;z-index:9999;display:flex;align-items:stretch;justify-content:center;background:var(--ink);transition:opacity .5s,visibility .5s;overflow-y:auto}
 #loginPage.out{opacity:0;visibility:hidden;pointer-events:none}
-.lp-shell{position:relative;z-index:1;width:100%;max-width:920px;margin:auto;display:grid;grid-template-columns:1.05fr .95fr;min-height:540px;background:#fff;box-shadow:var(--sh3);animation:slideUp .6s cubic-bezier(.16,1,.3,1) both}
-@keyframes slideUp{from{opacity:0;transform:translateY(24px) scale(.985)}to{opacity:1;transform:none}}
-
-/* image panel */
-.lp-visual{position:relative;overflow:hidden;background:#1a1610}
-.lp-visual img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(1.04)}
-.lp-visual::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(17,16,16,.15) 0%,rgba(17,16,16,.55) 60%,rgba(17,16,16,.85) 100%)}
-.lp-vtext{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:34px 34px 30px;color:#fff}
-.lp-vrule{width:34px;height:1px;background:var(--gold);margin-bottom:14px}
-.lp-vquote{font-family:var(--serif);font-size:22px;font-style:italic;line-height:1.4;font-weight:500;margin-bottom:10px;text-shadow:0 1px 12px rgba(0,0,0,.4)}
-.lp-vmeta{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.7);font-weight:500}
-.lp-vlogo{position:absolute;top:28px;left:34px;z-index:2;height:30px;width:auto;filter:brightness(0) invert(1);opacity:.95}
-
-/* form panel */
-.lp-form{display:flex;flex-direction:column;justify-content:center;padding:44px 46px}
-.lb-tag{font-size:8px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:14px}
-.lb-title{font-family:var(--serif);font-size:27px;color:var(--dark);margin-bottom:5px;line-height:1.1}
-.lb-title em{font-style:italic;color:var(--gold)}
-.lb-sub{font-size:12px;color:var(--muted);margin-bottom:24px;line-height:1.5}
-.lb-err{display:none;font-size:11px;color:#dc2626;background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.15);padding:10px 13px;margin-bottom:16px;text-align:center;border-radius:2px}
-.fl{margin-bottom:15px;position:relative}
-.fl-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;font-weight:600}
-.fl-inp{width:100%;font-family:var(--sans);font-size:14px;font-weight:300;padding:13px 15px;border:1px solid var(--border);background:#fafafa;color:var(--dark);outline:none;transition:all .2s;border-radius:3px}
-.fl-inp:focus{border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(184,134,11,.08)}
-.fl-inp.err{border-color:#dc2626}
-.fl-eye{position:absolute;right:13px;top:33px;color:var(--muted);cursor:pointer;font-size:15px;user-select:none;transition:color .15s}
-.fl-eye:hover{color:var(--gold)}
-.btn-login{width:100%;font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;padding:15px;background:var(--dark);color:#fff;border:none;cursor:pointer;transition:all .25s;margin-top:6px;overflow:hidden;position:relative;border-radius:3px}
-.btn-login::after{content:'';position:absolute;inset:0;background:var(--gold);transform:translateX(-100%);transition:transform .3s}
-.btn-login:hover::after{transform:translateX(0)}
-.btn-login:disabled{opacity:.6;cursor:not-allowed}
-.btn-login:disabled::after{transform:translateX(-100%)}
-.btn-login span{position:relative;z-index:1;display:inline-flex;align-items:center;gap:7px}
-.lb-foot{text-align:center;font-size:10px;color:var(--muted);margin-top:20px;letter-spacing:.4px}
-
-/* responsive login */
-@media(max-width:760px){
-  #loginPage{align-items:flex-start}
-  .lp-shell{grid-template-columns:1fr;max-width:440px;min-height:0;margin:0 auto}
-  .lp-visual{min-height:200px;order:-1}
-  .lp-vquote{font-size:18px}
-  .lp-form{padding:34px 26px 30px}
+.lp-shell{position:relative;z-index:1;width:100%;max-width:940px;margin:auto;display:grid;grid-template-columns:1fr 1fr;min-height:560px;background:var(--card);border-radius:24px;overflow:hidden;box-shadow:var(--sh-lg);animation:rise .6s cubic-bezier(.16,1,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(26px) scale(.985)}to{opacity:1;transform:none}}
+.lp-visual{position:relative;overflow:hidden;background:linear-gradient(150deg,#4f46e5,#7c3aed 55%,#db2777)}
+.lp-visual img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:overlay;opacity:.55}
+.lp-visual::after{content:'';position:absolute;inset:0;background:radial-gradient(120% 80% at 20% 0%,rgba(255,255,255,.18),transparent 55%)}
+.lp-blob{position:absolute;border-radius:50%;filter:blur(40px);opacity:.5}
+.lp-blob1{width:260px;height:260px;background:#f0abfc;top:-60px;right:-40px}
+.lp-blob2{width:200px;height:200px;background:#818cf8;bottom:-50px;left:-30px}
+.lp-vtext{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:38px 38px 34px;color:#fff}
+.lp-vquote{font-size:24px;font-weight:700;line-height:1.3;letter-spacing:-.02em;margin-bottom:10px;text-shadow:0 2px 20px rgba(0,0,0,.25)}
+.lp-vmeta{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.85);font-weight:600}
+.lp-vlogo{position:absolute;top:30px;left:38px;z-index:2;height:30px;filter:brightness(0) invert(1);opacity:.95}
+.lp-form{display:flex;flex-direction:column;justify-content:center;padding:48px 50px}
+.lb-badge{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--brand-d);background:var(--brand-l);padding:6px 12px;border-radius:20px;margin-bottom:18px}
+.lb-title{font-size:30px;font-weight:800;letter-spacing:-.03em;margin-bottom:6px}
+.lb-sub{font-size:14px;color:var(--muted);margin-bottom:26px}
+.lb-err{display:none;font-size:13px;color:var(--danger);background:#fef2f2;border:1px solid #fecaca;padding:11px 14px;border-radius:var(--r-sm);margin-bottom:16px}
+.fl{margin-bottom:16px;position:relative}
+.fl-lbl{font-size:12px;font-weight:600;color:var(--ink-2);display:block;margin-bottom:7px}
+.fl-inp{width:100%;font-family:var(--font);font-size:15px;padding:14px 16px;border:1.5px solid var(--line);background:#fbfcfe;color:var(--ink);outline:none;transition:all .18s;border-radius:12px}
+.fl-inp:focus{border-color:var(--brand);background:#fff;box-shadow:0 0 0 4px rgba(99,102,241,.12)}
+.fl-inp.err{border-color:var(--danger)}
+.fl-eye{position:absolute;right:14px;top:37px;color:var(--muted);cursor:pointer;font-size:17px;transition:color .15s}
+.fl-eye:hover{color:var(--brand)}
+.btn-login{width:100%;font-family:var(--font);font-size:15px;font-weight:700;padding:15px;background:var(--brand-d);color:#fff;border:none;cursor:pointer;border-radius:12px;transition:all .2s;margin-top:6px;box-shadow:0 6px 18px rgba(79,70,229,.32)}
+.btn-login:hover{background:var(--brand);transform:translateY(-1px);box-shadow:0 10px 26px rgba(79,70,229,.4)}
+.btn-login:disabled{opacity:.65;cursor:not-allowed;transform:none}
+.btn-login span{display:inline-flex;align-items:center;gap:8px}
+.lb-foot{text-align:center;font-size:12px;color:var(--muted);margin-top:22px}
+@media(max-width:780px){
+  #loginPage{align-items:flex-start;padding:0}
+  .lp-shell{grid-template-columns:1fr;max-width:460px;min-height:0;border-radius:0;margin:0 auto;min-height:100vh}
+  .lp-visual{min-height:190px;order:-1}
+  .lp-vquote{font-size:20px}
+  .lp-form{padding:34px 26px}
 }
-@media(max-width:420px){
-  .lp-visual{min-height:150px}
-  .lp-vtext{padding:22px 22px 18px}
-  .lp-vquote{font-size:16px}
-  .lb-title{font-size:23px}
-  .lp-form{padding:28px 20px 26px}
+@media(max-width:440px){.lb-title{font-size:25px}.lp-form{padding:28px 20px}.lp-visual{min-height:150px}}
+
+/* ════════ APP SHELL ════════ */
+#app{display:none}
+.shell{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+@media(max-width:980px){.shell{grid-template-columns:1fr}}
+
+/* sidebar */
+.side{background:var(--card);border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:60}
+@media(max-width:980px){
+  .side{position:fixed;left:0;top:0;bottom:0;width:264px;transform:translateX(-108%);transition:transform .28s cubic-bezier(.4,0,.2,1);box-shadow:var(--sh-lg)}
+  .side.open{transform:none}
 }
+.side-head{padding:22px 22px 18px;display:flex;align-items:center;gap:11px;border-bottom:1px solid var(--line)}
+.side-logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(140deg,var(--brand),#a855f7);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:17px;flex-shrink:0;box-shadow:0 4px 12px rgba(99,102,241,.35)}
+.side-brand{font-weight:800;font-size:15px;letter-spacing:-.02em;line-height:1.1}
+.side-brand small{display:block;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.side-scroll{flex:1;padding:14px 12px}
+.nav-lbl{font-size:10.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);padding:0 12px;margin:14px 0 6px}
+.nav-lbl:first-child{margin-top:0}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;font-size:13.5px;font-weight:600;color:var(--ink-2);cursor:pointer;transition:all .14s;user-select:none;margin-bottom:2px}
+.nav-item:hover{background:var(--bg)}
+.nav-item.active{background:var(--brand-l);color:var(--brand-d)}
+.nav-item i{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.nav-item .badge-n{margin-left:auto;font-size:11px;font-weight:700;background:var(--bg);color:var(--muted);padding:2px 9px;border-radius:20px;min-width:24px;text-align:center}
+.nav-item.active .badge-n{background:#fff;color:var(--brand-d)}
+.nav-item.s-new.active{background:var(--new-bg);color:var(--new)}
+.nav-item.s-comm.active{background:var(--comm-bg);color:#b45309}
+.nav-item.s-book.active{background:var(--book-bg);color:#047857}
+.nav-item.s-closed.active{background:var(--closed-bg);color:#475569}
+.nav-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-left:4px;margin-right:6px}
+.dot-new{background:var(--new)}.dot-comm{background:var(--comm)}.dot-book{background:var(--book)}.dot-closed{background:var(--closed)}
+.side-foot{padding:14px;border-top:1px solid var(--line)}
+.user-chip{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:11px;cursor:pointer;transition:background .14s}
+.user-chip:hover{background:var(--bg)}
+.user-av{width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,var(--brand),#a855f7);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.user-meta{flex:1;min-width:0}
+.user-name{font-size:13px;font-weight:700;line-height:1.2}
+.user-role{font-size:11px;color:var(--muted)}
 
-/* ══ APP ══ */
-#app{display:none;min-height:100vh}
-
-/* ── TOPBAR ── */
-.topbar{height:54px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:500;gap:10px;box-shadow:var(--sh0)}
-.tb-logo{height:30px;width:auto}
-.tb-rule{width:1px;height:18px;background:var(--border);flex-shrink:0}
-.tb-section{font-family:var(--serif);font-size:14px;color:var(--muted);font-style:italic;white-space:nowrap}
+/* main */
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{height:62px;background:rgba(246,247,251,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:0 24px;position:sticky;top:0;z-index:50}
+@media(max-width:576px){.topbar{padding:0 14px;height:56px}}
+.burger{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:#fff;display:none;align-items:center;justify-content:center;font-size:18px;cursor:pointer;color:var(--ink)}
+@media(max-width:980px){.burger{display:flex}}
+.tb-title{font-size:17px;font-weight:800;letter-spacing:-.02em}
 .tb-sp{flex:1}
-.tb-sync-txt{font-size:10px;color:var(--muted);white-space:nowrap}
-.btn-sync{font-family:var(--sans);font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:7px 14px;background:var(--dark);color:#fff;border:none;cursor:pointer;transition:background .2s;white-space:nowrap;flex-shrink:0}
-.btn-sync:hover{background:var(--gold)}
-.btn-sync:disabled{opacity:.4;cursor:not-allowed}
-.tb-user{display:flex;align-items:center;gap:7px;padding:5px 10px;border:1px solid var(--border);cursor:pointer;transition:border-color .2s;flex-shrink:0}
-.tb-user:hover{border-color:var(--gold)}
-.tb-av{width:26px;height:26px;border-radius:50%;background:var(--gold-pale);border:1px solid var(--gold-bd);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:11px;font-weight:600;color:var(--gold)}
-.tb-name{font-size:11px;font-weight:500;color:var(--dark)}
-.ham-btn{width:34px;height:34px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--dark);transition:all .2s;flex-shrink:0}
-.ham-btn:hover{border-color:var(--gold);color:var(--gold)}
-@media(min-width:900px){.ham-btn{display:none}}
-@media(max-width:500px){.tb-name,.tb-sync-txt{display:none}}
+.sync-pill{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);font-weight:600}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--book)}
+.btn-sync{display:inline-flex;align-items:center;gap:7px;font-family:var(--font);font-size:13px;font-weight:700;padding:9px 15px;background:var(--ink);color:#fff;border:none;border-radius:10px;cursor:pointer;transition:all .18s}
+.btn-sync:hover{background:var(--brand-d)}
+.btn-sync:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:576px){.sync-pill{display:none}.btn-sync .sync-label{display:none}.btn-sync{padding:9px 11px}}
 
-/* ── LAYOUT ── */
-.app-wrap{display:grid;grid-template-columns:200px 1fr;min-height:calc(100vh - 54px)}
-@media(max-width:899px){.app-wrap{grid-template-columns:1fr}}
-
-/* ── SIDEBAR ── */
-.sidebar{background:#fff;border-right:1px solid var(--border);padding:12px 0;position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto}
-@media(max-width:899px){
-  .sidebar{position:fixed;top:54px;left:0;bottom:0;width:220px;z-index:450;transform:translateX(-110%);transition:transform .28s cubic-bezier(.4,0,.2,1);box-shadow:var(--sh3)}
-  .sidebar.open{transform:translateX(0)}
-}
-.sb-overlay{display:none;position:fixed;inset:0;top:54px;background:rgba(0,0,0,.45);z-index:440;backdrop-filter:blur(2px)}
-.sb-overlay.show{display:block}
-.sb-grp{margin-bottom:18px}
-.sb-lbl{font-size:8px;letter-spacing:3.5px;text-transform:uppercase;color:var(--muted);padding:0 16px 7px;display:block;font-weight:500}
-.sb-item{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;border-left:2px solid transparent;transition:all .15s;font-weight:400;user-select:none}
-.sb-item:hover{color:var(--dark);background:var(--surface);border-left-color:var(--border)}
-.sb-item.active{color:var(--dark);background:var(--gold-pale);border-left-color:var(--gold);font-weight:500}
-.sb-ico{font-size:13px;width:16px;text-align:center;flex-shrink:0}
-.sb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;border:2px solid currentColor}
-.sb-badge{margin-left:auto;font-size:9px;background:var(--surface);color:var(--muted);padding:1px 7px;border-radius:20px;font-weight:600;border:1px solid var(--border)}
-.sb-item.active .sb-badge{background:var(--gold-pale);border-color:var(--gold-bd);color:var(--gold)}
-/* status colours in sidebar */
-.sb-item.s-new .sb-ico{color:var(--c-new)}.sb-item.s-comm .sb-ico{color:var(--c-comm)}
-.sb-item.s-book .sb-ico{color:var(--c-book)}.sb-item.s-closed .sb-ico{color:var(--c-closed)}
-.sb-divider{margin:6px 16px 14px;border:none;border-top:1px solid var(--border)}
-
-/* ── MAIN ── */
-.main{padding:20px 22px;background:var(--surface);min-height:calc(100vh - 54px)}
-@media(max-width:576px){.main{padding:12px 10px}}
-.view{display:none;animation:fadeIn .28s ease}
+.content{padding:26px 24px 60px;flex:1}
+@media(max-width:576px){.content{padding:18px 14px 50px}}
+.view{display:none;animation:fade .3s ease}
 .view.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-/* ── PAGE HEADER ── */
-.ph{padding-bottom:16px;margin-bottom:18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:10px}
-.ph-left{}
-.ph-title{font-family:var(--serif);font-size:22px;font-weight:500;color:var(--dark);line-height:1;margin-bottom:3px}
-.ph-title em{font-style:italic;color:var(--gold)}
-.ph-sub{font-size:11px;color:var(--muted)}
-.ph-right{text-align:right;flex-shrink:0}
-.ph-count{font-family:var(--serif);font-size:15px;color:var(--dark);font-weight:400}
-.ph-date{font-size:10px;color:var(--muted);margin-top:1px}
+/* page header */
+.phd{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+.phd h1{font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.phd p{font-size:13.5px;color:var(--muted);margin-top:4px}
+.phd .count{font-size:13px;font-weight:700;color:var(--ink-2);background:#fff;border:1px solid var(--line);padding:7px 14px;border-radius:10px;box-shadow:var(--sh-sm)}
 
-/* ── OVERVIEW STATS ── */
-.ov-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
-@media(max-width:700px){.ov-stats{grid-template-columns:repeat(2,1fr)}}
-.ov-stat{background:#fff;border:1px solid var(--border);padding:14px 16px;box-shadow:var(--sh0);transition:all .2s;cursor:pointer;position:relative;overflow:hidden}
-.ov-stat:hover{box-shadow:var(--sh1);transform:translateY(-2px)}
-.ov-stat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px}
-.os-new::after{background:var(--c-new)}.os-comm::after{background:var(--c-comm)}
-.os-book::after{background:var(--c-book)}.os-closed::after{background:var(--c-closed)}
-.ov-stat-n{font-family:var(--serif);font-size:34px;font-weight:600;line-height:1;margin-bottom:2px;color:var(--dark)}
-.ov-stat-l{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500}
-.ov-stat-ic{font-size:18px;margin-bottom:8px;display:block}
-.os-new .ov-stat-ic{color:var(--c-new)}.os-comm .ov-stat-ic{color:var(--c-comm)}
-.os-book .ov-stat-ic{color:var(--c-book)}.os-closed .ov-stat-ic{color:var(--c-closed)}
+/* stat cards */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px}
+@media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;box-shadow:var(--sh-sm)}
+.stat:hover{transform:translateY(-3px);box-shadow:var(--sh)}
+.stat-ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px}
+.s-new .stat-ic{background:var(--new-bg);color:var(--new)}
+.s-comm .stat-ic{background:var(--comm-bg);color:var(--comm)}
+.s-book .stat-ic{background:var(--book-bg);color:var(--book)}
+.s-closed .stat-ic{background:var(--closed-bg);color:var(--closed)}
+.stat-n{font-size:32px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.stat-l{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:3px}
+.stat-trend{position:absolute;top:18px;right:18px;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:var(--bg);color:var(--muted)}
 
-/* ── TOOLBAR ── */
-.toolbar{background:#fff;border:1px solid var(--border);padding:8px 12px;margin-bottom:14px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;box-shadow:var(--sh0)}
-.srch{position:relative;flex:1;min-width:150px}
-.srch input{width:100%;font-family:var(--sans);font-size:12px;font-weight:300;padding:8px 11px 8px 31px;border:1px solid var(--border);color:var(--dark);outline:none;transition:all .2s;background:#fff;border-radius:0}
-.srch input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,134,11,.07)}
-.srch input::placeholder{color:var(--muted)}
-.srch i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;pointer-events:none}
-.t-sel{font-family:var(--sans);font-size:11px;padding:8px 9px;border:1px solid var(--border);background:#fff;color:var(--dark);outline:none;cursor:pointer;border-radius:0;transition:border-color .2s}
-.t-sel:focus{border-color:var(--gold)}
-.btn-add{font-family:var(--sans);font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:8px 16px;background:var(--gold);color:#fff;border:none;cursor:pointer;transition:background .2s;white-space:nowrap;flex-shrink:0}
-.btn-add:hover{background:var(--gold-lt)}
+/* section title */
+.sec-title{display:flex;align-items:center;justify-content:space-between;margin:8px 0 14px}
+.sec-title h2{font-size:17px;font-weight:800;letter-spacing:-.02em}
+.sec-title .more{font-size:12.5px;font-weight:600;color:var(--brand-d);cursor:pointer}
 
-/* ── TODAY BANNER (New Leads) ── */
-.today-banner{background:linear-gradient(135deg,var(--c-new-bg),rgba(29,78,216,.03));border:1px solid var(--c-new-bd);padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
-.tb-dot{width:8px;height:8px;border-radius:50%;background:var(--c-new);flex-shrink:0;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.tb-txt{font-size:12px;color:var(--c-new);font-weight:500}
-.tb-count{font-family:var(--serif);font-size:13px;font-weight:600;color:var(--c-new);margin-left:auto}
+/* toolbar */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.search{position:relative;flex:1;min-width:200px}
+.search input{width:100%;font-family:var(--font);font-size:14px;padding:11px 14px 11px 40px;border:1px solid var(--line);border-radius:11px;background:#fff;outline:none;transition:all .18s;box-shadow:var(--sh-sm)}
+.search input:focus{border-color:var(--brand);box-shadow:0 0 0 4px rgba(99,102,241,.1)}
+.search i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px}
+.sel{font-family:var(--font);font-size:13.5px;font-weight:600;padding:11px 14px;border:1px solid var(--line);border-radius:11px;background:#fff;outline:none;cursor:pointer;color:var(--ink-2);box-shadow:var(--sh-sm)}
+.sel:focus{border-color:var(--brand)}
+.btn-add{display:inline-flex;align-items:center;gap:7px;font-family:var(--font);font-size:13.5px;font-weight:700;padding:11px 18px;background:var(--brand-d);color:#fff;border:none;border-radius:11px;cursor:pointer;transition:all .18s;box-shadow:0 4px 12px rgba(79,70,229,.28)}
+.btn-add:hover{background:var(--brand);transform:translateY(-1px)}
 
-/* ── LEAD CARD ── */
-.leads-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-@media(max-width:1200px){.leads-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:650px){.leads-grid{grid-template-columns:1fr}}
+/* cards grid */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:1180px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
 
-.lead-card{background:#fff;border:1px solid var(--border);box-shadow:var(--sh0);transition:all .22s;position:relative;overflow:hidden;animation:cardIn .3s ease both}
-@keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.lead-card:hover{box-shadow:var(--sh2);transform:translateY(-3px)}
-.lead-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;transition:width .2s}
-.lead-card:hover::before{width:4px}
-.lc-new::before{background:var(--c-new)}.lc-comm::before{background:var(--c-comm)}
-.lc-book::before{background:var(--c-book)}.lc-closed::before{background:var(--c-closed)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:all .2s;box-shadow:var(--sh-sm);animation:pop .3s ease both}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card:hover{transform:translateY(-3px);box-shadow:var(--sh);border-color:#dfe5ee}
+.card-top{padding:16px 16px 13px;display:flex;align-items:flex-start;gap:12px}
+.av{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0;color:#fff}
+.av-new{background:linear-gradient(140deg,#3b82f6,#60a5fa)}
+.av-comm{background:linear-gradient(140deg,#f59e0b,#fbbf24)}
+.av-book{background:linear-gradient(140deg,#10b981,#34d399)}
+.av-closed{background:linear-gradient(140deg,#94a3b8,#cbd5e1)}
+.card-id{flex:1;min-width:0}
+.card-name{font-size:15.5px;font-weight:700;letter-spacing:-.01em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-type{font-size:12px;color:var(--muted);font-weight:600;margin-top:2px}
+.chip{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.chip-new{background:var(--new-bg);color:var(--new)}
+.chip-comm{background:var(--comm-bg);color:#b45309}
+.chip-book{background:var(--book-bg);color:#047857}
+.chip-closed{background:var(--closed-bg);color:#475569}
+.chip-today{background:var(--new);color:#fff;margin-left:6px}
+.card-body{padding:0 16px 13px;display:flex;flex-direction:column;gap:8px}
+.crow{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink-2)}
+.crow i{font-size:14px;color:var(--muted);width:16px;flex-shrink:0}
+.note{margin:0 16px 13px;padding:10px 12px;background:var(--bg);border-radius:10px;font-size:12.5px;color:var(--ink-2);line-height:1.5}
+.card-acts{display:flex;gap:7px;padding:13px 16px;border-top:1px solid var(--line);background:#fcfcfd}
+.act{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:var(--font);font-size:12.5px;font-weight:700;padding:9px 8px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink-2);cursor:pointer;transition:all .15s;white-space:nowrap}
+.act:hover{border-color:#cbd5e1;background:var(--bg)}
+.act-wa{border:none;color:#fff;flex:1.4}
+.wa-new{background:var(--new)}.wa-comm{background:var(--comm)}.wa-book{background:var(--book)}.wa-closed{background:var(--closed)}
+.act-wa:hover{filter:brightness(1.07)}
+.act-adv{border-color:#c7d2fe;color:var(--brand-d);background:var(--brand-l)}
+.act-adv:hover{background:#e0e7ff}
+.act-ico{flex:0 0 auto;width:40px;padding:9px 0}
+.act-del:hover{border-color:var(--danger);color:var(--danger);background:#fef2f2}
 
-.lc-top{padding:13px 15px 10px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px}
-.lc-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:14px;font-weight:600;flex-shrink:0;transition:all .2s;border:1px solid}
-.lc-new .lc-av{background:var(--c-new-bg);color:var(--c-new);border-color:var(--c-new-bd)}
-.lc-comm .lc-av{background:var(--c-comm-bg);color:var(--c-comm);border-color:var(--c-comm-bd)}
-.lc-book .lc-av{background:var(--c-book-bg);color:var(--c-book);border-color:var(--c-book-bd)}
-.lc-closed .lc-av{background:var(--c-closed-bg);color:var(--c-closed);border-color:var(--c-closed-bd)}
-.lead-card:hover .lc-av{opacity:.85}
-.lc-info{flex:1;min-width:0}
-.lc-name{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lc-type{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:500}
-.lc-new .lc-type{color:var(--c-new)}.lc-comm .lc-type{color:var(--c-comm)}
-.lc-book .lc-type{color:var(--c-book)}.lc-closed .lc-type{color:var(--c-closed)}
-.lc-badge{font-size:8px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;border:1px solid}
-.lc-new .lc-badge{background:var(--c-new-bg);color:var(--c-new);border-color:var(--c-new-bd)}
-.lc-comm .lc-badge{background:var(--c-comm-bg);color:var(--c-comm);border-color:var(--c-comm-bd)}
-.lc-book .lc-badge{background:var(--c-book-bg);color:var(--c-book);border-color:var(--c-book-bd)}
-.lc-closed .lc-badge{background:var(--c-closed-bg);color:var(--c-closed);border-color:var(--c-closed-bd)}
+/* table */
+.tbl-wrap{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh-sm)}
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.tbl{width:100%;border-collapse:collapse;min-width:620px}
+.tbl thead th{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);padding:14px 16px;text-align:left;border-bottom:1px solid var(--line);background:#fcfcfd;white-space:nowrap}
+.tbl tbody td{padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr{cursor:pointer;transition:background .14s}
+.tbl tbody tr:hover td{background:var(--bg)}
+.t-client{display:flex;align-items:center;gap:11px}
+.t-av{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0}
+.t-name{font-size:14px;font-weight:700;line-height:1.2}
+.t-sub{font-size:12px;color:var(--muted)}
+.t-acts{display:flex;gap:6px}
+.t-btn{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);cursor:pointer;transition:all .15s}
+.t-btn:hover{border-color:#cbd5e1;color:var(--ink);background:var(--bg)}
+.t-btn.del:hover{border-color:var(--danger);color:var(--danger)}
 
-.lc-mid{padding:10px 15px}
-.lc-row{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);margin-bottom:5px;line-height:1.4}
-.lc-row:last-child{margin-bottom:0}
-.lc-row i{font-size:11px;width:13px;flex-shrink:0}
-.lc-new .lc-row i{color:var(--c-new)}.lc-comm .lc-row i{color:var(--c-comm)}
-.lc-book .lc-row i{color:var(--c-book)}.lc-closed .lc-row i{color:var(--c-closed)}
-.lc-note{margin:0 15px 10px;padding:7px 10px;font-size:11px;color:var(--muted);font-style:italic;line-height:1.6;border-left:2px solid var(--border);background:var(--surface)}
+/* empty state */
+.empty{text-align:center;padding:56px 20px;color:var(--muted)}
+.empty .ei{width:64px;height:64px;border-radius:18px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;color:#cbd5e1}
+.empty h3{font-size:17px;font-weight:700;color:var(--ink-2);margin-bottom:5px}
+.empty p{font-size:13px;max-width:280px;margin:0 auto}
 
-.lc-btns{padding:8px 15px;border-top:1px solid var(--border);background:var(--surface);display:flex;gap:5px}
-.lc-btn{flex:1;font-family:var(--sans);font-size:9px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;padding:7px 4px;border:1px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;transition:all .15s;text-align:center;display:flex;align-items:center;justify-content:center;gap:4px;border-radius:0}
-.lc-btn:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-pale)}
-/* WhatsApp button — colour matches status */
-.lc-btn.wa-new{border-color:var(--c-new-bd);color:var(--c-new);background:var(--c-new-bg)}
-.lc-btn.wa-new:hover{background:var(--c-new);color:#fff;border-color:var(--c-new)}
-.lc-btn.wa-comm{border-color:var(--c-comm-bd);color:var(--c-comm);background:var(--c-comm-bg)}
-.lc-btn.wa-comm:hover{background:var(--c-comm);color:#fff;border-color:var(--c-comm)}
-.lc-btn.wa-book{border-color:var(--c-book-bd);color:var(--c-book);background:var(--c-book-bg)}
-.lc-btn.wa-book:hover{background:var(--c-book);color:#fff;border-color:var(--c-book)}
-.lc-btn.del:hover{border-color:#dc2626;color:#dc2626;background:rgba(220,38,38,.05)}
-.lc-btn.move-btn{border-color:var(--gold-bd);color:var(--gold)}
-.lc-btn.move-btn:hover{background:var(--gold);color:#fff;border-color:var(--gold)}
+/* banner */
+.banner{display:flex;align-items:center;gap:12px;background:linear-gradient(100deg,var(--new-bg),#fff);border:1px solid var(--new-bd);border-radius:var(--r);padding:14px 18px;margin-bottom:18px}
+.banner .bdot{width:10px;height:10px;border-radius:50%;background:var(--new);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(59,130,246,.4)}50%{opacity:.7;box-shadow:0 0 0 8px rgba(59,130,246,0)}}
+.banner .btxt{font-size:13.5px;font-weight:700;color:var(--new)}
+.banner .bcount{margin-left:auto;font-size:13px;font-weight:800;color:var(--new)}
 
-/* ── CLOSED TABLE ── */
-.closed-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);box-shadow:var(--sh0)}
-.closed-table thead th{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:10px 13px;text-align:left;font-weight:500;border-bottom:1px solid var(--border);background:var(--surface);white-space:nowrap}
-.closed-table tbody td{padding:11px 13px;border-bottom:1px solid var(--border);vertical-align:middle}
-.closed-table tbody tr:last-child td{border-bottom:none}
-.closed-table tbody tr{transition:background .15s;cursor:pointer}
-.closed-table tbody tr:hover td{background:var(--gold-pale)}
-.ct-av{width:30px;height:30px;border-radius:50%;background:var(--c-closed-bg);border:1px solid var(--c-closed-bd);color:var(--c-closed);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:12px;font-weight:600;flex-shrink:0}
-.ct-name{font-family:var(--serif);font-size:14px;font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:1px}
-.ct-sub{font-size:10px;color:var(--muted)}
-.ct-reason{font-size:11px;color:var(--muted);font-style:italic;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ct-acts{display:flex;gap:4px}
-.ct-btn{width:26px;height:26px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--muted);transition:all .15s}
-.ct-btn:hover{border-color:var(--gold);color:var(--gold)}
-.ct-btn.del:hover{border-color:#dc2626;color:#dc2626}
+/* modal (custom) */
+.ov{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(4px);z-index:9990;align-items:center;justify-content:center;padding:18px}
+.ov.show{display:flex;animation:fade .2s ease}
+.sheet{background:#fff;width:100%;max-width:560px;border-radius:20px;box-shadow:var(--sh-lg);max-height:92vh;overflow-y:auto;animation:rise .32s cubic-bezier(.16,1,.3,1)}
+.sheet-sm{max-width:400px}
+.sheet-head{padding:22px 24px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;border-radius:20px 20px 0 0}
+.sheet-head h2{font-size:19px;font-weight:800;letter-spacing:-.02em}
+.x-btn{width:34px;height:34px;border-radius:10px;border:none;background:var(--bg);color:var(--muted);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.x-btn:hover{background:#e2e8f0;color:var(--ink)}
+.sheet-body{padding:20px 24px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:520px){.fgrid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column}
+.field.full{grid-column:1/-1}
+.field label{font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:6px}
+.field label .opt{color:var(--muted);font-weight:500}
+.inp{font-family:var(--font);font-size:14px;padding:11px 13px;border:1.5px solid var(--line);border-radius:11px;background:#fbfcfe;outline:none;transition:all .16s;width:100%}
+.inp:focus{border-color:var(--brand);background:#fff;box-shadow:0 0 0 4px rgba(99,102,241,.1)}
+textarea.inp{min-height:80px;resize:vertical;font-family:var(--font)}
+.stages{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media(max-width:520px){.stages{grid-template-columns:repeat(2,1fr)}}
+.stage{padding:11px 6px;border:1.5px solid var(--line);border-radius:11px;text-align:center;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .15s}
+.stage:hover{border-color:#cbd5e1}
+.stage.sel.st-new{background:var(--new-bg);border-color:var(--new-bd);color:var(--new)}
+.stage.sel.st-comm{background:var(--comm-bg);border-color:var(--comm-bd);color:#b45309}
+.stage.sel.st-book{background:var(--book-bg);border-color:var(--book-bd);color:#047857}
+.stage.sel.st-closed{background:var(--closed-bg);border-color:var(--closed-bd);color:#475569}
+.sheet-foot{padding:16px 24px 22px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--line);position:sticky;bottom:0;background:#fff}
+.btn-ghost{font-family:var(--font);font-size:14px;font-weight:700;padding:12px 20px;background:#fff;border:1px solid var(--line);border-radius:11px;color:var(--ink-2);cursor:pointer;transition:all .15s}
+.btn-ghost:hover{background:var(--bg)}
+.btn-primary{font-family:var(--font);font-size:14px;font-weight:700;padding:12px 24px;background:var(--brand-d);border:none;border-radius:11px;color:#fff;cursor:pointer;transition:all .18s;box-shadow:0 4px 12px rgba(79,70,229,.28)}
+.btn-primary:hover{background:var(--brand)}
 
-/* ── DATE PROMPT ── */
-.dp-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-.dp-bg.show{display:flex}
-.dp-box{background:#fff;width:100%;max-width:340px;border-top:2px solid var(--gold);box-shadow:var(--sh3);animation:slideUp .3s ease}
-.dp-head{padding:18px 22px 12px;border-bottom:1px solid var(--border)}
-.dp-title{font-family:var(--serif);font-size:18px;font-weight:500;color:var(--dark);margin-bottom:2px}
-.dp-sub{font-size:11px;color:var(--muted)}
-.dp-body{padding:16px 22px 20px}
-.btn-dp{width:100%;font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:12px;background:var(--dark);color:#fff;border:none;cursor:pointer;transition:background .2s;margin-top:8px}
-.btn-dp:hover{background:var(--gold)}
-.btn-dp-cancel{width:100%;font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;padding:10px;background:#fff;color:var(--muted);border:1px solid var(--border);cursor:pointer;margin-top:6px;transition:all .2s}
-.btn-dp-cancel:hover{border-color:var(--dark);color:var(--dark)}
-
-/* ── MODAL ── */
-.modal-content{border:none;border-radius:0;border-top:2px solid var(--gold);box-shadow:var(--sh3)}
-.modal-header{padding:18px 22px 12px;border-bottom:1px solid var(--border)}
-.m-title{font-family:var(--serif);font-size:20px;font-weight:500;color:var(--dark)}
-.modal-body{padding:16px 22px}
-.modal-footer{padding:12px 22px 20px;border-top:1px solid var(--border);gap:7px}
-.mfl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;font-weight:500}
-.mfi{width:100%;font-family:var(--sans);font-size:13px;font-weight:300;padding:10px 12px;border:1px solid var(--border);background:#fff;color:var(--dark);outline:none;transition:all .2s;border-radius:0}
-.mfi:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,134,11,.07)}
-textarea.mfi{min-height:66px;resize:vertical}
-/* status selector */
-.st-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-.st-opt{padding:9px 4px;border:1px solid var(--border);text-align:center;cursor:pointer;font-size:9px;letter-spacing:.8px;text-transform:uppercase;font-weight:600;color:var(--muted);transition:all .15s}
-.st-opt:hover{border-color:var(--gold);color:var(--gold)}
-.st-new.sel{background:var(--c-new-bg);border-color:var(--c-new-bd);color:var(--c-new)}
-.st-comm.sel{background:var(--c-comm-bg);border-color:var(--c-comm-bd);color:var(--c-comm)}
-.st-book.sel{background:var(--c-book-bg);border-color:var(--c-book-bd);color:var(--c-book)}
-.st-closed.sel{background:var(--c-closed-bg);border-color:var(--c-closed-bd);color:var(--c-closed)}
-.btn-save{font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:11px 26px;background:var(--dark);color:#fff;border:none;cursor:pointer;border-radius:0;transition:background .2s}
-.btn-save:hover{background:var(--gold)}
-.btn-cancel{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;padding:11px 16px;background:#fff;border:1px solid var(--border);color:var(--muted);cursor:pointer;border-radius:0;transition:all .2s}
-.btn-cancel:hover{border-color:var(--dark);color:var(--dark)}
-
-/* ── EMPTY STATE ── */
-.empty{grid-column:1/-1;text-align:center;padding:52px 16px;color:var(--muted)}
-.empty i{font-size:30px;opacity:.18;display:block;margin-bottom:12px}
-.empty .e-t{font-family:var(--serif);font-size:18px;color:var(--dark);margin-bottom:5px}
-.empty .e-s{font-size:11px;color:var(--muted);max-width:210px;margin:0 auto}
-
-/* ── TOAST ── */
-.toasts{position:fixed;bottom:18px;right:18px;z-index:9997;display:flex;flex-direction:column;gap:5px;pointer-events:none}
-.t-it{background:#fff;border:1px solid var(--border);border-left:3px solid var(--gold);box-shadow:var(--sh3);padding:10px 15px;font-size:12px;color:var(--dark);min-width:220px;display:flex;align-items:center;gap:8px;opacity:0;transform:translateX(12px);transition:all .26s;pointer-events:auto}
-.t-it.show{opacity:1;transform:translateX(0)}
-.t-it.warn{border-left-color:var(--c-comm)}
-.t-it.ok{border-left-color:var(--c-book)}
-.t-ico{font-size:13px;flex-shrink:0}
+/* toasts */
+.toasts{position:fixed;bottom:22px;right:22px;z-index:9995;display:flex;flex-direction:column;gap:9px;pointer-events:none}
+@media(max-width:520px){.toasts{left:14px;right:14px;bottom:14px}}
+.toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;padding:13px 17px;border-radius:12px;font-size:13.5px;font-weight:600;box-shadow:var(--sh-lg);opacity:0;transform:translateY(10px);transition:all .26s;pointer-events:auto;min-width:240px}
+.toast.show{opacity:1;transform:none}
+.toast i{font-size:17px;flex-shrink:0}
+.toast.ok i{color:#34d399}.toast.warn i{color:#fbbf24}
 @keyframes spin{to{transform:rotate(360deg)}}.spin{display:inline-block;animation:spin .7s linear infinite}
 
-/* ══════════ MOBILE RESPONSIVE ══════════ */
-/* horizontal scroll wrapper for wide tables */
-.table-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
-
-@media(max-width:768px){
-  body{font-size:13px}
-  .topbar{padding:0 12px;gap:7px}
-  .tb-section{font-size:13px}
-  .ph-title{font-size:19px}
-  /* toolbar: search full width, controls wrap neatly below */
-  .toolbar{gap:6px}
-  .srch{flex:1 1 100%;min-width:0;order:-1}
-  .t-sel{flex:1 1 auto}
-  .btn-add{flex:0 0 auto}
-  /* status selector becomes 2x2 so labels don't truncate */
-  .st-grid{grid-template-columns:repeat(2,1fr)}
-  /* modal full-width-ish */
-  .modal-body{padding:14px 16px}
-  .modal-header,.modal-footer{padding-left:16px;padding-right:16px}
-}
-
-@media(max-width:576px){
-  .topbar{height:50px}
-  .tb-logo{height:26px}
-  .tb-section{display:none}              /* topbar title hidden; sidebar shows context */
-  .btn-sync{padding:7px 10px}
-  .btn-sync .me-1{margin-right:0!important}
-  .btn-sync span,.btn-sync-label{display:none}
-  .ph{flex-direction:column;align-items:flex-start;gap:4px}
-  .ph-right{text-align:left}
-  .ov-stat{padding:12px 13px}
-  .ov-stat-n{font-size:28px}
-  /* cards: comfortable single column already; tighten buttons */
-  .lc-btns{flex-wrap:wrap}
-  .lc-btn{flex:1 1 auto;min-width:64px;padding:8px 5px}
-  /* closed/booked tables scroll horizontally instead of squishing */
-  .closed-table{min-width:560px}
-  .ct-reason{max-width:140px}
-  /* modal centered & padded for thumbs */
-  .modal-dialog{margin:.5rem}
-  .st-opt{padding:10px 4px}
-  /* date prompt fits small screens */
-  .dp-box{max-width:none;margin:0 14px}
-}
-
-@media(max-width:380px){
-  .ov-stats{gap:8px}
-  .ov-stat-l{font-size:8px}
-  .st-grid{grid-template-columns:1fr 1fr}
-}
-
-/* larger tap targets on touch devices */
+/* touch targets */
 @media(hover:none) and (pointer:coarse){
-  .sb-item{padding:11px 16px}
-  .lc-btn,.t-sel,.btn-add,.btn-sync{min-height:38px}
-  .ct-btn{width:32px;height:32px}
+  .nav-item{padding:12px}.act{min-height:40px}.t-btn{width:36px;height:36px}
 }
-
 </style>
 </head>
 <body>
 
-<!-- ══ LOGIN ══ -->
+<!-- ════════ LOGIN ════════ -->
 <div id="loginPage">
   <div class="lp-shell">
-    <!-- image panel -->
     <div class="lp-visual">
-       <img src="CT109704.jpg" alt="Studio photography" loading="eager">
-      
+      <div class="lp-blob lp-blob1"></div><div class="lp-blob lp-blob2"></div>
+      <img src="CT103474.JPG" alt="">
       <div class="lp-vtext">
-        <div class="lp-vrule"></div>
         <div class="lp-vquote">Every frame tells a story worth keeping.</div>
         <div class="lp-vmeta">Luxeimperial Studio · UK</div>
       </div>
     </div>
-    <!-- form panel -->
     <div class="lp-form">
-      <div class="lb-tag">Client Management</div>
-      <div class="lb-title">Welcome <em>back</em>.</div>
+      <div class="lb-badge"><i class="bi bi-stars"></i> Client Management</div>
+      <div class="lb-title">Welcome back</div>
       <div class="lb-sub">Sign in to manage your studio pipeline.</div>
-      <div class="lb-err" id="lbErr"><i class="bi bi-shield-x me-1"></i>Incorrect username or password.</div>
+      <div class="lb-err" id="lbErr"></div>
       <div class="fl">
         <label class="fl-lbl">Username</label>
         <input class="fl-inp" id="lUser" type="text" autocomplete="username" placeholder="Enter username" onkeydown="if(event.key==='Enter')doLogin()">
@@ -384,859 +313,599 @@ textarea.mfi{min-height:66px;resize:vertical}
       <div class="fl">
         <label class="fl-lbl">Password</label>
         <input class="fl-inp" id="lPass" type="password" autocomplete="current-password" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
-        <i class="bi bi-eye fl-eye" id="lEye" onclick="togglePw()" title="Show password"></i>
+        <i class="bi bi-eye fl-eye" id="lEye" onclick="togglePw()"></i>
       </div>
-      <button class="btn-login" id="btnLogin" onclick="doLogin()"><span id="btnLoginTxt">Access Dashboard <i class="bi bi-arrow-right"></i></span></button>
-      <div class="lb-foot">Luxeimperial Studio · UK · Secure Access</div>
+      <button class="btn-login" id="btnLogin" onclick="doLogin()"><span id="btnLoginTxt">Sign in <i class="bi bi-arrow-right"></i></span></button>
+      <div class="lb-foot">Luxeimperial Studio · Secure Access</div>
     </div>
   </div>
 </div>
 
-<!-- ══ DATE PROMPT ══ -->
-<div class="dp-bg" id="dpBg">
-  <div class="dp-box">
-    <div class="dp-head">
-      <div class="dp-title">Confirm Shoot Date</div>
-      <div class="dp-sub">Moving this client to <strong>Booked</strong>. Enter their confirmed shoot date.</div>
-    </div>
-    <div class="dp-body">
-      <label class="mfl" style="margin-bottom:5px">Shoot Date *</label>
-      <input class="mfi" id="dpDate" type="date">
-      <button class="btn-dp" onclick="confirmBook()"><i class="bi bi-check2 me-1"></i>Confirm Booking</button>
-      <button class="btn-dp-cancel" onclick="cancelBook()">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ APP ══ -->
+<!-- ════════ APP ════════ -->
 <div id="app">
+<div class="shell">
 
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <button class="ham-btn" id="hamBtn" onclick="toggleSb()"><i class="bi bi-list" id="hamIco"></i></button>
-    <img class="tb-logo" src="logo.png" alt="Luxeimperial">
-    <div class="tb-rule"></div>
-    <span class="tb-section" id="tbSec">Overview</span>
-    <div class="tb-sp"></div>
-    <span class="tb-sync-txt" id="syncTxt"></span>
-    <button class="btn-sync ms-2" id="btnSync" onclick="syncData()"><i class="bi bi-arrow-repeat"></i><span class="btn-sync-label ms-1">Sync</span></button>
-    <div class="tb-user ms-2" onclick="doLogout()" title="Sign out">
-      <div class="tb-av" id="navAv">SA</div>
-      <span class="tb-name" id="navName">Admin</span>
-      <i class="bi bi-box-arrow-right ms-1" style="font-size:11px;color:var(--muted)"></i>
+  <!-- SIDEBAR -->
+  <aside class="side" id="side">
+    <div class="side-head">
+      <div class="side-logo">L</div>
+      <div class="side-brand">Luxeimperial<small>Studio CRM</small></div>
     </div>
-  </div>
-  <div class="sb-overlay" id="sbOv" onclick="closeSb()"></div>
+    <div class="side-scroll">
+      <div class="nav-lbl">Dashboard</div>
+      <div class="nav-item active" onclick="go('overview',this)"><i class="bi bi-grid-1x2-fill"></i>Overview<span class="badge-n" id="n-all">0</span></div>
 
-  <div class="app-wrap">
+      <div class="nav-lbl">Pipeline</div>
+      <div class="nav-item s-new" onclick="go('new',this)"><span class="nav-dot dot-new"></span>New Leads<span class="badge-n" id="n-new">0</span></div>
+      <div class="nav-item s-comm" onclick="go('comm',this)"><span class="nav-dot dot-comm"></span>In Communication<span class="badge-n" id="n-comm">0</span></div>
+      <div class="nav-item s-book" onclick="go('book',this)"><span class="nav-dot dot-book"></span>Booked<span class="badge-n" id="n-book">0</span></div>
+      <div class="nav-item s-closed" onclick="go('closed',this)"><span class="nav-dot dot-closed"></span>Closed<span class="badge-n" id="n-closed">0</span></div>
 
-    <!-- SIDEBAR -->
-    <div class="sidebar" id="sidebar">
-      <div class="sb-grp mt-1">
-        <div class="sb-lbl">Studio</div>
-        <div class="sb-item active" onclick="goView('overview',this)">
-          <i class="bi bi-grid-1x2 sb-ico"></i>Overview
-          <span class="sb-badge" id="sb-all">0</span>
-        </div>
-      </div>
-      <div class="sb-grp">
-        <div class="sb-lbl">Pipeline</div>
-        <div class="sb-item s-new" onclick="goView('new',this)">
-          <i class="bi bi-inbox sb-ico"></i>New Leads
-          <span class="sb-badge" id="sb-new">0</span>
-        </div>
-        <div class="sb-item s-comm" onclick="goView('comm',this)">
-          <i class="bi bi-chat-dots sb-ico"></i>In Communication
-          <span class="sb-badge" id="sb-comm">0</span>
-        </div>
-        <div class="sb-item s-book" onclick="goView('book',this)">
-          <i class="bi bi-calendar-check sb-ico"></i>Booked
-          <span class="sb-badge" id="sb-book">0</span>
-        </div>
-      </div>
-      <hr class="sb-divider">
-      <div class="sb-grp">
-        <div class="sb-lbl">Archive</div>
-        <div class="sb-item s-closed" onclick="goView('closed',this)">
-          <i class="bi bi-archive sb-ico"></i>Closed
-          <span class="sb-badge" id="sb-closed">0</span>
-        </div>
-      </div>
-      <hr class="sb-divider">
-      <div class="sb-grp">
-        <div class="sb-lbl">Filter by Type</div>
-        <div class="sb-item" onclick="setTF('',this)"><i class="bi bi-circle sb-ico"></i>All Types</div>
-        <div class="sb-item" onclick="setTF('Birthday',this)"><i class="bi bi-balloon sb-ico"></i>Birthday</div>
-        <div class="sb-item" onclick="setTF('Anniversary',this)"><i class="bi bi-heart sb-ico"></i>Anniversary</div>
-        <div class="sb-item" onclick="setTF('Maternity',this)"><i class="bi bi-person-heart sb-ico"></i>Maternity</div>
-        <div class="sb-item" onclick="setTF('Pre-Wedding',this)"><i class="bi bi-flower1 sb-ico"></i>Pre-Wedding</div>
-        <div class="sb-item" onclick="setTF('Family Portrait',this)"><i class="bi bi-people sb-ico"></i>Family</div>
-        <div class="sb-item" onclick="setTF('Graduation',this)"><i class="bi bi-mortarboard sb-ico"></i>Graduation</div>
+      <div class="nav-lbl">Filter by Type</div>
+      <div class="nav-item" onclick="setTF('',this)"><i class="bi bi-collection"></i>All Types</div>
+      <div class="nav-item" onclick="setTF('Birthday',this)"><i class="bi bi-balloon"></i>Birthday</div>
+      <div class="nav-item" onclick="setTF('Anniversary',this)"><i class="bi bi-heart"></i>Anniversary</div>
+      <div class="nav-item" onclick="setTF('Maternity',this)"><i class="bi bi-person-hearts"></i>Maternity</div>
+      <div class="nav-item" onclick="setTF('Pre-Wedding',this)"><i class="bi bi-flower1"></i>Pre-Wedding</div>
+      <div class="nav-item" onclick="setTF('Family Portrait',this)"><i class="bi bi-people"></i>Family</div>
+      <div class="nav-item" onclick="setTF('Graduation',this)"><i class="bi bi-mortarboard"></i>Graduation</div>
+    </div>
+    <div class="side-foot">
+      <div class="user-chip" onclick="doLogout()" title="Sign out">
+        <div class="user-av" id="uAv">SA</div>
+        <div class="user-meta"><div class="user-name" id="uName">Admin</div><div class="user-role">Sign out</div></div>
+        <i class="bi bi-box-arrow-right" style="color:var(--muted)"></i>
       </div>
     </div>
+  </aside>
+  <div class="ov" id="sideOv" onclick="closeSide()" style="z-index:55;background:rgba(15,23,42,.4)"></div>
 
-    <!-- MAIN -->
-    <div class="main">
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <button class="burger" onclick="toggleSide()"><i class="bi bi-list"></i></button>
+      <div class="tb-title" id="tbTitle">Overview</div>
+      <div class="tb-sp"></div>
+      <div class="sync-pill"><span class="sync-dot"></span><span id="syncTxt">Synced</span></div>
+      <button class="btn-sync" id="btnSync" onclick="syncData()"><i class="bi bi-arrow-repeat"></i><span class="sync-label">Sync</span></button>
+    </header>
 
-      <!-- ── OVERVIEW ── -->
-      <div class="view active" id="v-overview">
-        <div class="ph">
-          <div class="ph-left">
-            <div class="ph-title">Studio <em>Overview</em></div>
-            <div class="ph-sub">Your pipeline at a glance — click any card to jump to that section.</div>
-          </div>
-          <div class="ph-right">
-            <div class="ph-count" id="ov-total">0 total clients</div>
-            <div class="ph-date" id="todayDate"></div>
-          </div>
-        </div>
-        <div class="ov-stats">
-          <div class="ov-stat os-new" onclick="goView('new',null)">
-            <i class="bi bi-inbox-fill ov-stat-ic"></i>
-            <div class="ov-stat-n" id="os-new">0</div>
-            <div class="ov-stat-l">New Leads</div>
-          </div>
-          <div class="ov-stat os-comm" onclick="goView('comm',null)">
-            <i class="bi bi-chat-dots-fill ov-stat-ic"></i>
-            <div class="ov-stat-n" id="os-comm">0</div>
-            <div class="ov-stat-l">In Communication</div>
-          </div>
-          <div class="ov-stat os-book" onclick="goView('book',null)">
-            <i class="bi bi-calendar-check-fill ov-stat-ic"></i>
-            <div class="ov-stat-n" id="os-book">0</div>
-            <div class="ov-stat-l">Booked</div>
-          </div>
-          <div class="ov-stat os-closed" onclick="goView('closed',null)">
-            <i class="bi bi-archive-fill ov-stat-ic"></i>
-            <div class="ov-stat-n" id="os-closed">0</div>
-            <div class="ov-stat-l">Closed</div>
-          </div>
-        </div>
-        <!-- Today's new leads preview -->
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div style="font-family:var(--serif);font-size:16px;font-weight:500;color:var(--dark)">Today's New Leads</div>
-          <span style="font-size:10px;color:var(--muted)" id="ov-today-c"></span>
-        </div>
-        <div class="leads-grid mb-4" id="ov-new-grid"></div>
-        <!-- Upcoming booked sessions -->
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;margin-top:20px">
-          <div style="font-family:var(--serif);font-size:16px;font-weight:500;color:var(--dark)">Upcoming Sessions</div>
-          <span style="font-size:10px;color:var(--muted)" id="ov-book-c"></span>
-        </div>
-        <div id="ov-book-list"></div>
-      </div>
+    <div class="content">
 
-      <!-- ── NEW LEADS ── -->
-      <div class="view" id="v-new">
-        <div class="ph">
-          <div class="ph-left">
-            <div class="ph-title">New <em>Leads</em></div>
-            <div class="ph-sub">All new enquiries — reach out and introduce yourself.</div>
-          </div>
-          <div class="ph-right"><div class="ph-count" id="ph-new">0 leads</div></div>
+      <!-- OVERVIEW -->
+      <section class="view active" id="v-overview">
+        <div class="phd">
+          <div><h1>Overview</h1><p id="todayDate"></p></div>
+          <div class="count" id="ovTotal">0 clients</div>
         </div>
-        <div id="today-banner-wrap"></div>
+        <div class="stats">
+          <div class="stat s-new" onclick="go('new',navEl('new'))"><div class="stat-ic"><i class="bi bi-inbox-fill"></i></div><div class="stat-n" id="st-new">0</div><div class="stat-l">New Leads</div></div>
+          <div class="stat s-comm" onclick="go('comm',navEl('comm'))"><div class="stat-ic"><i class="bi bi-chat-dots-fill"></i></div><div class="stat-n" id="st-comm">0</div><div class="stat-l">In Communication</div></div>
+          <div class="stat s-book" onclick="go('book',navEl('book'))"><div class="stat-ic"><i class="bi bi-calendar-check-fill"></i></div><div class="stat-n" id="st-book">0</div><div class="stat-l">Booked</div></div>
+          <div class="stat s-closed" onclick="go('closed',navEl('closed'))"><div class="stat-ic"><i class="bi bi-archive-fill"></i></div><div class="stat-n" id="st-closed">0</div><div class="stat-l">Closed</div></div>
+        </div>
+        <div class="sec-title"><h2>Today's New Leads</h2><span class="more" id="ovNewMore"></span></div>
+        <div class="grid" id="ovNew" style="margin-bottom:28px"></div>
+        <div class="sec-title"><h2>Upcoming Sessions</h2><span class="more" id="ovBookMore"></span></div>
+        <div id="ovBook"></div>
+      </section>
+
+      <!-- NEW -->
+      <section class="view" id="v-new">
+        <div class="phd"><div><h1>New Leads</h1><p>Fresh enquiries — reach out and introduce yourself.</p></div><div class="count" id="c-new">0 leads</div></div>
+        <div id="newBanner"></div>
         <div class="toolbar">
-          <div class="srch"><i class="bi bi-search"></i><input type="text" id="s-new" placeholder="Search name, phone, type…" oninput="dNew()"></div>
-          <select class="t-sel" id="f-new" onchange="renderNew()">
-            <option value="">All Types</option>
-            <option>Birthday</option><option>Anniversary</option><option>Maternity</option>
-            <option>Pre-Wedding</option><option>Wedding</option><option>Family Portrait</option>
-            <option>Personal Branding</option><option>Graduation</option><option>Other</option>
-          </select>
-          <button class="btn-add" onclick="openModal()"><i class="bi bi-plus-lg me-1"></i>Add</button>
+          <div class="search"><i class="bi bi-search"></i><input id="s-new" placeholder="Search name, phone, type…" oninput="dNew()"></div>
+          <select class="sel" id="f-new" onchange="renderNew()"><option value="">All Types</option><option>Birthday</option><option>Anniversary</option><option>Maternity</option><option>Pre-Wedding</option><option>Wedding</option><option>Family Portrait</option><option>Personal Branding</option><option>Graduation</option><option>Other</option></select>
+          <button class="btn-add" onclick="openModal()"><i class="bi bi-plus-lg"></i>Add Client</button>
         </div>
-        <div class="leads-grid" id="g-new"></div>
-      </div>
+        <div class="grid" id="g-new"></div>
+      </section>
 
-      <!-- ── IN COMMUNICATION ── -->
-      <div class="view" id="v-comm">
-        <div class="ph">
-          <div class="ph-left">
-            <div class="ph-title">In <em>Communication</em></div>
-            <div class="ph-sub">Still in conversation — keep the momentum going.</div>
-          </div>
-          <div class="ph-right"><div class="ph-count" id="ph-comm">0 clients</div></div>
-        </div>
+      <!-- COMM -->
+      <section class="view" id="v-comm">
+        <div class="phd"><div><h1>In Communication</h1><p>Still in conversation — keep the momentum going.</p></div><div class="count" id="c-comm">0 clients</div></div>
         <div class="toolbar">
-          <div class="srch"><i class="bi bi-search"></i><input type="text" id="s-comm" placeholder="Search…" oninput="dComm()"></div>
-          <select class="t-sel" id="f-comm" onchange="renderComm()">
-            <option value="">All Types</option>
-            <option>Birthday</option><option>Anniversary</option><option>Maternity</option>
-            <option>Pre-Wedding</option><option>Wedding</option><option>Family Portrait</option><option>Other</option>
-          </select>
-          <button class="btn-add" onclick="openModal()"><i class="bi bi-plus-lg me-1"></i>Add</button>
+          <div class="search"><i class="bi bi-search"></i><input id="s-comm" placeholder="Search…" oninput="dComm()"></div>
+          <select class="sel" id="f-comm" onchange="renderComm()"><option value="">All Types</option><option>Birthday</option><option>Anniversary</option><option>Maternity</option><option>Pre-Wedding</option><option>Wedding</option><option>Family Portrait</option><option>Other</option></select>
+          <button class="btn-add" onclick="openModal()"><i class="bi bi-plus-lg"></i>Add Client</button>
         </div>
-        <div class="leads-grid" id="g-comm"></div>
-      </div>
+        <div class="grid" id="g-comm"></div>
+      </section>
 
-      <!-- ── BOOKED ── -->
-      <div class="view" id="v-book">
-        <div class="ph">
-          <div class="ph-left">
-            <div class="ph-title">Booked <em>Sessions</em></div>
-            <div class="ph-sub">Confirmed and paid — sessions ready to shoot.</div>
-          </div>
-          <div class="ph-right"><div class="ph-count" id="ph-book">0 sessions</div></div>
-        </div>
+      <!-- BOOK -->
+      <section class="view" id="v-book">
+        <div class="phd"><div><h1>Booked Sessions</h1><p>Confirmed and secured — sessions ready to shoot.</p></div><div class="count" id="c-book">0 sessions</div></div>
         <div class="toolbar">
-          <div class="srch"><i class="bi bi-search"></i><input type="text" id="s-book" placeholder="Search…" oninput="dBook()"></div>
-          <select class="t-sel" id="f-book" onchange="renderBook()">
-            <option value="">All Types</option>
-            <option>Birthday</option><option>Anniversary</option><option>Maternity</option>
-            <option>Pre-Wedding</option><option>Wedding</option><option>Family Portrait</option><option>Other</option>
-          </select>
-          <button class="btn-add" onclick="openModal()"><i class="bi bi-plus-lg me-1"></i>Add</button>
+          <div class="search"><i class="bi bi-search"></i><input id="s-book" placeholder="Search…" oninput="dBook()"></div>
+          <select class="sel" id="f-book" onchange="renderBook()"><option value="">All Types</option><option>Birthday</option><option>Anniversary</option><option>Maternity</option><option>Pre-Wedding</option><option>Wedding</option><option>Family Portrait</option><option>Other</option></select>
+          <button class="btn-add" onclick="openModal()"><i class="bi bi-plus-lg"></i>Add Client</button>
         </div>
-        <div class="leads-grid" id="g-book"></div>
-      </div>
+        <div class="grid" id="g-book"></div>
+      </section>
 
-      <!-- ── CLOSED ── -->
-      <div class="view" id="v-closed">
-        <div class="ph">
-          <div class="ph-left">
-            <div class="ph-title">Closed <em>Clients</em></div>
-            <div class="ph-sub">Clients who didn't proceed — archived for reference.</div>
-          </div>
-          <div class="ph-right"><div class="ph-count" id="ph-closed">0 clients</div></div>
-        </div>
+      <!-- CLOSED -->
+      <section class="view" id="v-closed">
+        <div class="phd"><div><h1>Closed Clients</h1><p>Clients who didn't proceed — archived for reference.</p></div><div class="count" id="c-closed">0 clients</div></div>
         <div class="toolbar">
-          <div class="srch"><i class="bi bi-search"></i><input type="text" id="s-closed" placeholder="Search closed clients…" oninput="dClosed()"></div>
-          <button class="btn-add" onclick="openModal()"><i class="bi bi-plus-lg me-1"></i>Add</button>
+          <div class="search"><i class="bi bi-search"></i><input id="s-closed" placeholder="Search closed clients…" oninput="dClosed()"></div>
+          <button class="btn-add" onclick="openModal()"><i class="bi bi-plus-lg"></i>Add Client</button>
         </div>
         <div id="g-closed"></div>
-      </div>
+      </section>
 
     </div>
   </div>
 </div>
+</div>
 
-<!-- ══ MODAL ══ -->
-<div class="modal fade" id="lModal" tabindex="-1">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header"><div class="m-title" id="mTitle">New Client</div><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-      <div class="modal-body">
-        <input type="hidden" id="eIdx" value="-1">
-        <div class="row g-3">
-          <div class="col-md-6"><label class="mfl">Full Name *</label><input class="mfi" id="f-name" type="text" placeholder="Client full name"></div>
-          <div class="col-md-6"><label class="mfl">WhatsApp Number *</label><input class="mfi" id="f-phone" type="tel" placeholder="+44 000 0000 000"></div>
-          <div class="col-md-6"><label class="mfl">Email <small style="color:var(--muted);font-size:10px;letter-spacing:0;text-transform:none">(optional)</small></label><input class="mfi" id="f-email" type="email" placeholder="client@email.com"></div>
-          <div class="col-md-6"><label class="mfl">Shoot Date</label><input class="mfi" id="f-date" type="date"></div>
-          <div class="col-md-6">
-            <label class="mfl">Session Type</label>
-            <select class="mfi" id="f-type"><option value="">Select type</option><option>Birthday</option><option>Anniversary</option><option>Maternity</option><option>Pre-Wedding</option><option>Wedding</option><option>Family Portrait</option><option>Personal Branding</option><option>Graduation</option><option>Social Events</option><option>Other</option></select>
+<!-- ════════ CLIENT MODAL ════════ -->
+<div class="ov" id="modalOv">
+  <div class="sheet">
+    <div class="sheet-head"><h2 id="mTitle">New Client</h2><button class="x-btn" onclick="closeModal()"><i class="bi bi-x-lg"></i></button></div>
+    <div class="sheet-body">
+      <input type="hidden" id="eIdx" value="-1">
+      <div class="fgrid">
+        <div class="field"><label>Full Name *</label><input class="inp" id="f-name" placeholder="Client full name"></div>
+        <div class="field"><label>WhatsApp Number *</label><input class="inp" id="f-phone" type="tel" placeholder="+44 …"></div>
+        <div class="field"><label>Email <span class="opt">(optional)</span></label><input class="inp" id="f-email" type="email" placeholder="client@email.com"></div>
+        <div class="field"><label>Shoot Date</label><input class="inp" id="f-date" type="date"></div>
+        <div class="field"><label>Session Type</label><select class="inp" id="f-type"><option value="">Select type</option><option>Birthday</option><option>Anniversary</option><option>Maternity</option><option>Pre-Wedding</option><option>Wedding</option><option>Family Portrait</option><option>Personal Branding</option><option>Graduation</option><option>Social Events</option><option>Other</option></select></div>
+        <div class="field"><label>Scene</label><select class="inp" id="f-scene"><option value="">Select scene</option><option>Studio</option><option>Outdoor</option></select></div>
+        <div class="field full"><label>Stage</label>
+          <div class="stages">
+            <div class="stage st-new" onclick="selSt('new')">New Lead</div>
+            <div class="stage st-comm" onclick="selSt('comm')">Communication</div>
+            <div class="stage st-book" onclick="selSt('book')">Booked</div>
+            <div class="stage st-closed" onclick="selSt('closed')">Closed</div>
           </div>
-          <div class="col-md-6">
-            <label class="mfl">Scene</label>
-            <select class="mfi" id="f-scene"><option value="">Select scene</option><option>Studio</option><option>Outdoor</option></select>
-          </div>
-          <div class="col-12">
-            <label class="mfl">Stage</label>
-            <div class="st-grid">
-              <div class="st-opt st-new" onclick="selSt('new')">New Lead</div>
-              <div class="st-opt st-comm" onclick="selSt('comm')">In Communication</div>
-              <div class="st-opt st-book" onclick="selSt('book')">Booked</div>
-              <div class="st-opt st-closed" onclick="selSt('closed')">Closed</div>
-            </div>
-            <input type="hidden" id="f-status" value="new">
-          </div>
-          <div class="col-12"><label class="mfl">Notes</label><textarea class="mfi" id="f-notes" placeholder="Deposit paid, outfit, follow-up info, reason for closing…"></textarea></div>
+          <input type="hidden" id="f-status" value="new">
         </div>
+        <div class="field full"><label>Notes</label><textarea class="inp" id="f-notes" placeholder="Deposit paid, outfit, follow-up info, reason for closing…"></textarea></div>
       </div>
-      <div class="modal-footer">
-        <button class="btn-cancel" data-bs-dismiss="modal">Cancel</button>
-        <button class="btn-save" onclick="saveLead()"><i class="bi bi-check2 me-1"></i>Save</button>
-      </div>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveLead()"><i class="bi bi-check2 me-1"></i>Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ DATE PROMPT ════════ -->
+<div class="ov" id="dpOv">
+  <div class="sheet sheet-sm">
+    <div class="sheet-head"><h2>Confirm Booking</h2><button class="x-btn" onclick="cancelBook()"><i class="bi bi-x-lg"></i></button></div>
+    <div class="sheet-body">
+      <p style="font-size:13.5px;color:var(--muted);margin-bottom:14px">Moving this client to <strong style="color:var(--book)">Booked</strong>. Enter the confirmed shoot date.</p>
+      <div class="field"><label>Shoot Date *</label><input class="inp" id="dpDate" type="date"></div>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn-ghost" onclick="cancelBook()">Cancel</button>
+      <button class="btn-primary" onclick="confirmBook()"><i class="bi bi-calendar-check me-1"></i>Confirm</button>
     </div>
   </div>
 </div>
 
 <div class="toasts" id="toasts"></div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// ════════════════════════════════════
-// 🔴 UPDATE THIS ONE LINE ONLY
+// ════════ CONFIG ════════
+// 🔴 UPDATE THIS to your deployed /exec URL. Passwords live in Code.gs, not here.
 var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWXa1zcV-KXhGm2Cl0WJ5Kp_oUAbcu6a0N6vihpOTsEgQwJVGQGGZKZFdoBoB40NHr/exec';
-// ════════════════════════════════════
-// Passwords live in Code.gs — NOT here. Nothing sensitive is in this file.
 
-var leads=[], typeFilter='', bsModal, pendingIdx=-1, currentUser=null, syncInterval=null, authToken=null;
+var leads=[], typeFilter='', pendingIdx=-1, currentUser=null, authToken=null, syncInterval=null;
 
-// ── AUTH (server-verified) ──
+// ════════ HELPERS ════════
+var _c={};
+function el(id){var e=_c[id];if(e&&e.isConnected)return e;e=document.getElementById(id);_c[id]=e;return e;}
+function v(id){return el(id).value.trim();}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function initials(n){var p=(n||'').trim().split(' ');return((p[0]||'')[0]||'').toUpperCase()+((p.length>1?(p[p.length-1]||'')[0]:'')||'').toUpperCase();}
+function fmtDate(d){if(!d)return'—';try{return new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}catch(e){return d;}}
+function isToday(ts){if(!ts)return false;var d=new Date(ts),t=new Date();return d.getDate()===t.getDate()&&d.getMonth()===t.getMonth()&&d.getFullYear()===t.getFullYear();}
+function ago(ts){if(!ts)return'—';var d=Math.floor((Date.now()-new Date(ts))/864e5);return d<=0?'Today':d===1?'Yesterday':d+'d ago';}
+function nowISO(){return new Date().toISOString();}
+function uid(){return 'L'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function debounce(fn,w){var t;return function(){var a=arguments,c=this;clearTimeout(t);t=setTimeout(function(){fn.apply(c,a);},w);};}
+function navEl(id){return document.querySelector('.nav-item.s-'+id);}
+// active (non-archived) leads only
+function active(){return leads.filter(function(l){return !l.archived;});}
+function byStatus(s){return active().filter(function(l){return l.status===s&&(!typeFilter||l.shootType===typeFilter);});}
+function sorted(a){return a.slice().sort(function(x,y){return new Date(y.ts||0)-new Date(x.ts||0);});}
+function stampIdx(){for(var i=0;i<leads.length;i++)leads[i]._i=i;}
+function idxOf(l){return l._i!==undefined?l._i:leads.indexOf(l);}
+
+// ════════ SESSION (storage + URL-hash fallback) ════════
+function saveSession(o){var s=JSON.stringify(o);try{localStorage.setItem('li_sess',s);}catch(e){}try{sessionStorage.setItem('li_sess',s);}catch(e){}try{location.hash='s='+encodeURIComponent(btoa(s));}catch(e){}}
+function readSession(){try{var m=(location.hash||'').match(/[#&]s=([^&]+)/);if(m)return JSON.parse(atob(decodeURIComponent(m[1])));}catch(e){}try{var l=localStorage.getItem('li_sess');if(l)return JSON.parse(l);}catch(e){}try{var ss=sessionStorage.getItem('li_sess');if(ss)return JSON.parse(ss);}catch(e){}return null;}
+function clearSession(){try{localStorage.removeItem('li_sess');}catch(e){}try{sessionStorage.removeItem('li_sess');}catch(e){}try{location.hash='';}catch(e){}}
+
+// ════════ AUTH ════════
 async function doLogin(){
-  var u=v('lUser'), p=el('lPass').value;
-  if(!u||!p){ showLoginErr('Please enter username and password.'); return; }
-
-  var btn=el('btnLogin');
-  btn.disabled=true;
-  el('btnLoginTxt').innerHTML='<i class="bi bi-arrow-repeat spin"></i> Signing in…';
-  el('lbErr').style.display='none';
-  ['lUser','lPass'].forEach(function(id){el(id).classList.remove('err');});
-
+  var u=v('lUser'),p=el('lPass').value;
+  if(!u||!p){return loginErr('Please enter username and password.');}
+  var b=el('btnLogin');b.disabled=true;el('btnLoginTxt').innerHTML='<i class="bi bi-arrow-repeat spin"></i> Signing in…';
+  el('lbErr').style.display='none';['lUser','lPass'].forEach(function(id){el(id).classList.remove('err');});
   try{
-    var res=await fetch(SCRIPT_URL,{
-      method:'POST',
-      body:JSON.stringify({action:'login',user:u,pass:p})
-    });
-    var data=await res.json();
-    if(data&&data.success&&data.token){
-      authToken=data.token;
-      currentUser=data.user;
-      saveSession({
-        token:data.token, u:data.user.u, name:data.user.name, av:data.user.av, ts:Date.now()
-      });
-      resetLoginBtn();
-      showApp(data.user);
-    }else{
-      showLoginErr((data&&data.error)||'Incorrect username or password.');
-    }
-  }catch(e){
-    showLoginErr('Could not reach the server. Check your connection.');
-  }
+    var r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'login',user:u,pass:p})});
+    var d=await r.json();
+    if(d&&d.success&&d.token){
+      authToken=d.token;currentUser=d.user;
+      saveSession({token:d.token,u:d.user.u,name:d.user.name,av:d.user.av,ts:Date.now()});
+      resetLoginBtn();showApp(d.user);
+    }else{loginErr((d&&d.error)||'Incorrect username or password.');}
+  }catch(e){loginErr('Could not reach the server. Check your connection.');}
 }
-
-// ── SESSION STORAGE with fallbacks ──
-// Apps Script serves the dashboard inside a sandboxed iframe where some
-// browsers block localStorage/sessionStorage entirely. We try persistent
-// storage first, then fall back to the URL hash, which the iframe can
-// always read back after a reload. The token is never sent to a server
-// via the hash (hashes aren't transmitted), so it stays private.
-function saveSession(obj){
-  var str=JSON.stringify(obj);
-  // try both web storages — either may be blocked, that's fine
-  try{ localStorage.setItem('li_session',str); }catch(e){}
-  try{ sessionStorage.setItem('li_session',str); }catch(e){}
-  // always also stash in the URL hash as the reliable fallback
-  try{ location.hash='s='+encodeURIComponent(btoa(str)); }catch(e){}
-}
-function readSession(){
-  // 1) URL hash (survives iframe reloads even when storage is blocked)
-  try{
-    var h=location.hash||'';
-    var m=h.match(/[#&]s=([^&]+)/);
-    if(m){ return JSON.parse(atob(decodeURIComponent(m[1]))); }
-  }catch(e){}
-  // 2) localStorage
-  try{ var l=localStorage.getItem('li_session'); if(l) return JSON.parse(l); }catch(e){}
-  // 3) sessionStorage
-  try{ var s=sessionStorage.getItem('li_session'); if(s) return JSON.parse(s); }catch(e){}
-  return null;
-}
-function clearSession(){
-  try{ localStorage.removeItem('li_session'); }catch(e){}
-  try{ sessionStorage.removeItem('li_session'); }catch(e){}
-  try{ location.hash=''; }catch(e){}
-}
-
-function showLoginErr(msg){
-  resetLoginBtn();
-  var e=el('lbErr');
-  e.innerHTML='<i class="bi bi-shield-x me-1"></i>'+esc(msg);
-  e.style.display='block';
-  ['lUser','lPass'].forEach(function(id){el(id).classList.add('err');});
-  el('lPass').value='';
-  el('lPass').focus();
-}
-function resetLoginBtn(){
-  var btn=el('btnLogin');
-  btn.disabled=false;
-  el('btnLoginTxt').innerHTML='Access Dashboard <i class="bi bi-arrow-right"></i>';
-}
-function togglePw(){
-  var inp=el('lPass'), eye=el('lEye');
-  if(inp.type==='password'){inp.type='text';eye.className='bi bi-eye-slash fl-eye';}
-  else{inp.type='password';eye.className='bi bi-eye fl-eye';}
-}
-
+function loginErr(m){resetLoginBtn();var e=el('lbErr');e.innerHTML='<i class="bi bi-shield-exclamation me-1"></i>'+esc(m);e.style.display='block';['lUser','lPass'].forEach(function(id){el(id).classList.add('err');});el('lPass').value='';el('lPass').focus();}
+function resetLoginBtn(){var b=el('btnLogin');b.disabled=false;el('btnLoginTxt').innerHTML='Sign in <i class="bi bi-arrow-right"></i>';}
+function togglePw(){var i=el('lPass'),e=el('lEye');if(i.type==='password'){i.type='text';e.className='bi bi-eye-slash fl-eye';}else{i.type='password';e.className='bi bi-eye fl-eye';}}
 function showApp(user){
   currentUser=user;
   el('loginPage').classList.add('out');
   setTimeout(function(){el('loginPage').style.display='none';},520);
   el('app').style.display='block';
-  el('navAv').textContent=user.av;
-  el('navName').textContent=user.name;
-  el('lbErr').style.display='none';
-  ['lUser','lPass'].forEach(function(id){el(id).classList.remove('err');});
+  el('uAv').textContent=user.av;el('uName').textContent=user.name;
   init();
 }
+function doLogout(){if(!confirm('Sign out?'))return;clearSession();authToken=null;location.reload();}
 
-function doLogout(){
-  if(!confirm('Sign out?'))return;
-  clearSession();
-  authToken=null;
-  location.reload();
-}
-
-// ── RESTORE SESSION ON REFRESH (token kept from last login) ──
-// Runs after the full page + scripts are ready, so init()/render can't
-// throw before auth is restored. Auth restore and app rendering are
-// separated: even if rendering hiccups, you stay logged in.
 function checkSession(){
-  var sess=null;
-  try{ sess=readSession(); }catch(e){ sess=null; }
-  if(!sess || !sess.token) return;            // nothing saved → show login
-  if(Date.now()-sess.ts >= 7*24*60*60*1000){  // expired
-    clearSession();
-    return;
-  }
-  // valid session → restore auth FIRST (this is what keeps you logged in)
-  authToken=sess.token;
-  currentUser={u:sess.u, name:sess.name, av:sess.av};
-  try{ sess.ts=Date.now(); saveSession(sess); }catch(e){}  // rolling expiry
-  // then show the app; if rendering throws, we're still authenticated
-  try{ showApp(currentUser); }
-  catch(e){ console.error('Restore render error:', e); }
+  var s=null;try{s=readSession();}catch(e){}
+  if(!s||!s.token)return;
+  if(Date.now()-s.ts>=7*24*60*60*1000){clearSession();return;}
+  authToken=s.token;currentUser={u:s.u,name:s.name,av:s.av};
+  try{s.ts=Date.now();saveSession(s);}catch(e){}
+  try{showApp(currentUser);}catch(e){console.error(e);}
 }
+if(document.readyState==='complete')checkSession();else window.addEventListener('load',checkSession);
 
-if(document.readyState==='complete'){
-  checkSession();
-}else{
-  window.addEventListener('load', checkSession);
-}
+// ════════ SIDEBAR ════════
+function toggleSide(){var o=el('side').classList.toggle('open');el('sideOv').style.display=o?'block':'none';}
+function closeSide(){el('side').classList.remove('open');el('sideOv').style.display='none';}
 
-// ── SIDEBAR ──
-function toggleSb(){
-  var open=el('sidebar').classList.toggle('open');
-  el('sbOv').classList.toggle('show',open);
-  el('hamIco').className=open?'bi bi-x-lg':'bi bi-list';
-}
-function closeSb(){
-  el('sidebar').classList.remove('open');
-  el('sbOv').classList.remove('show');
-  el('hamIco').className='bi bi-list';
-}
-
-// ── INIT ──
+// ════════ INIT ════════
 function init(){
   el('todayDate').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   loadCache();
-  if(!leads.length) loadDemo();
+  if(!leads.length)loadDemo();
   selSt('new');
-  // Auto-sync every 30 seconds if SCRIPT_URL is set
-  if(SCRIPT_URL && SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL'){
-    syncData();
-    if(syncInterval) clearInterval(syncInterval);
-    syncInterval = setInterval(function(){
-      syncData(true); // silent=true (no toast on auto-sync)
-    }, 30000);
+  if(SCRIPT_URL&&SCRIPT_URL.indexOf('script.google.com')>-1){
+    syncData(true);
+    if(syncInterval)clearInterval(syncInterval);
+    syncInterval=setInterval(function(){syncData(true);},30000);
   }
 }
 
-// ── CACHE ──
-function loadCache(){try{var c=localStorage.getItem('li_crm');if(c){leads=JSON.parse(c);stampIdx();renderAll();stats();}}catch(e){}}
-function saveCache(){stampIdx();localStorage.setItem('li_crm',JSON.stringify(leads));}
+// ════════ CACHE ════════
+function loadCache(){try{var c=localStorage.getItem('li_crm');if(c){leads=JSON.parse(c);stampIdx();renderAll();}}catch(e){}}
+function saveCache(){stampIdx();try{localStorage.setItem('li_crm',JSON.stringify(leads));}catch(e){}}
 
-// ── DEMO DATA ──
 function loadDemo(){
-  var now=Date.now();
+  var n=Date.now();
   leads=[
-    {name:'Amara Johnson',phone:'447712345678',email:'amara@email.com',shootDate:'2025-06-12',shootType:'Maternity',scene:'Studio',status:'new',notes:'Loves the flower backdrop.',ts:new Date(now-864e5*.2).toISOString()},
-    {name:'Ada Nwosu',phone:'447700112233',email:'ada@email.com',shootDate:'2025-07-20',shootType:'Birthday',scene:'Studio',status:'new',notes:'30th birthday. Bold editorial look.',ts:new Date(now-864e5*.5).toISOString()},
-    {name:'Funmi Alade',phone:'447711223344',email:'',shootDate:'2025-07-05',shootType:'Pre-Wedding',scene:'Outdoor',status:'new',notes:'',ts:new Date(now-864e5*1.5).toISOString()},
-    {name:'Tolu & Bisi Adeyemi',phone:'447798765432',email:'tolu@email.com',shootDate:'2025-06-18',shootType:'Anniversary',scene:'Outdoor',status:'comm',notes:'Invoice sent 20 May. Waiting for deposit.',ts:new Date(now-864e5*3).toISOString()},
-    {name:'Chioma Obi',phone:'447766554433',email:'chioma@email.com',shootDate:'2025-07-12',shootType:'Maternity',scene:'Studio',status:'comm',notes:'Discussing bundle packages. Very interested.',ts:new Date(now-864e5*1).toISOString()},
-    {name:'Kemi Okafor',phone:'447733445566',email:'kemi@gmail.com',shootDate:'2025-06-22',shootType:'Birthday',scene:'Studio',status:'book',notes:'Deposit £150 received ✓. White dress. Arrive 30min early.',ts:new Date(now-864e5*5).toISOString()},
-    {name:'Yetunde Bello',phone:'447744556677',email:'yetunde@email.com',shootDate:'2025-06-28',shootType:'Maternity',scene:'Outdoor',status:'book',notes:'7 months pregnant. Golden hour 6pm.',ts:new Date(now-864e5*4).toISOString()},
-    {name:'Sade Badmus',phone:'447799001122',email:'',shootDate:'2025-05-20',shootType:'Birthday',scene:'Studio',status:'closed',notes:'Went with another studio — price difference.',ts:new Date(now-864e5*14).toISOString()},
-    {name:'Grace Udo',phone:'447788001122',email:'',shootDate:'',shootType:'Graduation',scene:'Outdoor',status:'closed',notes:'Not available for proposed dates.',ts:new Date(now-864e5*8).toISOString()},
+    {id:uid(),name:'Amara Johnson',phone:'447712345678',email:'amara@email.com',shootDate:'2025-06-12',shootType:'Maternity',scene:'Studio',status:'new',notes:'Loves the flower backdrop.',ts:new Date(n-864e5*.2).toISOString(),updated:nowISO(),archived:false},
+    {id:uid(),name:'Ada Nwosu',phone:'447700112233',email:'ada@email.com',shootDate:'2025-07-20',shootType:'Birthday',scene:'Studio',status:'new',notes:'30th birthday. Bold editorial look.',ts:new Date(n-864e5*.5).toISOString(),updated:nowISO(),archived:false},
+    {id:uid(),name:'Funmi Alade',phone:'447711223344',email:'',shootDate:'2025-07-05',shootType:'Pre-Wedding',scene:'Outdoor',status:'new',notes:'',ts:new Date(n-864e5*1.5).toISOString(),updated:nowISO(),archived:false},
+    {id:uid(),name:'Tolu & Bisi Adeyemi',phone:'447798765432',email:'tolu@email.com',shootDate:'2025-06-18',shootType:'Anniversary',scene:'Outdoor',status:'comm',notes:'Invoice sent. Waiting for deposit.',ts:new Date(n-864e5*3).toISOString(),updated:nowISO(),archived:false},
+    {id:uid(),name:'Chioma Obi',phone:'447766554433',email:'chioma@email.com',shootDate:'2025-07-12',shootType:'Maternity',scene:'Studio',status:'comm',notes:'Discussing bundle packages. Very interested.',ts:new Date(n-864e5*1).toISOString(),updated:nowISO(),archived:false},
+    {id:uid(),name:'Kemi Okafor',phone:'447733445566',email:'kemi@gmail.com',shootDate:'2025-06-22',shootType:'Birthday',scene:'Studio',status:'book',notes:'Deposit £150 received. White dress. Arrive 30min early.',ts:new Date(n-864e5*5).toISOString(),updated:nowISO(),archived:false},
+    {id:uid(),name:'Yetunde Bello',phone:'447744556677',email:'yetunde@email.com',shootDate:'2025-06-28',shootType:'Maternity',scene:'Outdoor',status:'book',notes:'7 months. Golden hour 6pm.',ts:new Date(n-864e5*4).toISOString(),updated:nowISO(),archived:false},
+    {id:uid(),name:'Sade Badmus',phone:'447799001122',email:'',shootDate:'2025-05-20',shootType:'Birthday',scene:'Studio',status:'closed',notes:'Went with another studio — price.',ts:new Date(n-864e5*14).toISOString(),updated:nowISO(),archived:false},
+    {id:uid(),name:'Grace Udo',phone:'447788001122',email:'',shootDate:'',shootType:'Graduation',scene:'Outdoor',status:'closed',notes:'Not available for proposed dates.',ts:new Date(n-864e5*8).toISOString(),updated:nowISO(),archived:false}
   ];
-  saveCache();renderAll();stats();
+  saveCache();renderAll();
 }
 
-// ── SYNC ──
+// ════════ SYNC (two-way, newest-wins, ID-keyed) ════════
 async function syncData(silent){
   var btn=el('btnSync');
-  if(!silent){btn.disabled=true;btn.innerHTML='<i class="bi bi-arrow-repeat spin"></i><span class="btn-sync-label ms-1">Syncing…</span>';}
+  if(!silent){btn.disabled=true;btn.innerHTML='<i class="bi bi-arrow-repeat spin"></i><span class="sync-label">Syncing…</span>';}
   try{
-    var res=await fetch(SCRIPT_URL+'?action=getLeads&token='+encodeURIComponent(authToken||''));
-    var data=await res.json();
-    if(data&&data.leads&&data.leads.length){
-      var mapped=data.leads.map(function(r){
-        // Preserve any local status/notes changes, fall back to sheet values
-        var ex=leads.find(function(l){
-          return (l.phone&&r.phone&&l.phone===r.phone)||(l.name&&r.name&&l.name===r.name);
-        });
-        // Status mapping — handles all possible values from sheet
-        var sm={
-          'new':'new','New Lead':'new','new lead':'new',
-          'talking':'comm','talk':'comm','comm':'comm','In Communication':'comm','in communication':'comm',
-          'booked':'book','book':'book','Date Secured':'book','date secured':'book','Closed Won':'book',
-          'closed':'closed','lost':'closed','Closed Lost':'closed','closed lost':'closed','won':'book'
+    var r=await fetch(SCRIPT_URL+'?action=getLeads&token='+encodeURIComponent(authToken||''));
+    var d=await r.json();
+    if(d&&d.success&&d.leads){
+      var sm={'new':'new','New Lead':'new','talking':'comm','comm':'comm','In Communication':'comm','booked':'book','book':'book','Date Secured':'book','won':'book','closed':'closed','lost':'closed','Closed Lost':'closed'};
+      // stable key: prefer ID, else name+phone (so ID-less rows don't duplicate)
+      function keyOf(o){return (o.id&&String(o.id).trim())?('id:'+o.id):('np:'+(o.name||'').trim().toLowerCase()+'|'+(o.phone||'').replace(/\D/g,''));}
+      var localByKey={};
+      leads.forEach(function(l){localByKey[keyOf(l)]=l;});
+      var merged=[],seen={};
+      d.leads.forEach(function(r){
+        var st=sm[r.status]||sm[(r.status||'').toLowerCase()]||r.status||'new';
+        var rec={
+          id:(r.id&&String(r.id).trim())?String(r.id):'',
+          name:r.name||'',phone:r.phone||'',email:r.email||'',shootDate:r.shootDate||'',
+          scene:r.scene||'',shootType:r.shootType||'',status:st,notes:r.notes||r.message||'',
+          ts:r.timestamp||r.ts||nowISO(),updated:r.updated||'',archived:!!r.archived
         };
-        var rawStatus=(ex&&ex.status)?ex.status:(r.status||r.Status||'new');
-        var status=sm[rawStatus]||sm[rawStatus.toLowerCase()]||'new';
-        return {
-          name:      r.name||r.Name||'',
-          phone:     r.phone||r.Phone||'',
-          email:     r.email||r.Email||'',
-          shootDate: r.shootDate||r.ShootDate||r['Shoot Date']||'',
-          scene:     r.scene||r.Scene||'',
-          shootType: r.shootType||r.ShootType||r['Shoot Type']||'',
-          notes:     (ex&&ex.notes)?ex.notes:(r.notes||r.Notes||r.message||r.Message||''),
-          status:    status,
-          ts:        r.timestamp||r.ts||r.Timestamp||new Date().toISOString()
-        };
-      }).filter(function(r){return r.name||r.phone;}); // skip completely empty rows
+        var k=keyOf(rec);
+        if(seen[k])return;           // same client already taken from sheet this round → skip dup
+        seen[k]=1;
+        var local=localByKey[k];
+        if(local){
+          // keep a stable id: whichever side has one
+          if(!rec.id&&local.id)rec.id=local.id;
+          // a locally-unsaved (dirty) change must NOT be clobbered by the sheet
+          if(local._dirty){
+            merged.push(Object.assign({},local,{id:rec.id||local.id}));
+          }else{
+            var lu=local.updated||'',ru=rec.updated||'';
+            merged.push((lu&&ru&&lu>ru)?Object.assign({},local,{id:rec.id||local.id}):rec);
+          }
+        }else{
+          // do NOT invent an id for an id-less sheet row — that would make it
+          // stop matching the same sheet row on the next sync (→ duplicates).
+          // The server assigns a permanent id and we pick it up on a later sync.
+          merged.push(rec);
+        }
+      });
+      // keep purely-local rows that aren't in the sheet yet (offline adds)
+      leads.forEach(function(l){var k=keyOf(l);if(!seen[k]){seen[k]=1;merged.push(l);}});
+      leads=merged;saveCache();renderAll();updateSyncBadge();
+      flushPending();          // retry anything that hasn't confirmed to the sheet
+      if(!silent)toast('Synced '+active().length+' clients','ok');
+    }else if(!silent){toast((d&&d.error)||'No data returned','warn');}
+  }catch(e){if(!leads.length)loadDemo();if(!silent)toast('Sync failed','warn');}
+  if(!silent){btn.disabled=false;btn.innerHTML='<i class="bi bi-arrow-repeat"></i><span class="sync-label">Sync</span>';}
+  el('syncTxt').textContent='Synced '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+}
 
-      leads=mapped;saveCache();renderAll();stats();
-      if(!silent) toast('Synced '+leads.length+' clients','ok');
+// push one lead (upsert) to sheet — confirms success, retries on failure
+async function push(lead){
+  if(!authToken||SCRIPT_URL.indexOf('script.google.com')<0)return;
+  lead._dirty=true;                       // mark unsynced until the sheet confirms
+  try{
+    var r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'upsert',token:authToken,lead:lead})});
+    var d=await r.json();
+    if(d&&d.success){
+      lead._dirty=false;                  // confirmed written to the sheet
+      if(d.id&&!lead.id)lead.id=d.id;     // adopt the server-assigned id
+      saveCache();
+      updateSyncBadge();
     }else{
-      if(!silent) toast('No data returned from sheet — check your Apps Script URL','warn');
+      updateSyncBadge();                  // stays dirty → will retry on next sync
     }
   }catch(e){
-    if(!leads.length)loadDemo();
-    if(!silent) toast('Sync failed: '+e.message,'warn');
+    updateSyncBadge();                    // network failed → stays dirty, retried later
   }
-  if(!silent){btn.disabled=false;btn.innerHTML='<i class="bi bi-arrow-repeat"></i><span class="btn-sync-label ms-1">Sync</span>';}
-  el('syncTxt').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+}
+async function pushArchive(id){
+  if(!authToken||SCRIPT_URL.indexOf('script.google.com')<0)return;
+  try{await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'archive',token:authToken,id:id})});}catch(e){}
+}
+// retry any leads whose last write didn't confirm
+async function flushPending(){
+  var pending=leads.filter(function(l){return l._dirty;});
+  for(var i=0;i<pending.length;i++){ await push(pending[i]); }
+}
+function updateSyncBadge(){
+  var n=leads.filter(function(l){return l._dirty;}).length;
+  var t=el('syncTxt');if(!t)return;
+  if(n>0){t.textContent=n+' unsaved…';t.style.color='var(--comm)';}
+  else{t.style.color='';}
 }
 
-// ── VIEW NAV ──
-function goView(id,sbEl){
-  document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
+// ════════ NAV ════════
+function go(id,navItem){
+  document.querySelectorAll('.view').forEach(function(x){x.classList.remove('active');});
   el('v-'+id).classList.add('active');
-  document.querySelectorAll('.sb-item').forEach(function(i){i.classList.remove('active');});
-  if(sbEl)sbEl.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(i){i.classList.remove('active');});
+  if(navItem)navItem.classList.add('active');else{var ne=navEl(id);if(ne)ne.classList.add('active');else{var ov=document.querySelector('.nav-item');if(id==='overview'&&ov)ov.classList.add('active');}}
   var names={overview:'Overview',new:'New Leads',comm:'In Communication',book:'Booked',closed:'Closed'};
-  el('tbSec').textContent=names[id]||id;
-  closeSb();
-  var r={overview:renderOverview,new:renderNew,comm:renderComm,book:renderBook,closed:renderClosed};
-  if(r[id])r[id]();
+  el('tbTitle').textContent=names[id]||id;
+  closeSide();
+  var R={overview:renderOverview,new:renderNew,comm:renderComm,book:renderBook,closed:renderClosed};
+  if(R[id])R[id]();
+}
+function setTF(t,item){
+  typeFilter=t;
+  document.querySelectorAll('.nav-item').forEach(function(i){i.classList.remove('active');});
+  if(item)item.classList.add('active');
+  closeSide();
+  var av=document.querySelector('.view.active');var id=av?av.id.replace('v-',''):'overview';
+  var R={overview:renderOverview,new:renderNew,comm:renderComm,book:renderBook,closed:renderClosed};
+  if(R[id])R[id]();stats();
 }
 
-// ── TYPE FILTER ──
-function setTF(t, el2){
-  typeFilter = t;
-  document.querySelectorAll('.sb-item').forEach(function(i){i.classList.remove('active');});
-  if(el2) el2.classList.add('active');
-  closeSb();
-  // Re-render whichever view is currently active
-  var activeView = document.querySelector('.view.active');
-  var id = activeView ? activeView.id.replace('v-','') : 'overview';
-  var renders = {overview:renderOverview, new:renderNew, comm:renderComm, book:renderBook, closed:renderClosed};
-  if(renders[id]) renders[id]();
-  stats();
-}
-
-// ── STATS ──
+// ════════ STATS ════════
 function stats(){
   var c={new:0,comm:0,book:0,closed:0};
-  leads.forEach(function(l){if(c[l.status]!==undefined)c[l.status]++;});
+  active().forEach(function(l){if(c[l.status]!==undefined)c[l.status]++;});
   ['new','comm','book','closed'].forEach(function(k){
-    ['os-'+k,'sb-'+k].forEach(function(id){var e=el(id);if(e)e.textContent=c[k];});
+    var a=el('st-'+k);if(a)a.textContent=c[k];
+    var b=el('n-'+k);if(b)b.textContent=c[k];
   });
-  el('sb-all').textContent=leads.length;
-  el('ov-total').textContent=leads.length+' total client'+(leads.length!==1?'s':'');
+  el('n-all').textContent=active().length;
+  el('ovTotal').textContent=active().length+' client'+(active().length!==1?'s':'');
 }
 
-// ── HELPERS ──
-var _elCache={};
-function el(id){var e=_elCache[id];if(e&&e.isConnected)return e;e=document.getElementById(id);_elCache[id]=e;return e;}
-function v(id){return el(id).value.trim();}
-function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function initials(n){var p=(n||'').trim().split(' ');return((p[0]||'')[0]||'').toUpperCase()+((p.length>1?(p[p.length-1]||'')[0]:'') ||'').toUpperCase();}
-function fmtDate(d){if(!d)return'—';try{return new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}catch(e){return d;}}
-function isToday(ts){if(!ts)return false;var d=new Date(ts);var t=new Date();return d.getDate()===t.getDate()&&d.getMonth()===t.getMonth()&&d.getFullYear()===t.getFullYear();}
-function ago(ts){if(!ts)return'—';var d=Math.floor((Date.now()-new Date(ts))/864e5);return d===0?'Today':d===1?'Yesterday':d+'d ago';}
-function byStatus(s){return leads.filter(function(l){return l.status===s&&(!typeFilter||l.shootType===typeFilter);});}
-function sorted(arr){return arr.slice().sort(function(a,b){return new Date(b.ts||0)-new Date(a.ts||0);});}
-
-// debounce — used so typing in search doesn't re-render on every keystroke
-function debounce(fn,wait){var t;return function(){var a=arguments,c=this;clearTimeout(t);t=setTimeout(function(){fn.apply(c,a);},wait);};}
-// stamp each lead with its array index once, so render loops avoid O(n²) indexOf
-function stampIdx(){for(var i=0;i<leads.length;i++)leads[i]._i=i;}
-
-// ── WHATSAPP MESSAGES ── (different per status)
+// ════════ WHATSAPP ════════
 function waMsg(l){
-  var fn=(l.name||'').split(' ')[0];
-  var type=l.shootType||'photography';
-  var date=l.shootDate?fmtDate(l.shootDate):'';
-
-  if(l.status==='new'){
-    return 'Hello '+fn+'! 👋\n\nThank you for reaching out to *Luxeimperial Studio*. We\'re so excited about your '+type+' enquiry! ✨\n\nCould you let us know:\n• Your ideal shoot date\n• Whether you\'d prefer Studio or Outdoor\n• Any ideas or inspiration you have in mind?\n\nWe can\'t wait to create something beautiful with you! 📸\n\n— *Luxeimperial Studio, UK*';
-  }
-  if(l.status==='comm'){
-    return 'Hello '+fn+'! 😊\n\nJust following up on your *'+type+'* session with *Luxeimperial Studio*. We\'d love to get this booked in for you!\n\nWe have great availability coming up — shall we go ahead and secure your date? A deposit locks it in so you don\'t miss out. 🗓️\n\nReply here and we\'ll get everything sorted! 💛\n\n— *Luxeimperial Studio, UK*';
-  }
-  if(l.status==='book'){
-    var dateLine=date?'\n\n📅 *Your session date:* '+date:'';
-    return 'Hello '+fn+'! 🎉\n\nYour *'+type+'* session is officially confirmed with *Luxeimperial Studio*!'+dateLine+'\n\n✅ *What to prepare:*\n• Bring your chosen outfit(s)\n• Arrive 15 minutes early\n• Bring any props or special items\n• Relax and trust us — we\'ll do the rest! 😊\n\nIf you have any questions before your session, just message us here. We cannot wait to work with you! 💛✨\n\n— *Luxeimperial Studio, UK*';
-  }
-  return 'Hello '+fn+'! 👋 This is *Luxeimperial Studio* reaching out. Please let us know if there\'s anything we can help with.\n\n— *Luxeimperial Studio, UK*';
+  var fn=(l.name||'').split(' ')[0],type=l.shootType||'photography',date=l.shootDate?fmtDate(l.shootDate):'';
+  if(l.status==='new')return 'Hello '+fn+'! 👋\n\nThank you for reaching out to *Luxeimperial Studio*. We\'re so excited about your '+type+' enquiry! ✨\n\nCould you let us know:\n• Your ideal shoot date\n• Studio or Outdoor\n• Any ideas or inspiration?\n\nWe can\'t wait to create something beautiful with you! 📸\n\n— *Luxeimperial Studio, UK*';
+  if(l.status==='comm')return 'Hi '+fn+'! 😊\n\nQuick update on your *'+type+'* session — our calendar is filling up fast and we\'re almost fully booked for the coming weeks.\n\nI\'d hate for you to miss out, so I wanted to reach out before your preferred dates go. ✨\n\nA small deposit secures your date completely and we\'ll handle the rest. 🗓️\n\nWould you like me to reserve a date for you? 💛\n\n— *Luxeimperial Studio, UK*';
+  if(l.status==='book'){var dl=date?'\n\n📅 *Your session date:* '+date:'';return 'Hello '+fn+'! 🎉\n\nYour *'+type+'* session is officially confirmed with *Luxeimperial Studio*!'+dl+'\n\n✅ *What to prepare:*\n• Bring your chosen outfit(s)\n• Arrive 15 minutes early\n• Bring any props\n• Relax — we\'ll do the rest! 😊\n\nAny questions before your session, just message us. 💛✨\n\n— *Luxeimperial Studio, UK*';}
+  return 'Hello '+fn+'! 👋 This is *Luxeimperial Studio*. Let us know if there\'s anything we can help with.\n\n— *Luxeimperial Studio, UK*';
+}
+function openWA(idx){
+  var l=leads[idx];if(!l)return toast('Client not found','warn');
+  var raw=(l.phone||'').replace(/[\s\-\(\)\+]/g,'');if(raw.charAt(0)==='0')raw='44'+raw.substring(1);
+  if(!raw)return toast('No phone number','warn');
+  window.open('https://wa.me/'+raw+'?text='+encodeURIComponent(waMsg(l)),'_blank');
 }
 
-// ── CARD HTML ──
-function cardHTML(l, di){
-  var idx=(l._i!==undefined)?l._i:leads.indexOf(l);
-  var s=l.status;
-  var cls='lc-'+s;
-  var waClass='wa-'+s;
-  var waLabel=s==='new'?'Say Hello':s==='comm'?'Follow Up':s==='book'?'Confirm Session':'WhatsApp';
-  var canAdvance=s==='new'||s==='comm';
-  var advLabel=s==='new'?'→ Talking':s==='comm'?'→ Booked':'';
-  var todayTag=isToday(l.ts)?'<span style="display:inline-block;font-size:8px;font-weight:600;letter-spacing:1px;text-transform:uppercase;background:var(--c-new-bg);color:var(--c-new);border:1px solid var(--c-new-bd);padding:2px 7px;border-radius:20px;margin-left:6px">Today</span>':'';
-
-  return '<div class="lead-card '+cls+'" style="animation-delay:'+(di*0.05)+'s">' +
-    '<div class="lc-top">' +
-      '<div class="lc-av">'+esc(initials(l.name))+'</div>' +
-      '<div class="lc-info"><div class="lc-name">'+esc(l.name)+todayTag+'</div><div class="lc-type">'+(l.shootType||'—')+(l.scene?' · '+l.scene:'')+'</div></div>' +
-      '<span class="lc-badge">'+(s==='new'?'New':s==='comm'?'Talking':s==='book'?'Booked':'Closed')+'</span>' +
-    '</div>' +
-    '<div class="lc-mid">' +
-      '<div class="lc-row"><i class="bi bi-telephone-fill"></i>'+esc(l.phone)+'</div>' +
-      (l.email?'<div class="lc-row"><i class="bi bi-envelope-fill"></i>'+esc(l.email)+'</div>':'') +
-      (l.shootDate?'<div class="lc-row"><i class="bi bi-calendar3-fill"></i>'+fmtDate(l.shootDate)+'</div>':'') +
-      '<div class="lc-row"><i class="bi bi-clock-fill"></i>'+ago(l.ts)+'</div>' +
-    '</div>' +
-    (l.notes?'<div class="lc-note">'+esc(l.notes.substring(0,88))+(l.notes.length>88?'…':'')+'</div>':'') +
-    '<div class="lc-btns">' +
-      '<button class="lc-btn '+waClass+'" onclick="openWA('+idx+')"><i class="bi bi-whatsapp"></i>'+waLabel+'</button>' +
-      '<button class="lc-btn" onclick="openModal('+idx+')"><i class="bi bi-pencil"></i>Edit</button>' +
-      (canAdvance?'<button class="lc-btn move-btn" onclick="advance('+idx+')"><i class="bi bi-arrow-right"></i>'+advLabel+'</button>':'') +
-      '<button class="lc-btn del" onclick="delLead('+idx+')"><i class="bi bi-trash"></i></button>' +
-    '</div>' +
+// ════════ CARD ════════
+function cardHTML(l,di){
+  var idx=idxOf(l),s=l.status;
+  var waLbl=s==='new'?'Say Hello':s==='comm'?'Follow Up':s==='book'?'Confirm':'Message';
+  var canAdv=s==='new'||s==='comm';
+  var advLbl=s==='new'?'Talking':'Book';
+  var today=isToday(l.ts)?'<span class="chip chip-today">Today</span>':'';
+  var chipTxt=s==='new'?'New':s==='comm'?'Talking':s==='book'?'Booked':'Closed';
+  return '<div class="card" style="animation-delay:'+(di*.04)+'s">'+
+    '<div class="card-top">'+
+      '<div class="av av-'+s+'">'+esc(initials(l.name))+'</div>'+
+      '<div class="card-id"><div class="card-name">'+esc(l.name)+today+'</div><div class="card-type">'+esc(l.shootType||'—')+(l.scene?' · '+esc(l.scene):'')+'</div></div>'+
+      '<span class="chip chip-'+s+'">'+chipTxt+'</span>'+
+    '</div>'+
+    '<div class="card-body">'+
+      '<div class="crow"><i class="bi bi-telephone"></i>'+esc(l.phone||'—')+'</div>'+
+      (l.email?'<div class="crow"><i class="bi bi-envelope"></i>'+esc(l.email)+'</div>':'')+
+      (l.shootDate?'<div class="crow"><i class="bi bi-calendar3"></i>'+fmtDate(l.shootDate)+'</div>':'')+
+      '<div class="crow"><i class="bi bi-clock"></i>'+ago(l.ts)+'</div>'+
+    '</div>'+
+    (l.notes?'<div class="note">'+esc(l.notes.substring(0,100))+(l.notes.length>100?'…':'')+'</div>':'')+
+    '<div class="card-acts">'+
+      '<button class="act act-wa wa-'+s+'" onclick="openWA('+idx+')"><i class="bi bi-whatsapp"></i>'+waLbl+'</button>'+
+      (canAdv?'<button class="act act-adv" onclick="advance('+idx+')"><i class="bi bi-arrow-right"></i>'+advLbl+'</button>':'')+
+      '<button class="act act-ico" onclick="openModal('+idx+')"><i class="bi bi-pencil"></i></button>'+
+      '<button class="act act-del act-ico" onclick="archive('+idx+')"><i class="bi bi-archive"></i></button>'+
+    '</div>'+
   '</div>';
 }
+function emptyHTML(ic,t,s){return '<div class="empty" style="grid-column:1/-1"><div class="ei"><i class="bi bi-'+ic+'"></i></div><h3>'+t+'</h3><p>'+s+'</p></div>';}
 
-// ── CLOSED TABLE ──
-function closedTableHTML(arr){
-  if(!arr.length) return '<div class="empty" style="display:block"><i class="bi bi-archive" style="font-size:30px;opacity:.15;display:block;margin-bottom:10px"></i><div class="e-t">No closed clients</div><div class="e-s">Clients you close will appear here.</div></div>';
-  return '<div class="table-scroll"><table class="closed-table"><thead><tr><th>Client</th><th>Type</th><th>Scene</th><th>Date</th><th>Reason / Notes</th><th>Actions</th></tr></thead><tbody>' +
+// ════════ TABLE (booked/closed) ════════
+function tableHTML(arr,kind){
+  if(!arr.length)return emptyHTML(kind==='book'?'calendar-check':'archive',kind==='book'?'No bookings yet':'No closed clients',kind==='book'?'Confirmed sessions show here.':'Closed clients show here.');
+  var dateHdr=kind==='book'?'Shoot Date':'Date';
+  var avc=kind==='book'?'av-book':'av-closed';
+  return '<div class="tbl-wrap"><div class="tbl-scroll"><table class="tbl"><thead><tr><th>Client</th><th>Type</th><th>Scene</th><th>'+dateHdr+'</th><th>Notes</th><th>Actions</th></tr></thead><tbody>'+
     arr.map(function(l){
-      var idx=(l._i!==undefined)?l._i:leads.indexOf(l);
-      return '<tr onclick="openModal('+idx+')">' +
-        '<td><div class="d-flex align-items-center gap-2"><div class="ct-av">'+esc(initials(l.name))+'</div><div><div class="ct-name">'+esc(l.name)+'</div><div class="ct-sub">'+esc(l.phone)+'</div></div></div></td>' +
-        '<td style="font-size:11px">'+(l.shootType||'—')+'</td>' +
-        '<td style="font-size:11px">'+(l.scene||'—')+'</td>' +
-        '<td style="font-size:11px;white-space:nowrap">'+fmtDate(l.shootDate)+'</td>' +
-        '<td><div class="ct-reason">'+esc(l.notes||'—')+'</div></td>' +
-        '<td><div class="ct-acts" onclick="event.stopPropagation()">' +
-          '<button class="ct-btn" onclick="openModal('+idx+')" title="Edit"><i class="bi bi-pencil"></i></button>' +
-          '<button class="ct-btn del" onclick="delLead('+idx+')" title="Delete"><i class="bi bi-trash"></i></button>' +
-        '</div></td>' +
+      var idx=idxOf(l);
+      return '<tr onclick="openModal('+idx+')">'+
+        '<td><div class="t-client"><div class="t-av '+avc+'">'+esc(initials(l.name))+'</div><div><div class="t-name">'+esc(l.name)+'</div><div class="t-sub">'+esc(l.phone||'—')+'</div></div></div></td>'+
+        '<td style="font-size:13px">'+esc(l.shootType||'—')+'</td>'+
+        '<td style="font-size:13px">'+esc(l.scene||'—')+'</td>'+
+        '<td style="font-size:13px;white-space:nowrap'+(kind==='book'?';font-weight:700;color:var(--book)':'')+'">'+fmtDate(l.shootDate)+'</td>'+
+        '<td><div style="font-size:12.5px;color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(l.notes||'—')+'</div></td>'+
+        '<td><div class="t-acts" onclick="event.stopPropagation()">'+
+          '<button class="t-btn" onclick="openWA('+idx+')" title="WhatsApp"><i class="bi bi-whatsapp" style="color:var(--book)"></i></button>'+
+          '<button class="t-btn" onclick="openModal('+idx+')" title="Edit"><i class="bi bi-pencil"></i></button>'+
+          '<button class="t-btn del" onclick="archive('+idx+')" title="Archive"><i class="bi bi-archive"></i></button>'+
+        '</div></td>'+
       '</tr>';
-    }).join('') +
-  '</tbody></table></div>';
+    }).join('')+
+  '</tbody></table></div></div>';
 }
 
-// ── BOOKED TABLE (for overview) ──
-function bookedTableHTML(arr){
-  if(!arr.length) return '<div style="text-align:center;padding:24px;color:var(--muted);font-size:12px">No upcoming sessions booked yet.</div>';
-  arr.sort(function(a,b){return(a.shootDate||'').localeCompare(b.shootDate||'');});
-  return '<div class="table-scroll"><table class="closed-table"><thead><tr><th>Client</th><th>Type</th><th>Scene</th><th>Shoot Date</th><th>Notes</th><th>Actions</th></tr></thead><tbody>' +
-    arr.map(function(l){
-      var idx=(l._i!==undefined)?l._i:leads.indexOf(l);
-      return '<tr onclick="openModal('+idx+')">' +
-        '<td><div class="d-flex align-items-center gap-2"><div class="ct-av" style="background:var(--c-book-bg);color:var(--c-book);border-color:var(--c-book-bd)">'+esc(initials(l.name))+'</div><div><div class="ct-name">'+esc(l.name)+'</div><div class="ct-sub">'+esc(l.phone)+'</div></div></div></td>' +
-        '<td style="font-size:11px">'+(l.shootType||'—')+'</td>' +
-        '<td style="font-size:11px">'+(l.scene||'—')+'</td>' +
-        '<td style="font-size:11px;white-space:nowrap;font-weight:500;color:var(--c-book)">'+fmtDate(l.shootDate)+'</td>' +
-        '<td><div class="ct-reason">'+esc(l.notes||'—')+'</div></td>' +
-        '<td><div class="ct-acts" onclick="event.stopPropagation()">' +
-          '<button class="ct-btn" onclick="openWA('+idx+')" title="WhatsApp"><i class="bi bi-whatsapp" style="color:#16a34a"></i></button>' +
-          '<button class="ct-btn" onclick="openModal('+idx+')" title="Edit"><i class="bi bi-pencil"></i></button>' +
-        '</div></td>' +
-      '</tr>';
-    }).join('') +
-  '</tbody></table></div>';
-}
-
-// ── EMPTY STATE ──
-function emptyHTML(icon,title,sub){
-  return '<div class="empty" style="display:block;grid-column:1/-1"><i class="bi bi-'+icon+'" style="font-size:28px;opacity:.15;display:block;margin-bottom:10px"></i><div class="e-t">'+title+'</div><div class="e-s">'+sub+'</div></div>';
-}
-
-// ── RENDER OVERVIEW ──
+// ════════ RENDERERS ════════
+function renderAll(){stampIdx();stats();var av=document.querySelector('.view.active');var id=av?av.id.replace('v-',''):'overview';var R={overview:renderOverview,new:renderNew,comm:renderComm,book:renderBook,closed:renderClosed};if(R[id])R[id]();}
 function renderOverview(){
-  var todayLeads=byStatus('new').filter(function(l){return isToday(l.ts);});
-  var recentNew=sorted(byStatus('new')).slice(0,3);
-  el('ov-today-c').textContent=todayLeads.length?todayLeads.length+' new today':'';
-  // Today banner
-  var g=el('ov-new-grid');
-  if(recentNew.length){
-    g.innerHTML=recentNew.map(function(l,i){return cardHTML(l,i);}).join('');
-  }else{
-    g.innerHTML=emptyHTML('inbox','No new leads yet','New enquiries will appear here.');
-  }
-  var bookArr=byStatus('book');
-  el('ov-book-c').textContent=bookArr.length?bookArr.length+' confirmed':'';
-  el('ov-book-list').innerHTML=bookedTableHTML(bookArr);
+  var recent=sorted(byStatus('new')).slice(0,3);
+  var todayCt=byStatus('new').filter(function(l){return isToday(l.ts);}).length;
+  el('ovNewMore').textContent=todayCt?todayCt+' new today':'';
+  el('ovNew').innerHTML=recent.length?recent.map(function(l,i){return cardHTML(l,i);}).join(''):emptyHTML('inbox','No new leads yet','New enquiries will appear here.');
+  var bk=byStatus('book').slice().sort(function(a,b){return(a.shootDate||'').localeCompare(b.shootDate||'');});
+  el('ovBookMore').textContent=bk.length?bk.length+' confirmed':'';
+  el('ovBook').innerHTML=tableHTML(bk,'book');
 }
-
-// ── RENDER NEW ──
 function renderNew(){
-  var q=v('s-new').toLowerCase();
-  var t=el('f-new').value;
-  var f=sorted(byStatus('new')).filter(function(l){
-    return(!q||(l.name||'').toLowerCase().includes(q)||(l.phone||'').includes(q)||(l.shootType||'').toLowerCase().includes(q))&&(!t||l.shootType===t);
-  });
-  el('ph-new').textContent=f.length+' lead'+(f.length!==1?'s':'');
-  // Today banner
-  var todayCt=f.filter(function(l){return isToday(l.ts);}).length;
-  el('today-banner-wrap').innerHTML=todayCt?
-    '<div class="today-banner"><div class="tb-dot"></div><span class="tb-txt">New leads today</span><span class="tb-count">'+todayCt+' new</span></div>':'';
-  var g=el('g-new');
-  g.innerHTML=f.length?f.map(function(l,i){return cardHTML(l,i);}).join(''):emptyHTML('inbox','No new leads','Fresh enquiries will show here.');
+  var q=v('s-new').toLowerCase(),t=el('f-new').value;
+  var f=sorted(byStatus('new')).filter(function(l){return(!q||(l.name||'').toLowerCase().includes(q)||(l.phone||'').includes(q)||(l.shootType||'').toLowerCase().includes(q))&&(!t||l.shootType===t);});
+  el('c-new').textContent=f.length+' lead'+(f.length!==1?'s':'');
+  var tc=f.filter(function(l){return isToday(l.ts);}).length;
+  el('newBanner').innerHTML=tc?'<div class="banner"><span class="bdot"></span><span class="btxt">New leads today</span><span class="bcount">'+tc+' new</span></div>':'';
+  el('g-new').innerHTML=f.length?f.map(function(l,i){return cardHTML(l,i);}).join(''):emptyHTML('inbox','No new leads','Fresh enquiries show here.');
 }
-
-// ── RENDER COMM ──
 function renderComm(){
-  var q=v('s-comm').toLowerCase();
-  var t=el('f-comm').value;
-  var f=sorted(byStatus('comm')).filter(function(l){
-    return(!q||(l.name||'').toLowerCase().includes(q)||(l.phone||'').includes(q))&&(!t||l.shootType===t);
-  });
-  el('ph-comm').textContent=f.length+' client'+(f.length!==1?'s':'');
-  el('g-comm').innerHTML=f.length?f.map(function(l,i){return cardHTML(l,i);}).join(''):emptyHTML('chat-dots','No active conversations','Clients in communication will show here.');
+  var q=v('s-comm').toLowerCase(),t=el('f-comm').value;
+  var f=sorted(byStatus('comm')).filter(function(l){return(!q||(l.name||'').toLowerCase().includes(q)||(l.phone||'').includes(q))&&(!t||l.shootType===t);});
+  el('c-comm').textContent=f.length+' client'+(f.length!==1?'s':'');
+  el('g-comm').innerHTML=f.length?f.map(function(l,i){return cardHTML(l,i);}).join(''):emptyHTML('chat-dots','No active conversations','Clients in communication show here.');
 }
-
-// ── RENDER BOOKED ──
 function renderBook(){
-  var q=v('s-book').toLowerCase();
-  var t=el('f-book').value;
-  var f=byStatus('book').filter(function(l){
-    return(!q||(l.name||'').toLowerCase().includes(q)||(l.phone||'').includes(q))&&(!t||l.shootType===t);
-  });
+  var q=v('s-book').toLowerCase(),t=el('f-book').value;
+  var f=byStatus('book').filter(function(l){return(!q||(l.name||'').toLowerCase().includes(q)||(l.phone||'').includes(q))&&(!t||l.shootType===t);});
   f.sort(function(a,b){return(a.shootDate||'').localeCompare(b.shootDate||'');});
-  el('ph-book').textContent=f.length+' session'+(f.length!==1?'s':'');
-  el('g-book').innerHTML=f.length?f.map(function(l,i){return cardHTML(l,i);}).join(''):emptyHTML('calendar-check','No bookings yet','Confirmed sessions will show here.');
+  el('c-book').textContent=f.length+' session'+(f.length!==1?'s':'');
+  el('g-book').innerHTML=f.length?f.map(function(l,i){return cardHTML(l,i);}).join(''):emptyHTML('calendar-check','No bookings yet','Confirmed sessions show here.');
 }
-
-// ── RENDER CLOSED ──
 function renderClosed(){
   var q=v('s-closed').toLowerCase();
-  var f=byStatus('closed').filter(function(l){
-    return(!q||(l.name||'').toLowerCase().includes(q)||(l.phone||'').includes(q));
-  });
+  var f=byStatus('closed').filter(function(l){return(!q||(l.name||'').toLowerCase().includes(q)||(l.phone||'').includes(q));});
   f.sort(function(a,b){return new Date(b.ts||0)-new Date(a.ts||0);});
-  el('ph-closed').textContent=f.length+' client'+(f.length!==1?'s':'');
-  el('g-closed').innerHTML=closedTableHTML(f);
+  el('c-closed').textContent=f.length+' client'+(f.length!==1?'s':'');
+  el('g-closed').innerHTML=tableHTML(f,'closed');
 }
+var dNew=debounce(renderNew,150),dComm=debounce(renderComm,150),dBook=debounce(renderBook,150),dClosed=debounce(renderClosed,150);
 
-function renderAll(){
-  stampIdx();
-  stats();
-  // Only re-render the view the user is actually looking at; others
-  // render lazily when navigated to (goView). Big win on large lists.
-  var active=document.querySelector('.view.active');
-  var id=active?active.id.replace('v-',''):'overview';
-  var r={overview:renderOverview,new:renderNew,comm:renderComm,book:renderBook,closed:renderClosed};
-  if(r[id])r[id]();
-}
-
-// debounced search handlers (160ms) — typing stays smooth on big lists
-var dNew=debounce(renderNew,160), dComm=debounce(renderComm,160),
-    dBook=debounce(renderBook,160), dClosed=debounce(renderClosed,160);
-
-// ── ADVANCE ──
+// ════════ ADVANCE / BOOK ════════
 function advance(idx){
   var l=leads[idx];
   if(l.status==='new'){
-    leads[idx].status='comm';
-    saveCache();renderAll();
-    toast(l.name.split(' ')[0]+' moved to In Communication');
-    pushStatus(leads[idx]);
+    leads[idx].status='comm';leads[idx].updated=nowISO();
+    saveCache();renderAll();toast(l.name.split(' ')[0]+' → In Communication','ok');push(leads[idx]);
   }else if(l.status==='comm'){
-    // Ask for date before booking
-    pendingIdx=idx;
-    el('dpDate').value=l.shootDate||'';
-    el('dpDate').min=new Date().toISOString().split('T')[0];
-    el('dpBg').classList.add('show');
+    pendingIdx=idx;el('dpDate').value=l.shootDate||'';el('dpDate').min=new Date().toISOString().split('T')[0];el('dpOv').classList.add('show');
   }
 }
 function confirmBook(){
-  var d=el('dpDate').value;
-  if(!d){toast('Please select a shoot date','warn');return;}
+  var d=el('dpDate').value;if(!d)return toast('Please select a shoot date','warn');
   if(pendingIdx>=0){
-    leads[pendingIdx].status='book';
-    leads[pendingIdx].shootDate=d;
-    saveCache();renderAll();
-    toast(leads[pendingIdx].name.split(' ')[0]+' → Booked ✓','ok');
-    pushStatus(leads[pendingIdx]);
-    pendingIdx=-1;
+    leads[pendingIdx].status='book';leads[pendingIdx].shootDate=d;leads[pendingIdx].updated=nowISO();
+    saveCache();renderAll();toast(leads[pendingIdx].name.split(' ')[0]+' → Booked ✓','ok');push(leads[pendingIdx]);pendingIdx=-1;
   }
-  el('dpBg').classList.remove('show');
+  el('dpOv').classList.remove('show');
 }
-function cancelBook(){pendingIdx=-1;el('dpBg').classList.remove('show');}
+function cancelBook(){pendingIdx=-1;el('dpOv').classList.remove('show');}
 
-// ── WHATSAPP ──
-function openWA(idx){
-  var l=leads[idx];
-  if(!l){toast('Client not found','warn');return;}
-  // Clean phone — remove spaces, dashes, brackets, + sign
-  var raw = (l.phone||'').replace(/[\s\-\(\)\+]/g,'');
-  // If starts with 0, replace with 44 (UK)
-  if(raw.charAt(0)==='0') raw='44'+raw.substring(1);
-  if(!raw){toast('No phone number for this client','warn');return;}
-  var msg = waMsg(l);
-  var url = 'https://wa.me/'+raw+'?text='+encodeURIComponent(msg);
-  window.open(url,'_blank');
-}
-
-// ── MODAL ──
+// ════════ MODAL ════════
 function openModal(idx){
-  if(!bsModal)bsModal=new bootstrap.Modal(el('lModal'));
-  el('eIdx').value=idx!==undefined?idx:-1;
+  el('eIdx').value=(idx!==undefined&&idx>=0)?idx:-1;
   if(idx!==undefined&&idx>=0){
-    var l=leads[idx];
-    el('mTitle').textContent='Edit Client';
-    el('f-name').value=l.name||'';el('f-phone').value=l.phone||'';
-    el('f-email').value=l.email||'';el('f-date').value=l.shootDate||'';
-    el('f-type').value=l.shootType||'';el('f-scene').value=l.scene||'';
+    var l=leads[idx];el('mTitle').textContent='Edit Client';
+    el('f-name').value=l.name||'';el('f-phone').value=l.phone||'';el('f-email').value=l.email||'';
+    el('f-date').value=l.shootDate||'';el('f-type').value=l.shootType||'';el('f-scene').value=l.scene||'';
     el('f-notes').value=l.notes||'';selSt(l.status||'new');
   }else{
     el('mTitle').textContent='New Client';
     ['f-name','f-phone','f-email','f-date','f-notes'].forEach(function(id){el(id).value='';});
     el('f-type').value='';el('f-scene').value='';selSt('new');
   }
-  bsModal.show();
+  el('modalOv').classList.add('show');
 }
+function closeModal(){el('modalOv').classList.remove('show');}
 function selSt(s){
   el('f-status').value=s;
-  document.querySelectorAll('.st-opt').forEach(function(o){o.classList.remove('sel');});
+  document.querySelectorAll('.stage').forEach(function(o){o.classList.remove('sel');});
   var e=document.querySelector('.st-'+s);if(e)e.classList.add('sel');
 }
 function saveLead(){
   var idx=parseInt(el('eIdx').value);
-  var lead={
-    name:v('f-name'),phone:v('f-phone'),email:v('f-email'),
-    shootDate:el('f-date').value,shootType:el('f-type').value,
-    scene:el('f-scene').value,status:el('f-status').value,
-    notes:el('f-notes').value.trim(),
-    ts:idx>=0?(leads[idx].ts||new Date().toISOString()):new Date().toISOString()
-  };
-  if(!lead.name||!lead.phone){toast('Name and phone are required','warn');return;}
-  if(idx>=0){leads[idx]=lead;toast('Client updated');}
-  else{leads.unshift(lead);toast('Client added');}
-  pushStatus(lead);saveCache();renderAll();
-  if(bsModal)bsModal.hide();
+  var name=v('f-name'),phone=v('f-phone');
+  if(!name||!phone)return toast('Name and phone are required','warn');
+  if(idx>=0){
+    var l=leads[idx];
+    l.name=name;l.phone=phone;l.email=v('f-email');l.shootDate=el('f-date').value;
+    l.shootType=el('f-type').value;l.scene=el('f-scene').value;l.status=el('f-status').value;
+    l.notes=el('f-notes').value.trim();l.updated=nowISO();
+    toast('Client updated','ok');push(l);
+  }else{
+    var nl={id:uid(),name:name,phone:phone,email:v('f-email'),shootDate:el('f-date').value,shootType:el('f-type').value,scene:el('f-scene').value,status:el('f-status').value,notes:el('f-notes').value.trim(),ts:nowISO(),updated:nowISO(),archived:false};
+    leads.unshift(nl);toast('Client added','ok');push(nl);
+  }
+  saveCache();renderAll();closeModal();
 }
-function delLead(idx){
-  if(!confirm('Remove "'+leads[idx].name+'"?'))return;
-  leads.splice(idx,1);saveCache();renderAll();toast('Client removed');
-}
-
-// ── PUSH STATUS TO SHEET ──
-async function pushStatus(lead){
-  if(!SCRIPT_URL||SCRIPT_URL==='YOUR_APPS_SCRIPT_URL'||!authToken)return;
-  try{
-    await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'updateStatus',token:authToken,phone:lead.phone,name:lead.name,status:lead.status,notes:lead.notes,shootDate:lead.shootDate})});
-  }catch(e){}
+// ════════ ARCHIVE (soft delete) ════════
+function archive(idx){
+  var l=leads[idx];if(!l)return;
+  if(!confirm('Archive "'+l.name+'"? It will be hidden but kept in your spreadsheet and can be recovered.'))return;
+  leads[idx].archived=true;leads[idx].updated=nowISO();
+  saveCache();renderAll();toast(l.name.split(' ')[0]+' archived');pushArchive(l.id);
 }
 
-// ── TOAST ──
+// ════════ TOAST ════════
 function toast(msg,type){
-  var s=el('toasts');
-  var t=document.createElement('div');
-  t.className='t-it'+(type?' '+type:'');
-  var ic=type==='warn'?'bi-exclamation-triangle':type==='ok'?'bi-check-circle':'bi-info-circle';
-  t.innerHTML='<i class="bi '+ic+' t-ico"></i>'+esc(msg);
-  s.appendChild(t);
-  requestAnimationFrame(function(){t.classList.add('show');});
-  setTimeout(function(){t.classList.remove('show');setTimeout(function(){t.remove();},280);},3200);
+  var s=el('toasts'),t=document.createElement('div');
+  t.className='toast'+(type?' '+type:'');
+  var ic=type==='warn'?'bi-exclamation-triangle-fill':type==='ok'?'bi-check-circle-fill':'bi-info-circle-fill';
+  t.innerHTML='<i class="bi '+ic+'"></i>'+esc(msg);
+  s.appendChild(t);requestAnimationFrame(function(){t.classList.add('show');});
+  setTimeout(function(){t.classList.remove('show');setTimeout(function(){t.remove();},280);},3000);
 }
+// close modals on backdrop click
+['modalOv','dpOv'].forEach(function(id){var o=document.getElementById(id);if(o)o.addEventListener('click',function(e){if(e.target===o)o.classList.remove('show');});});
 </script>
 </body>
 </html>
