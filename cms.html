@@ -363,7 +363,7 @@ textarea.mfi{min-height:66px;resize:vertical}
   <div class="lp-shell">
     <!-- image panel -->
     <div class="lp-visual">
-      <img src="CT109704.jpg" alt="Studio photography" loading="eager">
+       <img src="CT109704.jpg" alt="Studio photography" loading="eager">
       
       <div class="lp-vtext">
         <div class="lp-vrule"></div>
@@ -770,22 +770,31 @@ function doLogout(){
 }
 
 // ── RESTORE SESSION ON REFRESH (token kept from last login) ──
-(function checkSession(){
-  try{
-    var sess=readSession();
-    if(sess && sess.token){
-      // session valid for 7 days; refreshes on each load while in use
-      if(Date.now()-sess.ts < 7*24*60*60*1000){
-        authToken=sess.token;
-        sess.ts=Date.now();                  // rolling expiry — stays logged in while active
-        saveSession(sess);
-        showApp({u:sess.u, name:sess.name, av:sess.av});
-      }else{
-        clearSession();                      // expired — clear it
-      }
-    }
-  }catch(e){}
-})();
+// Runs after the full page + scripts are ready, so init()/render can't
+// throw before auth is restored. Auth restore and app rendering are
+// separated: even if rendering hiccups, you stay logged in.
+function checkSession(){
+  var sess=null;
+  try{ sess=readSession(); }catch(e){ sess=null; }
+  if(!sess || !sess.token) return;            // nothing saved → show login
+  if(Date.now()-sess.ts >= 7*24*60*60*1000){  // expired
+    clearSession();
+    return;
+  }
+  // valid session → restore auth FIRST (this is what keeps you logged in)
+  authToken=sess.token;
+  currentUser={u:sess.u, name:sess.name, av:sess.av};
+  try{ sess.ts=Date.now(); saveSession(sess); }catch(e){}  // rolling expiry
+  // then show the app; if rendering throws, we're still authenticated
+  try{ showApp(currentUser); }
+  catch(e){ console.error('Restore render error:', e); }
+}
+
+if(document.readyState==='complete'){
+  checkSession();
+}else{
+  window.addEventListener('load', checkSession);
+}
 
 // ── SIDEBAR ──
 function toggleSb(){
