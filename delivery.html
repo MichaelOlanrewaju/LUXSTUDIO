@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luxeimperial Studio — Delivery & Production</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root{
+  --brand:#0ea5e9;        /* sky/cyan — distinct from CRM indigo so you know which dashboard */
+  --brand-d:#0284c7;
+  --brand-l:#e0f2fe;
+  --ink:#0f172a;--ink-2:#334155;--muted:#64748b;--line:#e9edf3;--bg:#f6f7fb;--card:#fff;
+  --font:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+  /* stage palette */
+  --shot:#8b5cf6;   --shot-bg:#f5f3ff;   --shot-bd:#ddd6fe;
+  --sel:#3b82f6;    --sel-bg:#eff6ff;    --sel-bd:#bfdbfe;
+  --ret:#f59e0b;    --ret-bg:#fffbeb;    --ret-bd:#fde68a;
+  --ready:#10b981;  --ready-bg:#ecfdf5;  --ready-bd:#a7f3d0;
+  --del:#64748b;    --del-bg:#f1f5f9;    --del-bd:#cbd5e1;
+  --danger:#ef4444;--warn:#f59e0b;
+  --r:14px;--r-sm:10px;
+  --sh-sm:0 1px 2px rgba(16,24,40,.06);--sh:0 4px 16px rgba(16,24,40,.08);--sh-lg:0 16px 48px rgba(16,24,40,.16);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.5}
+
+/* LOGIN */
+#loginPage{position:fixed;inset:0;z-index:9999;display:flex;align-items:stretch;justify-content:center;background:var(--ink);transition:opacity .5s,visibility .5s;overflow-y:auto}
+#loginPage.out{opacity:0;visibility:hidden;pointer-events:none}
+.lp-shell{position:relative;width:100%;max-width:940px;margin:auto;display:grid;grid-template-columns:1fr 1fr;min-height:560px;background:var(--card);border-radius:24px;overflow:hidden;box-shadow:var(--sh-lg);animation:rise .6s cubic-bezier(.16,1,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(26px) scale(.985)}to{opacity:1;transform:none}}
+.lp-visual{position:relative;overflow:hidden;background:linear-gradient(150deg,#0284c7,#0891b2 55%,#7c3aed)}
+.lp-visual img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:overlay;opacity:.5}
+.lp-blob{position:absolute;border-radius:50%;filter:blur(40px);opacity:.5}
+.lp-blob1{width:260px;height:260px;background:#67e8f9;top:-60px;right:-40px}
+.lp-blob2{width:200px;height:200px;background:#818cf8;bottom:-50px;left:-30px}
+.lp-vtext{position:absolute;left:0;right:0;bottom:0;padding:38px;color:#fff;z-index:2}
+.lp-vquote{font-size:24px;font-weight:700;line-height:1.3;letter-spacing:-.02em;margin-bottom:10px}
+.lp-vmeta{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.85);font-weight:600}
+.lp-vlogo{position:absolute;top:30px;left:38px;z-index:2;height:30px;filter:brightness(0) invert(1);opacity:.95}
+.lp-form{display:flex;flex-direction:column;justify-content:center;padding:48px 50px}
+.lb-badge{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;font-size:11px;font-weight:700;color:var(--brand-d);background:var(--brand-l);padding:6px 12px;border-radius:20px;margin-bottom:18px}
+.lb-title{font-size:30px;font-weight:800;letter-spacing:-.03em;margin-bottom:6px}
+.lb-sub{font-size:14px;color:var(--muted);margin-bottom:26px}
+.lb-err{display:none;font-size:13px;color:var(--danger);background:#fef2f2;border:1px solid #fecaca;padding:11px 14px;border-radius:var(--r-sm);margin-bottom:16px}
+.fl{margin-bottom:16px;position:relative}
+.fl-lbl{font-size:12px;font-weight:600;color:var(--ink-2);display:block;margin-bottom:7px}
+.fl-inp{width:100%;font-family:var(--font);font-size:15px;padding:14px 16px;border:1.5px solid var(--line);background:#fbfcfe;border-radius:12px;outline:none;transition:all .18s}
+.fl-inp:focus{border-color:var(--brand);background:#fff;box-shadow:0 0 0 4px rgba(14,165,233,.12)}
+.fl-inp.err{border-color:var(--danger)}
+.fl-eye{position:absolute;right:14px;top:37px;color:var(--muted);cursor:pointer;font-size:17px}
+.fl-eye:hover{color:var(--brand)}
+.btn-login{width:100%;font-size:15px;font-weight:700;padding:15px;background:var(--brand-d);color:#fff;border:none;border-radius:12px;cursor:pointer;transition:all .2s;margin-top:6px;box-shadow:0 6px 18px rgba(2,132,199,.32);font-family:var(--font)}
+.btn-login:hover{background:var(--brand);transform:translateY(-1px)}
+.btn-login:disabled{opacity:.65;cursor:not-allowed}
+.btn-login span{display:inline-flex;align-items:center;gap:8px}
+.lb-foot{text-align:center;font-size:12px;color:var(--muted);margin-top:22px}
+.lb-switch{text-align:center;font-size:13px;margin-top:14px}
+.lb-switch a{color:var(--brand-d);font-weight:700;text-decoration:none}
+@media(max-width:780px){#loginPage{align-items:flex-start}.lp-shell{grid-template-columns:1fr;max-width:460px;border-radius:0;min-height:100vh}.lp-visual{min-height:190px;order:-1}.lp-form{padding:34px 26px}}
+@media(max-width:440px){.lb-title{font-size:25px}.lp-form{padding:28px 20px}}
+
+/* APP */
+#app{display:none}
+.shell{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+@media(max-width:980px){.shell{grid-template-columns:1fr}}
+.side{background:var(--card);border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:60}
+@media(max-width:980px){.side{position:fixed;left:0;top:0;bottom:0;width:264px;transform:translateX(-108%);transition:transform .28s;box-shadow:var(--sh-lg)}.side.open{transform:none}}
+.side-head{padding:22px 22px 18px;display:flex;align-items:center;gap:11px;border-bottom:1px solid var(--line)}
+.side-logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(140deg,var(--brand),#0891b2);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:17px;flex-shrink:0;box-shadow:0 4px 12px rgba(14,165,233,.35)}
+.side-brand{font-weight:800;font-size:15px;letter-spacing:-.02em;line-height:1.1}
+.side-brand small{display:block;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.side-scroll{flex:1;padding:14px 12px}
+.nav-lbl{font-size:10.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);padding:0 12px;margin:14px 0 6px}
+.nav-lbl:first-child{margin-top:0}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;font-size:13.5px;font-weight:600;color:var(--ink-2);cursor:pointer;transition:all .14s;margin-bottom:2px;user-select:none}
+.nav-item:hover{background:var(--bg)}
+.nav-item.active{background:var(--brand-l);color:var(--brand-d)}
+.nav-item i{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.nav-item .badge-n{margin-left:auto;font-size:11px;font-weight:700;background:var(--bg);color:var(--muted);padding:2px 9px;border-radius:20px;min-width:24px;text-align:center}
+.nav-item.active .badge-n{background:#fff;color:var(--brand-d)}
+.nav-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-left:4px;margin-right:6px}
+.dot-shot{background:var(--shot)}.dot-sel{background:var(--sel)}.dot-ret{background:var(--ret)}.dot-ready{background:var(--ready)}.dot-del{background:var(--del)}
+.side-foot{padding:14px;border-top:1px solid var(--line)}
+.user-chip{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:11px;cursor:pointer;transition:background .14s}
+.user-chip:hover{background:var(--bg)}
+.user-av{width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,var(--brand),#0891b2);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.user-meta{flex:1;min-width:0}
+.user-name{font-size:13px;font-weight:700;line-height:1.2}
+.user-role{font-size:11px;color:var(--muted)}
+
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{height:62px;background:rgba(246,247,251,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:0 24px;position:sticky;top:0;z-index:50}
+@media(max-width:576px){.topbar{padding:0 14px;height:56px}}
+.burger{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:#fff;display:none;align-items:center;justify-content:center;font-size:18px;cursor:pointer}
+@media(max-width:980px){.burger{display:flex}}
+.tb-title{font-size:17px;font-weight:800;letter-spacing:-.02em}
+.tb-sp{flex:1}
+.sync-pill{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);font-weight:600}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--ready)}
+.btn-sync{display:inline-flex;align-items:center;gap:7px;font-family:var(--font);font-size:13px;font-weight:700;padding:9px 15px;background:var(--ink);color:#fff;border:none;border-radius:10px;cursor:pointer;transition:all .18s}
+.btn-sync:hover{background:var(--brand-d)}
+.btn-sync:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:576px){.sync-pill{display:none}.btn-sync .sync-label{display:none}.btn-sync{padding:9px 11px}}
+
+.content{padding:26px 24px 60px;flex:1}
+@media(max-width:576px){.content{padding:18px 14px 50px}}
+.view{display:none;animation:fade .3s ease}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.phd{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+.phd h1{font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.phd p{font-size:13.5px;color:var(--muted);margin-top:4px}
+.phd .count{font-size:13px;font-weight:700;color:var(--ink-2);background:#fff;border:1px solid var(--line);padding:7px 14px;border-radius:10px;box-shadow:var(--sh-sm)}
+
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:26px}
+@media(max-width:980px){.stats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;cursor:pointer;transition:all .2s;box-shadow:var(--sh-sm)}
+.stat:hover{transform:translateY(-3px);box-shadow:var(--sh)}
+.stat-ic{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px}
+.s-shot .stat-ic{background:var(--shot-bg);color:var(--shot)}
+.s-sel .stat-ic{background:var(--sel-bg);color:var(--sel)}
+.s-ret .stat-ic{background:var(--ret-bg);color:var(--ret)}
+.s-ready .stat-ic{background:var(--ready-bg);color:var(--ready)}
+.s-del .stat-ic{background:var(--del-bg);color:var(--del)}
+.stat-n{font-size:28px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.stat-l{font-size:12px;color:var(--muted);font-weight:600;margin-top:3px}
+
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.search{position:relative;flex:1;min-width:200px}
+.search input{width:100%;font-family:var(--font);font-size:14px;padding:11px 14px 11px 40px;border:1px solid var(--line);border-radius:11px;background:#fff;outline:none;transition:all .18s;box-shadow:var(--sh-sm)}
+.search input:focus{border-color:var(--brand);box-shadow:0 0 0 4px rgba(14,165,233,.1)}
+.search i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px}
+.sel{font-family:var(--font);font-size:13.5px;font-weight:600;padding:11px 14px;border:1px solid var(--line);border-radius:11px;background:#fff;outline:none;cursor:pointer;color:var(--ink-2);box-shadow:var(--sh-sm)}
+.btn-add{display:inline-flex;align-items:center;gap:7px;font-family:var(--font);font-size:13.5px;font-weight:700;padding:11px 18px;background:var(--brand-d);color:#fff;border:none;border-radius:11px;cursor:pointer;transition:all .18s;box-shadow:0 4px 12px rgba(2,132,199,.28)}
+.btn-add:hover{background:var(--brand);transform:translateY(-1px)}
+
+/* job cards */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:1180px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+.jcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:all .2s;box-shadow:var(--sh-sm);animation:pop .3s ease both;border-left:4px solid var(--line)}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.jcard:hover{transform:translateY(-3px);box-shadow:var(--sh)}
+.jcard.b-shot{border-left-color:var(--shot)}.jcard.b-sel{border-left-color:var(--sel)}.jcard.b-ret{border-left-color:var(--ret)}.jcard.b-ready{border-left-color:var(--ready)}.jcard.b-del{border-left-color:var(--del)}
+.jcard.overdue{border-left-color:var(--danger)}
+.jc-top{padding:15px 16px 12px;display:flex;align-items:flex-start;gap:11px}
+.jc-name{flex:1;min-width:0}
+.jc-cust{font-size:15.5px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jc-shoot{font-size:12px;color:var(--muted);font-weight:600;margin-top:2px}
+.chip{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.chip-shot{background:var(--shot-bg);color:var(--shot)}.chip-sel{background:var(--sel-bg);color:var(--sel)}.chip-ret{background:var(--ret-bg);color:#b45309}.chip-ready{background:var(--ready-bg);color:#047857}.chip-del{background:var(--del-bg);color:#475569}
+.jc-body{padding:0 16px 12px;display:flex;flex-direction:column;gap:7px}
+.jrow{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink-2)}
+.jrow i{font-size:14px;color:var(--muted);width:16px;flex-shrink:0}
+.jrow b{font-weight:700}
+.jc-count{display:inline-flex;align-items:center;gap:5px;font-weight:800;color:var(--brand-d)}
+.deadline{display:flex;align-items:center;gap:7px;margin:0 16px 12px;padding:9px 12px;border-radius:10px;font-size:12.5px;font-weight:700;background:var(--bg);color:var(--ink-2)}
+.deadline.soon{background:var(--ret-bg);color:#b45309}
+.deadline.over{background:#fef2f2;color:var(--danger)}
+.jc-acts{display:flex;gap:7px;padding:12px 16px;border-top:1px solid var(--line);background:#fcfcfd}
+.act{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:var(--font);font-size:12.5px;font-weight:700;padding:9px 8px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink-2);cursor:pointer;transition:all .15s;white-space:nowrap}
+.act:hover{border-color:#cbd5e1;background:var(--bg)}
+.act-adv{border:none;color:#fff;flex:1.5;background:var(--brand-d)}
+.act-adv:hover{background:var(--brand)}
+.act-ico{flex:0 0 auto;width:40px;padding:9px 0}
+.act-del:hover{border-color:var(--danger);color:var(--danger);background:#fef2f2}
+
+/* workload bars */
+.work-wrap{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh-sm);margin-bottom:24px}
+.work-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+.work-row:last-child{border-bottom:none}
+.work-av{width:40px;height:40px;border-radius:11px;background:linear-gradient(140deg,var(--ret),#fbbf24);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.work-info{flex:1;min-width:0}
+.work-name{font-size:14px;font-weight:700}
+.work-meta{font-size:12px;color:var(--muted)}
+.work-bar{flex:2;height:8px;background:var(--bg);border-radius:10px;overflow:hidden;max-width:280px}
+.work-fill{height:100%;background:linear-gradient(90deg,var(--ret),#fbbf24);border-radius:10px;transition:width .5s}
+.work-num{font-size:18px;font-weight:800;color:var(--ret);min-width:60px;text-align:right}
+.work-num small{font-size:11px;color:var(--muted);font-weight:600;display:block}
+
+/* table */
+.tbl-wrap{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh-sm)}
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.tbl{width:100%;border-collapse:collapse;min-width:760px}
+.tbl thead th{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);padding:14px 16px;text-align:left;border-bottom:1px solid var(--line);background:#fcfcfd;white-space:nowrap}
+.tbl tbody td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr{cursor:pointer;transition:background .14s}
+.tbl tbody tr:hover td{background:var(--bg)}
+.t-cust{font-size:14px;font-weight:700}
+.t-sub{font-size:12px;color:var(--muted)}
+.mini-chip{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap}
+
+.empty{text-align:center;padding:56px 20px;color:var(--muted)}
+.empty .ei{width:64px;height:64px;border-radius:18px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;color:#cbd5e1}
+.empty h3{font-size:17px;font-weight:700;color:var(--ink-2);margin-bottom:5px}
+.empty p{font-size:13px;max-width:300px;margin:0 auto}
+
+/* modal */
+.ov{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(4px);z-index:9990;align-items:center;justify-content:center;padding:18px}
+.ov.show{display:flex;animation:fade .2s ease}
+.sheet{background:#fff;width:100%;max-width:600px;border-radius:20px;box-shadow:var(--sh-lg);max-height:92vh;overflow-y:auto;animation:rise .32s cubic-bezier(.16,1,.3,1)}
+.sheet-head{padding:22px 24px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;border-radius:20px 20px 0 0;z-index:2}
+.sheet-head h2{font-size:19px;font-weight:800;letter-spacing:-.02em}
+.x-btn{width:34px;height:34px;border-radius:10px;border:none;background:var(--bg);color:var(--muted);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.x-btn:hover{background:#e2e8f0;color:var(--ink)}
+.sheet-body{padding:20px 24px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:520px){.fgrid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;position:relative}
+.field.full{grid-column:1/-1}
+.field label{font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:6px}
+.field label .opt{color:var(--muted);font-weight:500}
+.inp{font-family:var(--font);font-size:14px;padding:11px 13px;border:1.5px solid var(--line);border-radius:11px;background:#fbfcfe;outline:none;transition:all .16s;width:100%}
+.inp:focus{border-color:var(--brand);background:#fff;box-shadow:0 0 0 4px rgba(14,165,233,.1)}
+textarea.inp{min-height:70px;resize:vertical;font-family:var(--font)}
+/* autocomplete */
+.ac-list{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:11px;box-shadow:var(--sh);z-index:20;max-height:180px;overflow-y:auto;margin-top:4px;display:none}
+.ac-list.show{display:block}
+.ac-item{padding:10px 13px;font-size:13.5px;cursor:pointer;transition:background .12s}
+.ac-item:hover,.ac-item.hl{background:var(--brand-l)}
+.ac-item small{color:var(--muted);font-size:11.5px}
+.stages5{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+@media(max-width:520px){.stages5{grid-template-columns:repeat(3,1fr)}}
+.stage{padding:10px 4px;border:1.5px solid var(--line);border-radius:10px;text-align:center;font-size:11.5px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .15s}
+.stage:hover{border-color:#cbd5e1}
+.stage.sel.st-shot{background:var(--shot-bg);border-color:var(--shot-bd);color:var(--shot)}
+.stage.sel.st-sel{background:var(--sel-bg);border-color:var(--sel-bd);color:var(--sel)}
+.stage.sel.st-ret{background:var(--ret-bg);border-color:var(--ret-bd);color:#b45309}
+.stage.sel.st-ready{background:var(--ready-bg);border-color:var(--ready-bd);color:#047857}
+.stage.sel.st-del{background:var(--del-bg);border-color:var(--del-bd);color:#475569}
+.sheet-foot{padding:16px 24px 22px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--line);position:sticky;bottom:0;background:#fff}
+.btn-ghost{font-family:var(--font);font-size:14px;font-weight:700;padding:12px 20px;background:#fff;border:1px solid var(--line);border-radius:11px;color:var(--ink-2);cursor:pointer}
+.btn-ghost:hover{background:var(--bg)}
+.btn-primary{font-family:var(--font);font-size:14px;font-weight:700;padding:12px 24px;background:var(--brand-d);border:none;border-radius:11px;color:#fff;cursor:pointer;box-shadow:0 4px 12px rgba(2,132,199,.28)}
+.btn-primary:hover{background:var(--brand)}
+
+.toasts{position:fixed;bottom:22px;right:22px;z-index:9995;display:flex;flex-direction:column;gap:9px;pointer-events:none}
+@media(max-width:520px){.toasts{left:14px;right:14px;bottom:14px}}
+.toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;padding:13px 17px;border-radius:12px;font-size:13.5px;font-weight:600;box-shadow:var(--sh-lg);opacity:0;transform:translateY(10px);transition:all .26s;min-width:240px}
+.toast.show{opacity:1;transform:none}
+.toast i{font-size:17px;flex-shrink:0}
+.toast.ok i{color:#34d399}.toast.warn i{color:#fbbf24}
+@keyframes spin{to{transform:rotate(360deg)}}.spin{display:inline-block;animation:spin .7s linear infinite}
+@media(hover:none) and (pointer:coarse){.nav-item{padding:12px}.act{min-height:40px}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage">
+  <div class="lp-shell">
+    <div class="lp-visual">
+      <div class="lp-blob lp-blob1"></div><div class="lp-blob lp-blob2"></div>
+      <img src="https://images.unsplash.com/photo-1452587925148-ce544e77e70d?auto=format&fit=crop&w=900&q=70" alt="">
+      <img class="lp-vlogo" src="https://res.cloudinary.com/lanremichael/image/upload/v1777536586/LOGO_vvhdu7.png" alt="Luxeimperial">
+      <div class="lp-vtext">
+        <div class="lp-vquote">From shutter to delivery — every frame on track.</div>
+        <div class="lp-vmeta">Production & Delivery · Luxeimperial Studio</div>
+      </div>
+    </div>
+    <div class="lp-form">
+      <div class="lb-badge"><i class="bi bi-box-seam"></i> Production & Delivery</div>
+      <div class="lb-title">Luxeimperial Delivery Hub</div>
+      <div class="lb-sub">Track retouching, deadlines and deliveries.</div>
+      <div class="lb-err" id="lbErr"></div>
+      <div class="fl"><label class="fl-lbl">Username</label><input class="fl-inp" id="lUser" type="text" autocomplete="username" placeholder="Enter username" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="fl"><label class="fl-lbl">Password</label><input class="fl-inp" id="lPass" type="password" autocomplete="current-password" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()"><i class="bi bi-eye fl-eye" id="lEye" onclick="togglePw()"></i></div>
+      <button class="btn-login" id="btnLogin" onclick="doLogin()"><span id="btnLoginTxt">Sign in <i class="bi bi-arrow-right"></i></span></button>
+      <div class="lb-switch">Looking for the client CRM? <a href="cms.html">Open CRM →</a></div>
+      <div class="lb-foot">Luxeimperial Studio · Secure Access</div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app"><div class="shell">
+  <aside class="side" id="side">
+    <div class="side-head"><div class="side-logo">L</div><div class="side-brand"> Luxe Delivery Hub<small>Production CRM</small></div></div>
+    <div class="side-scroll">
+      <div class="nav-lbl">Dashboard</div>
+      <div class="nav-item active" onclick="go('overview',this)"><i class="bi bi-grid-1x2-fill"></i>Overview<span class="badge-n" id="n-all">0</span></div>
+      <div class="nav-item" onclick="go('workload',this)"><i class="bi bi-bar-chart-fill"></i>Retoucher Workload</div>
+      <div class="nav-lbl">Pipeline</div>
+      <div class="nav-item" onclick="go('shot',this)"><span class="nav-dot dot-shot"></span>Shot<span class="badge-n" id="n-shot">0</span></div>
+      <div class="nav-item" onclick="go('sel',this)"><span class="nav-dot dot-sel"></span>Selected<span class="badge-n" id="n-sel">0</span></div>
+      <div class="nav-item" onclick="go('ret',this)"><span class="nav-dot dot-ret"></span>Retouching<span class="badge-n" id="n-ret">0</span></div>
+      <div class="nav-item" onclick="go('ready',this)"><span class="nav-dot dot-ready"></span>Ready<span class="badge-n" id="n-ready">0</span></div>
+      <div class="nav-item" onclick="go('del',this)"><span class="nav-dot dot-del"></span>Delivered<span class="badge-n" id="n-del">0</span></div>
+    </div>
+    <div class="side-foot"><div class="user-chip" onclick="doLogout()" title="Sign out"><div class="user-av" id="uAv">SA</div><div class="user-meta"><div class="user-name" id="uName">Admin</div><div class="user-role">Sign out</div></div><i class="bi bi-box-arrow-right" style="color:var(--muted)"></i></div></div>
+  </aside>
+  <div class="ov" id="sideOv" onclick="closeSide()" style="z-index:55;background:rgba(15,23,42,.4)"></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="burger" onclick="toggleSide()"><i class="bi bi-list"></i></button>
+      <div class="tb-title" id="tbTitle">Overview</div>
+      <div class="tb-sp"></div>
+      <div class="sync-pill"><span class="sync-dot"></span><span id="syncTxt">Synced</span></div>
+      <button class="btn-sync" id="btnSync" onclick="syncData()"><i class="bi bi-arrow-repeat"></i><span class="sync-label">Sync</span></button>
+    </header>
+    <div class="content">
+
+      <!-- OVERVIEW -->
+      <section class="view active" id="v-overview">
+        <div class="phd"><div><h1>Production Overview</h1><p id="todayDate"></p></div><div class="count" id="ovTotal">0 jobs</div></div>
+        <div class="stats">
+          <div class="stat s-shot" onclick="go('shot',navEl('shot'))"><div class="stat-ic"><i class="bi bi-camera-fill"></i></div><div class="stat-n" id="st-shot">0</div><div class="stat-l">Shot</div></div>
+          <div class="stat s-sel" onclick="go('sel',navEl('sel'))"><div class="stat-ic"><i class="bi bi-check2-square"></i></div><div class="stat-n" id="st-sel">0</div><div class="stat-l">Selected</div></div>
+          <div class="stat s-ret" onclick="go('ret',navEl('ret'))"><div class="stat-ic"><i class="bi bi-brush-fill"></i></div><div class="stat-n" id="st-ret">0</div><div class="stat-l">Retouching</div></div>
+          <div class="stat s-ready" onclick="go('ready',navEl('ready'))"><div class="stat-ic"><i class="bi bi-bag-check-fill"></i></div><div class="stat-n" id="st-ready">0</div><div class="stat-l">Ready</div></div>
+          <div class="stat s-del" onclick="go('del',navEl('del'))"><div class="stat-ic"><i class="bi bi-send-check-fill"></i></div><div class="stat-n" id="st-del">0</div><div class="stat-l">Delivered</div></div>
+        </div>
+        <div class="phd" style="margin-bottom:14px"><div><h1 style="font-size:18px">Due Soon &amp; Overdue</h1></div></div>
+        <div class="grid" id="ovDue" style="margin-bottom:28px"></div>
+        <div class="phd" style="margin-bottom:14px"><div><h1 style="font-size:18px">In Production</h1></div></div>
+        <div id="ovActive"></div>
+      </section>
+
+      <!-- WORKLOAD -->
+      <section class="view" id="v-workload">
+        <div class="phd"><div><h1>Retoucher Workload</h1><p>Who's retouching what, and how many photos each.</p></div></div>
+        <div class="work-wrap" id="workBars"></div>
+        <div class="phd" style="margin-bottom:14px"><div><h1 style="font-size:18px">Photographer Output</h1></div></div>
+        <div class="work-wrap" id="photogBars"></div>
+      </section>
+
+      <!-- PIPELINE STAGES (shared layout) -->
+      <section class="view" id="v-shot"><div class="phd"><div><h1>Shoot</h1><p>Sessions completed — awaiting client selection.</p></div><div class="count" id="c-shot">0</div></div><div class="toolbar"><div class="search"><i class="bi bi-search"></i><input id="s-shot" placeholder="Search customer, photographer…" oninput="dShot()"></div><button class="btn-add" onclick="openModal()"><i class="bi bi-plus-lg"></i>Add Job</button></div><div class="grid" id="g-shot"></div></section>
+      <section class="view" id="v-sel"><div class="phd"><div><h1>Selected</h1><p>Client has chosen their photos — ready to assign retouching.</p></div><div class="count" id="c-sel">0</div></div><div class="toolbar"><div class="search"><i class="bi bi-search"></i><input id="s-sel" placeholder="Search…" oninput="dSel()"></div><button class="btn-add" onclick="openModal()"><i class="bi bi-plus-lg"></i>Add Job</button></div><div class="grid" id="g-sel"></div></section>
+      <section class="view" id="v-ret"><div class="phd"><div><h1>Retouching</h1><p>Currently being retouched — track deadlines closely.</p></div><div class="count" id="c-ret">0</div></div><div class="toolbar"><div class="search"><i class="bi bi-search"></i><input id="s-ret" placeholder="Search customer, retoucher…" oninput="dRet()"></div><button class="btn-add" onclick="openModal()"><i class="bi bi-plus-lg"></i>Add Job</button></div><div class="grid" id="g-ret"></div></section>
+      <section class="view" id="v-ready"><div class="phd"><div><h1>Ready to Deliver</h1><p>Retouching done — ready to hand over to the client.</p></div><div class="count" id="c-ready">0</div></div><div class="toolbar"><div class="search"><i class="bi bi-search"></i><input id="s-ready" placeholder="Search…" oninput="dReady()"></div><button class="btn-add" onclick="openModal()"><i class="bi bi-plus-lg"></i>Add Job</button></div><div class="grid" id="g-ready"></div></section>
+      <section class="view" id="v-del"><div class="phd"><div><h1>Delivered</h1><p>Completed and handed over.</p></div><div class="count" id="c-del">0</div></div><div class="toolbar"><div class="search"><i class="bi bi-search"></i><input id="s-del" placeholder="Search delivered…" oninput="dDel()"></div></div><div id="g-del"></div></section>
+
+    </div>
+  </div>
+</div></div>
+
+<!-- JOB MODAL -->
+<div class="ov" id="modalOv">
+  <div class="sheet">
+    <div class="sheet-head"><h2 id="mTitle">New Job</h2><button class="x-btn" onclick="closeModal()"><i class="bi bi-x-lg"></i></button></div>
+    <div class="sheet-body">
+      <input type="hidden" id="eIdx" value="-1">
+      <div class="fgrid">
+        <div class="field full"><label>Customer Name *</label><input class="inp" id="f-cust" placeholder="Type or search booked clients…" autocomplete="off" oninput="acCust(this.value)" onfocus="acCust(this.value)"><div class="ac-list" id="acCust"></div></div>
+        <div class="field"><label>Shoot Date</label><input class="inp" id="f-shoot" type="date"></div>
+        <div class="field"><label>Photographer</label><input class="inp" id="f-photog" placeholder="Type or search…" autocomplete="off" oninput="acName('photog',this.value)" onfocus="acName('photog',this.value)"><div class="ac-list" id="acPhotog"></div></div>
+        <div class="field"><label>Photos Selected <span class="opt">(count)</span></label><input class="inp" id="f-count" type="number" min="0" placeholder="e.g. 45"></div>
+        <div class="field"><label>Retoucher</label><input class="inp" id="f-retoucher" placeholder="Type or search…" autocomplete="off" oninput="acName('retoucher',this.value)" onfocus="acName('retoucher',this.value)"><div class="ac-list" id="acRetoucher"></div></div>
+        <div class="field"><label>Retoucher Delivery Date</label><input class="inp" id="f-rdue" type="date"></div>
+        <div class="field"><label>Final Delivery Deadline *</label><input class="inp" id="f-deadline" type="date"></div>
+        <div class="field full"><label>Stage</label>
+          <div class="stages5">
+            <div class="stage st-shot" onclick="selSt('shot')">Shot</div>
+            <div class="stage st-sel" onclick="selSt('sel')">Selected</div>
+            <div class="stage st-ret" onclick="selSt('ret')">Retouching</div>
+            <div class="stage st-ready" onclick="selSt('ready')">Ready</div>
+            <div class="stage st-del" onclick="selSt('del')">Delivered</div>
+          </div>
+          <input type="hidden" id="f-stage" value="shot">
+        </div>
+        <div class="field full"><label>Notes</label><textarea class="inp" id="f-notes" placeholder="Special instructions, album type, revisions…"></textarea></div>
+      </div>
+    </div>
+    <div class="sheet-foot"><button class="btn-ghost" onclick="closeModal()">Cancel</button><button class="btn-primary" onclick="saveJob()"><i class="bi bi-check2 me-1"></i>Save Job</button></div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// 🔴 SAME URL as the CRM
+var SCRIPT_URL='https://script.google.com/macros/s/AKfycbzWXa1zcV-KXhGm2Cl0WJ5Kp_oUAbcu6a0N6vihpOTsEgQwJVGQGGZKZFdoBoB40NHr/exec';
+var jobs=[], crmNames=[], teamNames=[], authToken=null, currentUser=null, syncInterval=null, acTarget='';
+var STAGES=['shot','sel','ret','ready','del'];
+var STAGE_LABEL={shot:'Shot',sel:'Selected',ret:'Retouching',ready:'Ready',del:'Delivered'};
+
+// HELPERS
+var _c={};
+function el(id){var e=_c[id];if(e&&e.isConnected)return e;e=document.getElementById(id);_c[id]=e;return e;}
+function v(id){return el(id).value.trim();}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function initials(n){var p=(n||'').trim().split(' ');return((p[0]||'')[0]||'').toUpperCase()+((p.length>1?(p[p.length-1]||'')[0]:'')||'').toUpperCase();}
+function fmtDate(d){if(!d)return'—';try{return new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}catch(e){return d;}}
+function daysUntil(d){if(!d)return null;var t=new Date();t.setHours(0,0,0,0);var x=new Date(d+'T12:00:00');return Math.round((x-t)/864e5);}
+function nowISO(){return new Date().toISOString();}
+function uid(){return 'D'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function debounce(fn,w){var t;return function(){var a=arguments,c=this;clearTimeout(t);t=setTimeout(function(){fn.apply(c,a);},w);};}
+function navEl(id){var m={shot:0,sel:1,ret:2,ready:3,del:4};var items=document.querySelectorAll('.nav-item .nav-dot');return null;}
+function active(){return jobs.filter(function(j){return !j.archived;});}
+function byStage(s){return active().filter(function(j){return j.stage===s;});}
+function stampIdx(){for(var i=0;i<jobs.length;i++)jobs[i]._i=i;}
+function idxOf(j){return j._i!==undefined?j._i:jobs.indexOf(j);}
+function keyOf(o){return(o.id&&String(o.id).trim())?('id:'+o.id):('cs:'+(o.customer||'').trim().toLowerCase()+'|'+(o.shootDate||''));}
+
+// SESSION (shared with CRM via same keys)
+function saveSession(o){var s=JSON.stringify(o);try{localStorage.setItem('li_sess',s);}catch(e){}try{sessionStorage.setItem('li_sess',s);}catch(e){}try{location.hash='s='+encodeURIComponent(btoa(s));}catch(e){}}
+function readSession(){try{var m=(location.hash||'').match(/[#&]s=([^&]+)/);if(m)return JSON.parse(atob(decodeURIComponent(m[1])));}catch(e){}try{var l=localStorage.getItem('li_sess');if(l)return JSON.parse(l);}catch(e){}try{var ss=sessionStorage.getItem('li_sess');if(ss)return JSON.parse(ss);}catch(e){}return null;}
+function clearSession(){try{localStorage.removeItem('li_sess');}catch(e){}try{sessionStorage.removeItem('li_sess');}catch(e){}try{location.hash='';}catch(e){}}
+
+// AUTH (same backend/token as CRM)
+async function doLogin(){
+  var u=v('lUser'),p=el('lPass').value;
+  if(!u||!p)return loginErr('Please enter username and password.');
+  var b=el('btnLogin');b.disabled=true;el('btnLoginTxt').innerHTML='<i class="bi bi-arrow-repeat spin"></i> Signing in…';
+  el('lbErr').style.display='none';
+  try{
+    var r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'login',user:u,pass:p})});
+    var d=await r.json();
+    if(d&&d.success&&d.token){authToken=d.token;currentUser=d.user;saveSession({token:d.token,u:d.user.u,name:d.user.name,av:d.user.av,ts:Date.now()});resetBtn();showApp(d.user);}
+    else loginErr((d&&d.error)||'Incorrect username or password.');
+  }catch(e){loginErr('Could not reach the server.');}
+}
+function loginErr(m){resetBtn();var e=el('lbErr');e.innerHTML='<i class="bi bi-shield-exclamation me-1"></i>'+esc(m);e.style.display='block';['lUser','lPass'].forEach(function(id){el(id).classList.add('err');});el('lPass').value='';}
+function resetBtn(){var b=el('btnLogin');b.disabled=false;el('btnLoginTxt').innerHTML='Sign in <i class="bi bi-arrow-right"></i>';}
+function togglePw(){var i=el('lPass'),e=el('lEye');if(i.type==='password'){i.type='text';e.className='bi bi-eye-slash fl-eye';}else{i.type='password';e.className='bi bi-eye fl-eye';}}
+function showApp(user){currentUser=user;el('loginPage').classList.add('out');setTimeout(function(){el('loginPage').style.display='none';},520);el('app').style.display='block';el('uAv').textContent=user.av;el('uName').textContent=user.name;init();}
+function doLogout(){if(!confirm('Sign out?'))return;clearSession();authToken=null;location.reload();}
+function checkSession(){var s=null;try{s=readSession();}catch(e){}if(!s||!s.token)return;if(Date.now()-s.ts>=7*24*60*60*1000){clearSession();return;}authToken=s.token;currentUser={u:s.u,name:s.name,av:s.av};try{s.ts=Date.now();saveSession(s);}catch(e){}try{showApp(currentUser);}catch(e){console.error(e);}}
+if(document.readyState==='complete')checkSession();else window.addEventListener('load',checkSession);
+
+// SIDEBAR
+function toggleSide(){var o=el('side').classList.toggle('open');el('sideOv').style.display=o?'block':'none';}
+function closeSide(){el('side').classList.remove('open');el('sideOv').style.display='none';}
+
+// INIT
+function init(){
+  el('todayDate').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  loadCache();
+  if(SCRIPT_URL.indexOf('script.google.com')>-1){
+    syncData(true); loadCrmNames();
+    if(syncInterval)clearInterval(syncInterval);
+    syncInterval=setInterval(function(){syncData(true);},30000);
+  }else if(!jobs.length){loadDemo();}
+}
+function loadCache(){try{var c=localStorage.getItem('li_delivery');if(c){jobs=JSON.parse(c);stampIdx();renderAll();}}catch(e){}try{var t=localStorage.getItem('li_team');if(t)teamNames=JSON.parse(t);}catch(e){}}
+function saveCache(){stampIdx();try{localStorage.setItem('li_delivery',JSON.stringify(jobs));}catch(e){}}
+function saveTeam(){try{localStorage.setItem('li_team',JSON.stringify(teamNames));}catch(e){}}
+function rememberName(n){n=(n||'').trim();if(n&&teamNames.indexOf(n)<0){teamNames.push(n);saveTeam();}}
+
+function loadDemo(){
+  var n=Date.now();
+  jobs=[
+    {id:uid(),customer:'Kemi Okafor',shootDate:'2025-06-22',photographer:'Michael',count:'45',retoucher:'Sandra',retouchDue:'2025-06-26',deadline:'2025-06-29',stage:'ret',notes:'Bright editorial finish.',updated:nowISO(),archived:false},
+    {id:uid(),customer:'Yetunde Bello',shootDate:'2025-06-28',photographer:'Michael',count:'60',retoucher:'James',retouchDue:'2025-07-02',deadline:'2025-07-05',stage:'ret',notes:'',updated:nowISO(),archived:false},
+    {id:uid(),customer:'Amara Johnson',shootDate:'2025-06-12',photographer:'Grace',count:'',retoucher:'',retouchDue:'',deadline:'2025-06-20',stage:'sel',notes:'Awaiting selection.',updated:nowISO(),archived:false},
+    {id:uid(),customer:'Tolu Adeyemi',shootDate:'2025-06-18',photographer:'Grace',count:'30',retoucher:'Sandra',retouchDue:'2025-06-24',deadline:'2025-06-27',stage:'ready',notes:'Ready for handover.',updated:nowISO(),archived:false},
+    {id:uid(),customer:'Chioma Obi',shootDate:'2025-06-05',photographer:'Michael',count:'50',retoucher:'James',retouchDue:'2025-06-10',deadline:'2025-06-12',stage:'del',notes:'Delivered via WeTransfer.',updated:nowISO(),archived:false}
+  ];
+  saveCache();renderAll();
+}
+
+// PULL booked client names from the CRM leads for autocomplete
+async function loadCrmNames(){
+  try{
+    var r=await fetch(SCRIPT_URL+'?action=getLeads&token='+encodeURIComponent(authToken||''));
+    var d=await r.json();
+    if(d&&d.leads){crmNames=d.leads.filter(function(l){return !l.archived;}).map(function(l){return{name:l.name,date:l.shootDate,type:l.shootType};});}
+  }catch(e){}
+}
+
+// SYNC (two-way, newest-wins)
+async function syncData(silent){
+  var btn=el('btnSync');
+  if(!silent){btn.disabled=true;btn.innerHTML='<i class="bi bi-arrow-repeat spin"></i><span class="sync-label">Syncing…</span>';}
+  try{
+    var r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'getDeliveries',token:authToken||''})});
+    var d=await r.json();
+    if(d&&d.success&&d.jobs){
+      var localByKey={};jobs.forEach(function(j){localByKey[keyOf(j)]=j;});
+      var merged=[],seen={};
+      d.jobs.forEach(function(s){
+        var rec={id:(s.id&&String(s.id).trim())?String(s.id):'',customer:s.customer||'',shootDate:s.shootDate||'',photographer:s.photographer||'',count:s.count||'',retoucher:s.retoucher||'',retouchDue:s.retouchDue||'',deadline:s.deadline||'',stage:s.stage||'shot',notes:s.notes||'',updated:s.updated||'',archived:!!s.archived};
+        var k=keyOf(rec);if(seen[k])return;seen[k]=1;
+        var local=localByKey[k];
+        if(local){
+          if(!rec.id&&local.id)rec.id=local.id;
+          if(local._dirty){merged.push(Object.assign({},local,{id:rec.id||local.id}));}
+          else{var lu=local.updated||'',ru=rec.updated||'';merged.push((lu&&ru&&lu>ru)?Object.assign({},local,{id:rec.id||local.id}):rec);}
+        }else merged.push(rec);
+        rememberName(rec.photographer);rememberName(rec.retoucher);
+      });
+      jobs.forEach(function(j){var k=keyOf(j);if(!seen[k]){seen[k]=1;merged.push(j);}});
+      jobs=merged;saveCache();renderAll();updateSyncBadge();flushPending();
+      if(!silent)toast('Synced '+active().length+' jobs','ok');
+    }else if(!silent)toast((d&&d.error)||'No data','warn');
+  }catch(e){if(!jobs.length)loadDemo();if(!silent)toast('Sync failed','warn');}
+  if(!silent){btn.disabled=false;btn.innerHTML='<i class="bi bi-arrow-repeat"></i><span class="sync-label">Sync</span>';}
+  el('syncTxt').textContent='Synced '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+}
+async function push(job){
+  if(!authToken||SCRIPT_URL.indexOf('script.google.com')<0)return;
+  job._dirty=true;
+  try{var r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'upsertDelivery',token:authToken,job:job})});var d=await r.json();
+    if(d&&d.success){job._dirty=false;if(d.id&&!job.id)job.id=d.id;saveCache();}
+  }catch(e){}
+  updateSyncBadge();
+}
+async function pushArchive(id){if(!authToken||SCRIPT_URL.indexOf('script.google.com')<0)return;try{await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'archiveDelivery',token:authToken,id:id})});}catch(e){}}
+async function flushPending(){var p=jobs.filter(function(j){return j._dirty;});for(var i=0;i<p.length;i++)await push(p[i]);}
+function updateSyncBadge(){var n=jobs.filter(function(j){return j._dirty;}).length;var t=el('syncTxt');if(!t)return;if(n>0){t.textContent=n+' unsaved…';t.style.color='var(--ret)';}else t.style.color='';}
+
+// NAV
+function go(id,navItem){
+  document.querySelectorAll('.view').forEach(function(x){x.classList.remove('active');});
+  var view=el('v-'+id);if(view)view.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(i){i.classList.remove('active');});
+  if(navItem)navItem.classList.add('active');
+  var names={overview:'Overview',workload:'Retoucher Workload',shot:'Shot',sel:'Selected',ret:'Retouching',ready:'Ready',del:'Delivered'};
+  el('tbTitle').textContent=names[id]||id;closeSide();
+  var R={overview:renderOverview,workload:renderWorkload,shot:function(){renderStage('shot');},sel:function(){renderStage('sel');},ret:function(){renderStage('ret');},ready:function(){renderStage('ready');},del:renderDelivered};
+  if(R[id])R[id]();
+}
+// fix navEl to return the right sidebar item
+function navEl(id){var map={shot:'dot-shot',sel:'dot-sel',ret:'dot-ret',ready:'dot-ready',del:'dot-del'};var dot=document.querySelector('.'+map[id]);return dot?dot.closest('.nav-item'):null;}
+
+// STATS
+function stats(){
+  var c={shot:0,sel:0,ret:0,ready:0,del:0};
+  active().forEach(function(j){if(c[j.stage]!==undefined)c[j.stage]++;});
+  STAGES.forEach(function(s){var a=el('st-'+s);if(a)a.textContent=c[s];var b=el('n-'+s);if(b)b.textContent=c[s];var cc=el('c-'+s);if(cc)cc.textContent=c[s]+' job'+(c[s]!==1?'s':'');});
+  el('n-all').textContent=active().length;
+  el('ovTotal').textContent=active().length+' job'+(active().length!==1?'s':'');
+}
+
+// RENDER
+function renderAll(){stampIdx();stats();var av=document.querySelector('.view.active');var id=av?av.id.replace('v-',''):'overview';go(id,navEl(id)||(id==='overview'?document.querySelector('.nav-item'):null));}
+
+function deadlineBadge(j){
+  var du=daysUntil(j.deadline);
+  if(j.stage==='del')return '<div class="deadline"><i class="bi bi-check-circle-fill" style="color:var(--ready)"></i>Delivered</div>';
+  if(du===null)return '<div class="deadline"><i class="bi bi-calendar-x"></i>No deadline set</div>';
+  var cls=du<0?'over':du<=3?'soon':'';
+  var txt=du<0?('Overdue by '+Math.abs(du)+'d'):du===0?'Due today':du===1?'Due tomorrow':('Due in '+du+' days');
+  return '<div class="deadline '+cls+'"><i class="bi bi-clock-fill"></i>'+txt+' · '+fmtDate(j.deadline)+'</div>';
+}
+function jobCard(j,di){
+  var idx=idxOf(j),s=j.stage;
+  var du=daysUntil(j.deadline);var over=(s!=='del'&&du!==null&&du<0);
+  var nextStage={shot:'sel',sel:'ret',ret:'ready',ready:'del'}[s];
+  var nextLbl={sel:'→ Selected',ret:'→ Retouching',ready:'→ Ready',del:'→ Delivered'}[nextStage];
+  return '<div class="jcard b-'+s+(over?' overdue':'')+'" style="animation-delay:'+(di*.04)+'s">'+
+    '<div class="jc-top"><div class="jc-name"><div class="jc-cust">'+esc(j.customer)+'</div><div class="jc-shoot">Shot '+fmtDate(j.shootDate)+'</div></div><span class="chip chip-'+s+'">'+STAGE_LABEL[s]+'</span></div>'+
+    '<div class="jc-body">'+
+      (j.photographer?'<div class="jrow"><i class="bi bi-camera"></i>Photographer: <b>'+esc(j.photographer)+'</b></div>':'')+
+      (j.count?'<div class="jrow"><i class="bi bi-images"></i><span class="jc-count">'+esc(j.count)+' photos</span> selected</div>':'')+
+      (j.retoucher?'<div class="jrow"><i class="bi bi-brush"></i>Retoucher: <b>'+esc(j.retoucher)+'</b></div>':'')+
+      (j.retouchDue?'<div class="jrow"><i class="bi bi-calendar-event"></i>Retouch due: <b>'+fmtDate(j.retouchDue)+'</b></div>':'')+
+    '</div>'+
+    deadlineBadge(j)+
+    (j.notes?'<div class="jrow" style="padding:0 16px 12px;font-size:12.5px;color:var(--muted)"><i class="bi bi-sticky"></i>'+esc(j.notes.substring(0,80))+(j.notes.length>80?'…':'')+'</div>':'')+
+    '<div class="jc-acts">'+
+      (nextStage?'<button class="act act-adv" onclick="advance('+idx+')"><i class="bi bi-arrow-right"></i>'+nextLbl+'</button>':'<button class="act act-adv" style="background:var(--ready)" disabled><i class="bi bi-check2-all"></i>Delivered</button>')+
+      '<button class="act act-ico" onclick="openModal('+idx+')"><i class="bi bi-pencil"></i></button>'+
+      '<button class="act act-ico act-del" onclick="archiveJob('+idx+')"><i class="bi bi-archive"></i></button>'+
+    '</div></div>';
+}
+function emptyHTML(ic,t,s){return '<div class="empty" style="grid-column:1/-1"><div class="ei"><i class="bi bi-'+ic+'"></i></div><h3>'+t+'</h3><p>'+s+'</p></div>';}
+
+function renderOverview(){
+  stats();
+  // due soon / overdue (not delivered), sorted by urgency
+  var due=active().filter(function(j){return j.stage!=='del'&&j.deadline;}).sort(function(a,b){return(a.deadline||'').localeCompare(b.deadline||'');}).filter(function(j){var du=daysUntil(j.deadline);return du!==null&&du<=5;});
+  el('ovDue').innerHTML=due.length?due.map(function(j,i){return jobCard(j,i);}).join(''):emptyHTML('emoji-smile','Nothing urgent','No deadlines within 5 days. Great pace!');
+  // in production (shot/sel/ret/ready)
+  var act=active().filter(function(j){return j.stage!=='del';}).sort(function(a,b){return STAGES.indexOf(a.stage)-STAGES.indexOf(b.stage);});
+  el('ovActive').innerHTML=tableHTML(act);
+}
+function renderStage(s){
+  var q=v('s-'+s).toLowerCase();
+  var f=byStage(s).filter(function(j){return !q||(j.customer||'').toLowerCase().includes(q)||(j.photographer||'').toLowerCase().includes(q)||(j.retoucher||'').toLowerCase().includes(q);});
+  f.sort(function(a,b){return(a.deadline||'zzz').localeCompare(b.deadline||'zzz');});
+  el('c-'+s).textContent=f.length+' job'+(f.length!==1?'s':'');
+  var empties={shot:['camera','No jobs shot yet','Completed sessions awaiting selection show here.'],sel:['check2-square','Nothing selected yet','Jobs where clients have chosen photos show here.'],ret:['brush','No active retouching','Assigned retouching jobs show here.'],ready:['bag-check','Nothing ready yet','Finished jobs ready to deliver show here.']};
+  var e=empties[s]||['inbox','Empty','Nothing here yet.'];
+  el('g-'+s).innerHTML=f.length?f.map(function(j,i){return jobCard(j,i);}).join(''):emptyHTML(e[0],e[1],e[2]);
+}
+function renderDelivered(){
+  var q=v('s-del').toLowerCase();
+  var f=byStage('del').filter(function(j){return !q||(j.customer||'').toLowerCase().includes(q)||(j.retoucher||'').toLowerCase().includes(q);});
+  el('c-del').textContent=f.length+' delivered';
+  el('g-del').innerHTML=tableHTML(f);
+}
+function tableHTML(arr){
+  if(!arr.length)return emptyHTML('inbox','Nothing here','No jobs to show.');
+  return '<div class="tbl-wrap"><div class="tbl-scroll"><table class="tbl"><thead><tr><th>Customer</th><th>Photographer</th><th>Photos</th><th>Retoucher</th><th>Deadline</th><th>Stage</th><th>Actions</th></tr></thead><tbody>'+
+    arr.map(function(j){
+      var idx=idxOf(j);var du=daysUntil(j.deadline);var dcol=(j.stage!=='del'&&du!==null&&du<0)?'color:var(--danger);font-weight:700':(j.stage!=='del'&&du!==null&&du<=3)?'color:var(--ret);font-weight:700':'';
+      return '<tr onclick="openModal('+idx+')">'+
+        '<td><div class="t-cust">'+esc(j.customer)+'</div><div class="t-sub">Shot '+fmtDate(j.shootDate)+'</div></td>'+
+        '<td style="font-size:13px">'+esc(j.photographer||'—')+'</td>'+
+        '<td style="font-size:13px;font-weight:700;color:var(--brand-d)">'+(j.count?esc(j.count):'—')+'</td>'+
+        '<td style="font-size:13px">'+esc(j.retoucher||'—')+'</td>'+
+        '<td style="font-size:13px;white-space:nowrap;'+dcol+'">'+(j.stage==='del'?'Delivered':fmtDate(j.deadline))+'</td>'+
+        '<td><span class="mini-chip chip-'+j.stage+'">'+STAGE_LABEL[j.stage]+'</span></td>'+
+        '<td><div onclick="event.stopPropagation()" style="display:flex;gap:6px"><button class="act act-ico" style="flex:0 0 auto" onclick="openModal('+idx+')"><i class="bi bi-pencil"></i></button><button class="act act-ico act-del" style="flex:0 0 auto" onclick="archiveJob('+idx+')"><i class="bi bi-archive"></i></button></div></td>'+
+      '</tr>';
+    }).join('')+'</tbody></table></div></div>';
+}
+
+// WORKLOAD
+function renderWorkload(){
+  var ret={};active().filter(function(j){return j.stage==='ret'||j.stage==='ready';}).forEach(function(j){
+    if(!j.retoucher)return;var k=j.retoucher;if(!ret[k])ret[k]={count:0,photos:0,jobs:[]};ret[k].count++;ret[k].photos+=parseInt(j.count)||0;ret[k].jobs.push(j.customer);
+  });
+  var arr=Object.keys(ret).map(function(k){return{name:k,d:ret[k]};}).sort(function(a,b){return b.d.photos-a.d.photos;});
+  var maxP=Math.max.apply(null,arr.map(function(x){return x.d.photos;}).concat([1]));
+  el('workBars').innerHTML=arr.length?arr.map(function(x){
+    return '<div class="work-row"><div class="work-av">'+esc(initials(x.name))+'</div><div class="work-info"><div class="work-name">'+esc(x.name)+'</div><div class="work-meta">'+x.d.count+' job'+(x.d.count!==1?'s':'')+' · '+esc(x.d.jobs.slice(0,3).join(', '))+(x.d.jobs.length>3?'…':'')+'</div></div><div class="work-bar"><div class="work-fill" style="width:'+Math.round(x.d.photos/maxP*100)+'%"></div></div><div class="work-num">'+x.d.photos+'<small>photos</small></div></div>';
+  }).join(''):emptyHTML('person-check','No active retouching','Assign retouchers to jobs to see workload here.');
+  // photographers
+  var pg={};active().forEach(function(j){if(!j.photographer)return;var k=j.photographer;if(!pg[k])pg[k]={count:0,photos:0};pg[k].count++;pg[k].photos+=parseInt(j.count)||0;});
+  var pa=Object.keys(pg).map(function(k){return{name:k,d:pg[k]};}).sort(function(a,b){return b.d.count-a.d.count;});
+  var maxC=Math.max.apply(null,pa.map(function(x){return x.d.count;}).concat([1]));
+  el('photogBars').innerHTML=pa.length?pa.map(function(x){
+    return '<div class="work-row"><div class="work-av" style="background:linear-gradient(140deg,var(--shot),#a78bfa)">'+esc(initials(x.name))+'</div><div class="work-info"><div class="work-name">'+esc(x.name)+'</div><div class="work-meta">'+x.d.count+' shoot'+(x.d.count!==1?'s':'')+' in production</div></div><div class="work-bar"><div class="work-fill" style="background:linear-gradient(90deg,var(--shot),#a78bfa);width:'+Math.round(x.d.count/maxC*100)+'%"></div></div><div class="work-num" style="color:var(--shot)">'+x.d.count+'<small>jobs</small></div></div>';
+  }).join(''):emptyHTML('camera','No photographers yet','Add jobs with photographers to see output here.');
+}
+var dShot=debounce(function(){renderStage('shot');},150),dSel=debounce(function(){renderStage('sel');},150),dRet=debounce(function(){renderStage('ret');},150),dReady=debounce(function(){renderStage('ready');},150),dDel=debounce(renderDelivered,150);
+
+// ADVANCE stage
+function advance(idx){
+  var j=jobs[idx];var nx={shot:'sel',sel:'ret',ret:'ready',ready:'del'}[j.stage];if(!nx)return;
+  // Moving Shot -> Selected: this is where photo count + the two delivery dates are set.
+  // Open the editor (pre-set to the new stage) so the dates are entered and SAVED properly,
+  // instead of disappearing. The user fills them in and hits Save.
+  if(nx==='sel'){
+    openModal(idx);
+    selSt('sel');
+    toast('Set photos selected, retoucher date & final delivery date, then Save','ok');
+    setTimeout(function(){el('f-count').focus();},250);
+    return;
+  }
+  // Selected -> Retouching: make sure a retoucher is named (open editor if missing)
+  if(nx==='ret' && !j.retoucher){
+    openModal(idx);
+    selSt('ret');
+    toast('Add the retoucher, then Save','warn');
+    setTimeout(function(){el('f-retoucher').focus();},250);
+    return;
+  }
+  // Other transitions advance directly
+  j.stage=nx;j.updated=nowISO();
+  saveCache();renderAll();toast(j.customer.split(' ')[0]+' → '+STAGE_LABEL[nx],'ok');push(j);
+}
+
+// MODAL
+function openModal(idx){
+  el('eIdx').value=(idx!==undefined&&idx>=0)?idx:-1;
+  if(idx!==undefined&&idx>=0){
+    var j=jobs[idx];el('mTitle').textContent='Edit Job';
+    el('f-cust').value=j.customer||'';el('f-shoot').value=j.shootDate||'';el('f-photog').value=j.photographer||'';
+    el('f-count').value=j.count||'';el('f-retoucher').value=j.retoucher||'';el('f-rdue').value=j.retouchDue||'';
+    el('f-deadline').value=j.deadline||'';el('f-notes').value=j.notes||'';selSt(j.stage||'shot');
+  }else{
+    el('mTitle').textContent='New Job';
+    ['f-cust','f-shoot','f-photog','f-count','f-retoucher','f-rdue','f-deadline','f-notes'].forEach(function(id){el(id).value='';});
+    selSt('shot');
+  }
+  el('modalOv').classList.add('show');
+}
+function closeModal(){el('modalOv').classList.remove('show');hideAc();}
+function selSt(s){el('f-stage').value=s;document.querySelectorAll('.stage').forEach(function(o){o.classList.remove('sel');});var e=document.querySelector('.st-'+s);if(e)e.classList.add('sel');}
+function saveJob(){
+  var idx=parseInt(el('eIdx').value);var cust=v('f-cust');
+  if(!cust)return toast('Customer name is required','warn');
+  if(!el('f-deadline').value)return toast('Delivery deadline is required','warn');
+  var data={customer:cust,shootDate:el('f-shoot').value,photographer:v('f-photog'),count:v('f-count'),retoucher:v('f-retoucher'),retouchDue:el('f-rdue').value,deadline:el('f-deadline').value,stage:el('f-stage').value,notes:el('f-notes').value.trim()};
+  rememberName(data.photographer);rememberName(data.retoucher);
+  if(idx>=0){var j=jobs[idx];Object.assign(j,data);j.updated=nowISO();toast('Job updated','ok');push(j);}
+  else{var nj=Object.assign({id:uid(),updated:nowISO(),archived:false},data);jobs.unshift(nj);toast('Job added','ok');push(nj);}
+  saveCache();renderAll();closeModal();
+}
+function archiveJob(idx){var j=jobs[idx];if(!j)return;if(!confirm('Archive job for "'+j.customer+'"? Kept in the spreadsheet, can be recovered.'))return;j.archived=true;j.updated=nowISO();saveCache();renderAll();toast(j.customer.split(' ')[0]+' archived');pushArchive(j.id);}
+
+// AUTOCOMPLETE
+function acCust(val){
+  var list=el('acCust');val=(val||'').toLowerCase();
+  var matches=crmNames.filter(function(c){return c.name&&c.name.toLowerCase().includes(val);}).slice(0,6);
+  if(!matches.length){hideAc();return;}
+  list.innerHTML=matches.map(function(c){return '<div class="ac-item" onclick="pickCust(\''+esc(c.name).replace(/'/g,"\\'")+'\',\''+(c.date||'')+'\')"><b>'+esc(c.name)+'</b> <small>'+(c.type?esc(c.type):'')+(c.date?' · '+fmtDate(c.date):'')+'</small></div>';}).join('');
+  list.classList.add('show');
+}
+function pickCust(name,date){el('f-cust').value=name;if(date&&!el('f-shoot').value)el('f-shoot').value=date;hideAc();}
+function acName(target,val){
+  var list=el(target==='photog'?'acPhotog':'acRetoucher');val=(val||'').toLowerCase();
+  var matches=teamNames.filter(function(n){return n.toLowerCase().includes(val);}).slice(0,6);
+  if(!matches.length){list.classList.remove('show');return;}
+  var field=target==='photog'?'f-photog':'f-retoucher';
+  list.innerHTML=matches.map(function(n){return '<div class="ac-item" onclick="pickName(\''+field+'\',\''+esc(n).replace(/'/g,"\\'")+'\')">'+esc(n)+'</div>';}).join('');
+  list.classList.add('show');
+}
+function pickName(field,n){el(field).value=n;el('acPhotog').classList.remove('show');el('acRetoucher').classList.remove('show');}
+function hideAc(){el('acCust').classList.remove('show');el('acPhotog').classList.remove('show');el('acRetoucher').classList.remove('show');}
+document.addEventListener('click',function(e){if(!e.target.closest('.field'))hideAc();});
+
+// TOAST
+function toast(msg,type){var s=el('toasts'),t=document.createElement('div');t.className='toast'+(type?' '+type:'');var ic=type==='warn'?'bi-exclamation-triangle-fill':type==='ok'?'bi-check-circle-fill':'bi-info-circle-fill';t.innerHTML='<i class="bi '+ic+'"></i>'+esc(msg);s.appendChild(t);requestAnimationFrame(function(){t.classList.add('show');});setTimeout(function(){t.classList.remove('show');setTimeout(function(){t.remove();},280);},3000);}
+el('modalOv').addEventListener('click',function(e){if(e.target===el('modalOv'))closeModal();});
+</script>
+</body>
+</html>
