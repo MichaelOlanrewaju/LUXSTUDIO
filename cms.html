@@ -527,7 +527,7 @@ async function doLogin(){
   var b=el('btnLogin');b.disabled=true;el('btnLoginTxt').innerHTML='<i class="bi bi-arrow-repeat spin"></i> Signing in…';
   el('lbErr').style.display='none';['lUser','lPass'].forEach(function(id){el(id).classList.remove('err');});
   try{
-    var r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'login',user:u,pass:p})});
+    var r=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'login',user:u,pass:p})});
     var d=await r.json();
     if(d&&d.success&&d.token){
       authToken=d.token;currentUser=d.user;
@@ -655,7 +655,7 @@ async function push(lead){
   if(!authToken||SCRIPT_URL.indexOf('script.google.com')<0)return;
   lead._dirty=true;                       // mark unsynced until the sheet confirms
   try{
-    var r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'upsert',token:authToken,lead:lead})});
+    var r=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'upsert',token:authToken,lead:lead})});
     var d=await r.json();
     if(d&&d.success){
       lead._dirty=false;                  // confirmed written to the sheet
@@ -671,7 +671,7 @@ async function push(lead){
 }
 async function pushArchive(id){
   if(!authToken||SCRIPT_URL.indexOf('script.google.com')<0)return;
-  try{await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'archive',token:authToken,id:id})});}catch(e){}
+  try{await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'archive',token:authToken,id:id})});}catch(e){}
 }
 // retry any leads whose last write didn't confirm
 async function flushPending(){
