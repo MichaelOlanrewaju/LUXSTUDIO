@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfolio — Manchester Portrait Photography | Luxeimperial Studio</title>
+  <meta name="description" content="Browse the Luxeimperial Studio portfolio: birthday, maternity, anniversary, pre-wedding and family portrait photography from our Manchester studio.">
+  <link rel="canonical" href="https://luxeimperialstudio.com/">
+  <meta property="og:title" content="Portfolio — Manchester Portrait Photography | Luxeimperial Studio">
+  <meta property="og:description" content="Browse the Luxeimperial Studio portfolio: birthday, maternity, anniversary, pre-wedding and family portrait photography from our Manchester studio.">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold:#b8860b; --gold-light:#d4a017; --gold-pale:#fdf9f0;
+      --surface:#f8f6f3; --border:#e4dfd9; --text:#1a1714; --text-muted:#6b6560;
+      --serif:'Playfair Display', Georgia, serif; --sans:'DM Sans', sans-serif;
+    }
+    *, *::before, *::after { box-sizing:border-box; }
+    html, body { overflow-x:hidden; width:100%; font-family:var(--sans); color:var(--text); background:#fff; -webkit-font-smoothing:antialiased; }
+    a { text-decoration:none; }
+
+    /* NAVBAR */
+    #mainNav { position:fixed; top:0; left:0; width:100%; z-index:1000; padding:14px 0; background:rgba(255,255,255,0.97); border-bottom:1px solid var(--border); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); transition:padding .3s, box-shadow .3s; }
+    #mainNav.scrolled { padding:10px 0; box-shadow:0 2px 20px rgba(0,0,0,0.08); }
+    #mainNav .nav-link { font-family:var(--sans); font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); font-weight:400; padding:8px 14px; transition:color .2s; }
+    #mainNav .nav-link:hover, #mainNav .nav-link.active { color:var(--gold); }
+    .btn-nav-book { font-family:var(--sans); font-size:11px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:10px 24px; background:var(--text); color:#fff !important; border:none; border-radius:0; display:inline-block; min-height:40px; line-height:1.6; transition:background .2s; }
+    .btn-nav-book:hover { background:var(--gold); color:#fff !important; }
+    .navbar-toggler { border:1px solid var(--border); padding:6px 10px; border-radius:0; }
+    .navbar-toggler:focus { box-shadow:none; }
+    body { padding-top:73px; }
+
+    /* PAGE HEADER */
+    .page-hero { position:relative; min-height:46vh; display:flex; align-items:center; justify-content:center; text-align:center; overflow:hidden; }
+    .page-hero-bg { position:absolute; inset:0; background-size:cover; background-position:center 28%; z-index:0; }
+    .page-hero-overlay { position:absolute; inset:0; background:linear-gradient(160deg, rgba(0,0,0,0.62), rgba(0,0,0,0.48) 60%, rgba(0,0,0,0.72)); z-index:1; }
+    .page-hero-inner { position:relative; z-index:2; padding:64px 20px; }
+    .page-hero .eyebrow { font-size:10px; letter-spacing:4px; text-transform:uppercase; color:rgba(255,255,255,0.8); display:block; margin-bottom:14px; }
+    .page-hero h1 { font-family:var(--serif); font-weight:700; color:#fff; font-size:clamp(30px,6vw,52px); line-height:1.1; margin:0; }
+    .page-hero h1 em { font-style:italic; color:var(--gold-light); }
+    .page-hero .sub { color:rgba(255,255,255,0.82); font-weight:300; font-size:15px; max-width:560px; margin:16px auto 0; line-height:1.7; }
+
+    /* SHARED SECTION BITS */
+    .section-kicker { font-size:10px; letter-spacing:3.5px; text-transform:uppercase; color:var(--gold); text-align:center; margin-bottom:10px; display:block; }
+    .section-title { font-family:var(--serif); font-size:clamp(24px,5vw,38px); font-weight:700; text-align:center; color:var(--text); margin-bottom:14px; }
+    .section-title em { font-style:italic; color:var(--gold); }
+    .section-divider { width:44px; height:2px; background:var(--gold); margin:0 auto 22px; }
+    .section-body { font-size:15px; font-weight:300; color:var(--text-muted); line-height:1.85; max-width:640px; margin:0 auto; }
+
+    /* FOOTER */
+    .site-footer { background:var(--text); text-align:center; padding:40px 16px; font-size:11px; color:rgba(255,255,255,0.35); letter-spacing:1px; }
+    .site-footer strong { font-family:var(--serif); font-size:16px; font-weight:600; color:rgba(255,255,255,0.8); display:block; margin-bottom:10px; }
+    .footer-links { display:flex; flex-wrap:wrap; gap:18px; justify-content:center; margin-bottom:16px; }
+    .footer-links a { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.55); transition:color .2s; }
+    .footer-links a:hover { color:var(--gold-light); }
+    .btn-gold { display:inline-block; padding:14px 32px; background:var(--gold); color:#fff !important; font-family:var(--sans); font-size:11px; font-weight:500; letter-spacing:2px; text-transform:uppercase; border:2px solid var(--gold); transition:background .25s, color .25s; }
+    .btn-gold:hover { background:transparent; color:var(--gold) !important; }
+    .btn-ghost { display:inline-block; padding:12px 30px; background:transparent; color:var(--text) !important; font-family:var(--sans); font-size:11px; font-weight:500; letter-spacing:2px; text-transform:uppercase; border:1px solid var(--border); transition:border-color .25s, color .25s; }
+    .btn-ghost:hover { border-color:var(--gold); color:var(--gold) !important; }
+    
+    .portfolio-section { padding:56px 0 76px; background:var(--surface); }
+    .filter-tabs { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:36px; }
+    .filter-tab { font-family:var(--sans); font-size:11px; letter-spacing:1.5px; text-transform:uppercase; padding:8px 20px; border:1px solid var(--border); background:#fff; color:var(--text-muted); cursor:pointer; transition:all .2s; }
+    .filter-tab:hover, .filter-tab.active { background:var(--gold); border-color:var(--gold); color:#fff; }
+    .gallery-grid { columns:2; column-gap:10px; }
+    @media (min-width:768px){ .gallery-grid { columns:3; } }
+    @media (min-width:1100px){ .gallery-grid { columns:4; } }
+    .gallery-item { break-inside:avoid; margin-bottom:10px; position:relative; overflow:hidden; cursor:pointer; }
+    .gallery-item img { width:100%; height:auto; display:block; transition:transform .5s ease; filter:grayscale(8%); }
+    .gallery-item:hover img { transform:scale(1.05); filter:grayscale(0%); }
+    .gallery-overlay { position:absolute; inset:0; background:linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.75) 100%); opacity:0; transition:opacity .3s; display:flex; align-items:flex-end; padding:16px; }
+    .gallery-item:hover .gallery-overlay { opacity:1; }
+    .gallery-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.9); }
+    /* LIGHTBOX */
+    .lb-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.96); z-index:9000; flex-direction:column; align-items:center; justify-content:center; }
+    .lb-backdrop.open { display:flex; }
+    .lb-close { position:absolute; top:20px; right:24px; background:none; border:none; color:#fff; font-size:32px; cursor:pointer; z-index:9001; line-height:1; }
+    .lb-counter { position:absolute; top:22px; left:24px; font-size:11px; letter-spacing:2px; color:rgba(255,255,255,0.4); text-transform:uppercase; }
+    .lb-img-wrap { width:100%; max-width:860px; max-height:80vh; display:flex; align-items:center; justify-content:center; padding:0 60px; }
+    .lb-img-wrap img { max-width:100%; max-height:80vh; object-fit:contain; }
+    .lb-arrow { position:absolute; top:50%; transform:translateY(-50%); background:none; border:1px solid rgba(255,255,255,0.2); color:#fff; font-size:22px; width:48px; height:48px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background .2s, border-color .2s; z-index:9001; }
+    .lb-arrow:hover { background:var(--gold); border-color:var(--gold); }
+    .lb-arrow.prev { left:12px; } .lb-arrow.next { right:12px; }
+    @media (max-width:576px){ .lb-img-wrap { padding:0 54px; } }
+
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="index.html"><img src="logo.png" alt="Luxeimperial Studio — Manchester Photographer" height="44"></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="services.html">Services</a></li>
+        <li class="nav-item"><a class="nav-link active" href="portfolio.html">Portfolio</a></li>
+        <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+        <li class="nav-item ms-lg-3 mt-2 mt-lg-0"><a class="btn btn-nav-book" href="contact.html">Book a Session</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="page-hero-bg" style="background-image:url('CT109610.jpg')"></div>
+  <div class="page-hero-overlay"></div>
+  <div class="page-hero-inner">
+    <span class="eyebrow">Our Work</span>
+    <h1>A Glimpse Into <em>Our World</em></h1>
+    <p class="sub">A collection of recent birthday, maternity, anniversary, pre-wedding and family sessions, captured in Manchester.</p>
+  </div>
+</section>
+
+<section class="portfolio-section" id="portfolio">
+  <div class="container">
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-filter="all">All</button>
+      <button class="filter-tab" data-filter="birthday">Birthday</button>
+      <button class="filter-tab" data-filter="anniversary">Anniversary</button>
+      <button class="filter-tab" data-filter="maternity">Maternity</button>
+      <button class="filter-tab" data-filter="prewedding">Pre-Wedding</button>
+      <button class="filter-tab" data-filter="family">Family</button>
+    </div>
+    <div class="gallery-grid" id="galleryGrid">
+      <div class="gallery-item" data-category="birthday"><img src="CT107627.jpg" alt="Birthday photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="IMG_4779.JPG" alt="Birthday photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="CT104555.jpg" alt="Birthday photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="IMG_4550.JPG" alt="Birthday photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="CT108863.jpg" alt="Birthday photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="CT103474.JPG" alt="Birthday photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="Fash 2.JPG" alt="Birthday photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="CT103892.jpg" alt="Birthday photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="Ako 7.jpg" alt="Birthday photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="CT108187.jpg" alt="Birthday photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="CT109268.jpg" alt="Birthday photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="CT104093.jpg" alt="Birthday photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="CT109704.jpg" alt="Birthday photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="IMG_4071.jpg" alt="Birthday photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="birthday"><img src="CT104527.jpg" alt="Birthday photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Birthday</span></div></div>
+      <div class="gallery-item" data-category="anniversary"><img src="CT108052.jpg" alt="Anniversary photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Anniversary</span></div></div>
+      <div class="gallery-item" data-category="anniversary"><img src="IMG_4521.jpg" alt="Anniversary photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Anniversary</span></div></div>
+      <div class="gallery-item" data-category="anniversary"><img src="DDD.PNG" alt="Anniversary photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Anniversary</span></div></div>
+      <div class="gallery-item" data-category="anniversary"><img src="JUGI.png" alt="Anniversary photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Anniversary</span></div></div>
+      <div class="gallery-item" data-category="anniversary"><img src="CT104684.JPG" alt="Anniversary photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Anniversary</span></div></div>
+      <div class="gallery-item" data-category="anniversary"><img src="DHHDH.PNG" alt="Anniversary photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Anniversary</span></div></div>
+      <div class="gallery-item" data-category="maternity"><img src="IMG_1511.jpeg" alt="Maternity photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Maternity</span></div></div>
+      <div class="gallery-item" data-category="maternity"><img src="CT109944.jpeg" alt="Maternity photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Maternity</span></div></div>
+      <div class="gallery-item" data-category="maternity"><img src="CT108575.jpg" alt="Maternity photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Maternity</span></div></div>
+      <div class="gallery-item" data-category="maternity"><img src="CT101038.jpg" alt="Maternity photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Maternity</span></div></div>
+      <div class="gallery-item" data-category="maternity"><img src="CT108366.jpg" alt="Maternity photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Maternity</span></div></div>
+      <div class="gallery-item" data-category="maternity"><img src="CT100715.jpg" alt="Maternity photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Maternity</span></div></div>
+      <div class="gallery-item" data-category="maternity"><img src="CT103275.jpg" alt="Maternity photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Maternity</span></div></div>
+      <div class="gallery-item" data-category="maternity"><img src="CT102342.jpg" alt="Maternity photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Maternity</span></div></div>
+      <div class="gallery-item" data-category="prewedding"><img src="IMG_2433.jpg" alt="Pre-Wedding photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Pre-Wedding</span></div></div>
+      <div class="gallery-item" data-category="prewedding"><img src="CT100036.jpg" alt="Pre-Wedding photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Pre-Wedding</span></div></div>
+      <div class="gallery-item" data-category="prewedding"><img src="CT1097370 2.JPG" alt="Pre-Wedding photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Pre-Wedding</span></div></div>
+      <div class="gallery-item" data-category="prewedding"><img src="IMG_2857 2.JPG" alt="Pre-Wedding photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Pre-Wedding</span></div></div>
+      <div class="gallery-item" data-category="prewedding"><img src="kgjj.png" alt="Pre-Wedding photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Pre-Wedding</span></div></div>
+      <div class="gallery-item" data-category="family"><img src="IMG_4431.jpg" alt="Family photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Family</span></div></div>
+      <div class="gallery-item" data-category="family"><img src="CT109610.jpg" alt="Family photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Family</span></div></div>
+      <div class="gallery-item" data-category="family"><img src="CT100387.jpg" alt="Family photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Family</span></div></div>
+      <div class="gallery-item" data-category="family"><img src="CT100970.jpg" alt="Family photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Family</span></div></div>
+      <div class="gallery-item" data-category="family"><img src="HJK.png" alt="Family photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Family</span></div></div>
+      <div class="gallery-item" data-category="family"><img src="jfhh.png" alt="Family photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Family</span></div></div>
+      <div class="gallery-item" data-category="family"><img src="kgjfj.png" alt="Family photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Family</span></div></div>
+      <div class="gallery-item" data-category="family"><img src="gjgj.png" alt="Family photography Manchester — Luxeimperial Studio" loading="lazy"><div class="gallery-overlay"><span class="gallery-label">Family</span></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="lb-backdrop" id="lightbox">
+  <button class="lb-close" id="lbClose">✕</button>
+  <div class="lb-counter" id="lbCounter">1 / 1</div>
+  <div class="lb-img-wrap"><img id="lbImg" src="" alt="Portfolio image"></div>
+  <button class="lb-arrow prev" id="lbPrev">&#8592;</button>
+  <button class="lb-arrow next" id="lbNext">&#8594;</button>
+</div>
+
+<section class="strip-cta" style="padding:74px 0; background:var(--text); text-align:center;">
+  <div class="container">
+    <h2 style="font-family:var(--serif); color:#fff; font-size:clamp(24px,4.5vw,36px); font-weight:700; margin-bottom:12px;">Love what you <em style="font-style:italic; color:var(--gold-light);">see?</em></h2>
+    <p style="color:rgba(255,255,255,0.6); font-weight:300; max-width:520px; margin:0 auto 26px; line-height:1.8;">Let's create portraits just like these, made for you. Booking now across Manchester.</p>
+    <a class="btn-gold" href="contact.html">Book Your Session</a>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <strong>Luxeimperial Studio</strong>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  Manchester UK &nbsp;·&nbsp; luxeimperialstudiouk@gmail.com &nbsp;·&nbsp; © 2026 Luxeimperial Studio. All rights reserved
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  window.addEventListener('scroll', function(){ document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50); });
+</script>
+<script>
+  (function(){
+    var allItems=Array.from(document.querySelectorAll('.gallery-item'));
+    var grid=document.getElementById('galleryGrid');
+    var tabs=Array.from(document.querySelectorAll('.filter-tab'));
+    var lightbox=document.getElementById('lightbox'), lbImg=document.getElementById('lbImg'),
+        lbCounter=document.getElementById('lbCounter');
+    var visible=[], idx=0;
+
+    function applyFilter(f){
+      visible=[];
+      allItems.forEach(function(it){
+        var show = f==='all' || it.getAttribute('data-category')===f;
+        it.style.display = show?'block':'none';
+        if(show) visible.push(it);
+      });
+    }
+    tabs.forEach(function(t){
+      t.addEventListener('click', function(){
+        tabs.forEach(function(x){x.classList.remove('active');});
+        t.classList.add('active');
+        applyFilter(t.getAttribute('data-filter'));
+      });
+    });
+    function openLb(item){
+      idx=visible.indexOf(item); render(); lightbox.classList.add('open');
+    }
+    function render(){
+      var img=visible[idx].querySelector('img');
+      lbImg.src=img.src; lbImg.alt=img.alt;
+      lbCounter.textContent=(idx+1)+' / '+visible.length;
+    }
+    allItems.forEach(function(it){ it.addEventListener('click', function(){ openLb(it); }); });
+    document.getElementById('lbClose').addEventListener('click', function(){ lightbox.classList.remove('open'); });
+    document.getElementById('lbNext').addEventListener('click', function(){ idx=(idx+1)%visible.length; render(); });
+    document.getElementById('lbPrev').addEventListener('click', function(){ idx=(idx-1+visible.length)%visible.length; render(); });
+    lightbox.addEventListener('click', function(e){ if(e.target===lightbox) lightbox.classList.remove('open'); });
+    document.addEventListener('keydown', function(e){
+      if(!lightbox.classList.contains('open')) return;
+      if(e.key==='Escape') lightbox.classList.remove('open');
+      if(e.key==='ArrowRight'){ idx=(idx+1)%visible.length; render(); }
+      if(e.key==='ArrowLeft'){ idx=(idx-1+visible.length)%visible.length; render(); }
+    });
+    applyFilter('all');
+  })();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"ProfessionalService",
+  "name":"Luxeimperial Studio",
+  "image":"https://luxeimperialstudio.com/logo.png",
+  "url":"https://luxeimperialstudio.com/",
+  "email":"luxeimperialstudiouk@gmail.com",
+  "telephone":"+447368208684",
+  "priceRange":"££",
+  "description":"Luxeimperial Studio is a Manchester-based portrait photography studio specialising in birthday, maternity, anniversary, pre-wedding and family sessions, with guided posing, professional makeup and hand retouching.",
+  "areaServed":{"@type":"City","name":"Manchester"},
+  "address":{"@type":"PostalAddress","addressLocality":"Manchester","addressCountry":"GB"},
+  "knowsAbout":["Portrait photography","Maternity photography","Birthday photography","Family photography","Pre-wedding photography","Anniversary photography"],
+  "sameAs":["https://www.instagram.com/luxeimperial_studio/"]
+}
+</script>
+</body></html>
