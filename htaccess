@@ -1,0 +1,29 @@
+# ===================================================================
+# Luxeimperial Studio — clean URLs (removes .html) + basics
+# For Apache servers (most shared/cPanel hosting)
+# ===================================================================
+
+RewriteEngine On
+
+# 1. Redirect any old .html URL to the clean version (301 permanent)
+#    e.g. /about.html  ->  /about
+RewriteCond %{THE_REQUEST} \s/+([^\s?]+?)\.html[\s?] [NC]
+RewriteRule ^ /%1 [R=301,L]
+
+# 2. Internally serve the .html file when someone visits the clean URL
+#    e.g. /about  ->  serves about.html (without changing the address bar)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.html -f
+RewriteRule ^(.+?)/?$ $1.html [L]
+
+# 3. Send /index (or /index.html) to the site root
+RewriteCond %{THE_REQUEST} \s/+index(\.html)?[\s?] [NC]
+RewriteRule ^ / [R=301,L]
+
+# ---- Small quality-of-life extras (optional but recommended) ----
+
+# Use index.html as the default document
+DirectoryIndex index.html
+
+# Custom 404 (only works if you create a 404.html page)
+# ErrorDocument 404 /404.html
