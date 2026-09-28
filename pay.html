@@ -70,6 +70,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-
 .mini-btn{height:44px;padding:0 14px;border:none;border-radius:10px;background:var(--brand);color:#fff;font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
 .mini-btn.wa{background:#25d366}
 .mini-btn.ghost{background:#fff;color:var(--ink-2);border:1.5px solid var(--line)}
+/* handling fee toggle */
+.fee-row{display:flex;align-items:flex-start;gap:12px;padding:14px;border:1.5px solid var(--line);border-radius:12px;background:#fafbff;margin:4px 0 16px}
+.fee-txt{flex:1}
+.fee-lbl{font-size:13.5px;font-weight:600;color:var(--ink-2)}
+.fee-break{font-size:12.5px;color:var(--muted);margin-top:3px}
+.fee-break b{color:var(--ink);font-weight:700}
+.fee-break .net{color:var(--ok);font-weight:700}
+.switch{position:relative;display:inline-block;width:42px;height:24px;flex-shrink:0;margin-top:1px}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;inset:0;background:#cbd2e0;border-radius:24px;transition:.2s}
+.slider:before{content:'';position:absolute;height:18px;width:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.switch input:checked+.slider{background:var(--brand)}
+.switch input:checked+.slider:before{transform:translateX(18px)}
 
 /* LIST */
 .list-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
@@ -143,9 +156,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-
       <div class="field"><label>Client email <span class="opt">(optional — emails them a receipt)</span></label><input id="c-email" type="email" placeholder="client@email.com"></div>
     </div>
     <div class="row2">
-      <div class="field"><label>Amount *</label><div class="amt-wrap"><span class="cur">£</span><input id="c-amount" type="number" min="1" step="0.01" placeholder="0.00"></div></div>
+      <div class="field"><label>Amount you want to receive *</label><div class="amt-wrap"><span class="cur">£</span><input id="c-amount" type="number" min="1" step="0.01" placeholder="0.00" oninput="updateFee()"></div></div>
       <div class="field"><label>What's it for? <span class="opt">(shows on the client's checkout)</span></label>
-        <select id="c-desc">
+        <select id="c-desc" onchange="updateFee()">
           <option value="">Select a shoot type</option>
           <option>Birthday</option>
           <option>Anniversary</option>
@@ -161,6 +174,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-
           <option>Christmas</option>
           <option>Other</option>
         </select>
+      </div>
+    </div>
+    <div class="fee-row">
+      <label class="switch"><input type="checkbox" id="c-fee" onchange="updateFee()"><span class="slider"></span></label>
+      <div class="fee-txt">
+        <div class="fee-lbl">Add handling fee <span class="opt">(client covers the card processing cost)</span></div>
+        <div class="fee-break" id="feeBreak">Enter an amount to see the breakdown.</div>
       </div>
     </div>
     <button class="btn" id="btnCreate" onclick="createLink()" style="margin-top:4px"><span id="createTxt"><i class="bi bi-link-45deg"></i> Generate payment link</span></button>
@@ -243,6 +263,31 @@ async function loadPayments(){
   }catch(e){}
 }
 
+// ── HANDLING FEE ──
+// Stripe UK standard: 1.5% + 20p (UK cards). Grossing up so YOU receive the
+// target amount: client_pays = (net + fixed) / (1 - pct).
+var FEE_PCT = 0.015, FEE_FIXED = 0.20;
+function feeGrossUp(net){
+  var pays = (net + FEE_FIXED) / (1 - FEE_PCT);
+  return Math.ceil(pays * 100) / 100; // round up to nearest penny
+}
+function currentCharge(){
+  var net = parseFloat(v('c-amount'))||0;
+  var addFee = el('c-fee').checked;
+  var pays = addFee ? feeGrossUp(net) : net;
+  return { net:net, pays:pays, fee:Math.round((pays-net)*100)/100, addFee:addFee };
+}
+function updateFee(){
+  var c=currentCharge();
+  var box=el('feeBreak');
+  if(!c.net){box.innerHTML='Enter an amount to see the breakdown.';return;}
+  if(c.addFee){
+    box.innerHTML='Client pays <b>£'+c.pays.toFixed(2)+'</b> · handling fee £'+c.fee.toFixed(2)+' · you receive <span class="net">£'+c.net.toFixed(2)+'</span>';
+  }else{
+    box.innerHTML='Client pays <b>£'+c.net.toFixed(2)+'</b> · you receive about <span class="net">£'+(Math.round((c.net*(1-FEE_PCT)-FEE_FIXED)*100)/100).toFixed(2)+'</span> after Stripe\u2019s fee';
+  }
+}
+
 // ── CREATE LINK ──
 async function createLink(){
   var name=v('c-name'),amount=v('c-amount'),email=v('c-email'),shoot=v('c-desc'),phone=v('c-phone');
@@ -251,23 +296,26 @@ async function createLink(){
   if(!shoot)return toast('Please choose what the payment is for','warn');
   // clear description the client sees on the Stripe checkout page
   var desc = (shoot==='Other') ? (STUDIO+' — Photography') : (shoot+' Photography — '+STUDIO);
+  var charge=currentCharge();               // {net,pays,fee,addFee}
+  var chargeAmt=charge.pays.toFixed(2);      // what the CLIENT is billed
+  if(charge.addFee && charge.fee>0) desc += ' (incl. handling fee)';
   el('btnCreate').disabled=true;el('createTxt').innerHTML='Generating…';
   if(!SCRIPT_URL||SCRIPT_URL.indexOf('script.google.com')<0){
     // demo
     var demoLink='https://checkout.stripe.com/pay/demo_'+Math.random().toString(36).slice(2,10);
     showResult(demoLink,name,phone);
-    payments.unshift({id:'D'+Date.now(),client:name,email:email,phone:phone,description:desc||('Payment — '+name),amount:parseFloat(amount).toFixed(2),currency:'GBP',status:'pending',link:demoLink,created:new Date().toISOString(),paidAt:''});
+    payments.unshift({id:'D'+Date.now(),client:name,email:email,phone:phone,description:desc||('Payment — '+name),amount:chargeAmt,currency:'GBP',status:'pending',link:demoLink,created:new Date().toISOString(),paidAt:''});
     renderAll();resetCreate();toast('Demo link generated','ok');return;
   }
   try{
-    var r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'createLink',token:authToken,client:name,email:email,amount:amount,description:desc})});
+    var r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'createLink',token:authToken,client:name,email:email,amount:chargeAmt,description:desc})});
     var j=await r.json();
     if(j.success){showResult(j.link,name,phone);loadPayments();resetCreate();toast('Payment link created','ok');}
     else toast(j.error||'Could not create link','err');
   }catch(e){toast('Connection error','err');}
   finally{el('btnCreate').disabled=false;el('createTxt').innerHTML='<i class="bi bi-link-45deg"></i> Generate payment link';}
 }
-function resetCreate(){['c-name','c-phone','c-email','c-amount','c-desc'].forEach(function(id){el(id).value='';});}
+function resetCreate(){['c-name','c-phone','c-email','c-amount','c-desc'].forEach(function(id){el(id).value='';});el('c-fee').checked=false;updateFee();}
 function showResult(link,client,phone){lastLink=link;lastClient=client;lastPhone=phone||'';el('genLink').value=link;el('result').classList.add('show');}
 function copyLink(){el('genLink').select();try{document.execCommand('copy');}catch(e){}navigator.clipboard&&navigator.clipboard.writeText(lastLink);toast('Link copied','ok');}
 // normalise a phone to wa.me international format (digits only, UK-aware)
